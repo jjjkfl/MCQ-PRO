@@ -1,6 +1,7 @@
 /**
  * src/controllers/teacherController.js
- * Teacher dashboard — PDF upload, MCQ management, session, result monitoring
+ * Teacher dashboard — DOCX/PDF upload, MCQ management, session, result monitoring
+ * Supports structured DOCX parsing with image extraction + AI fallback.
  */
 
 const path     = require('path');
@@ -11,10 +12,10 @@ const Session  = require('../models/Session');
 const MCQBank  = require('../models/MCQBank');
 const Result   = require('../models/Result');
 const User     = require('../models/User');
-const { extractMCQsFromPDF } = require('../services/aiParserService');
+const { extractMCQsFromDocx, extractMCQsFromDocument } = require('../services/aiParserService');
 const logger   = require('../utils/logger');
 
-/* ─── Multer Config for PDF uploads ──────────────────────────────── */
+/* ─── Multer Config for Document uploads ─────────────────────────── */
 const uploadDir = path.join(__dirname, '../../uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -27,8 +28,13 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (_req, file, cb) => {
-  if (file.mimetype === 'application/pdf') cb(null, true);
-  else cb(new Error('Only PDF files allowed'), false);
+  const allowed = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
+  if (allowed.includes(file.mimetype)) cb(null, true);
+  else cb(new Error('Only PDF and Word documents allowed'), false);
 };
 
 const upload = multer({
@@ -42,141 +48,134 @@ exports.uploadPDFMiddleware = upload.single('pdf');
 /* ─── DASHBOARD ───────────────────────────────────────────────────── */
 exports.getDashboard = async (req, res) => {
   try {
-    const teacherId = req.user._id;
-
-    const [sessions, mcqBanks, totalStudents, recentResults] = await Promise.all([
-      Session.find({ createdBy: teacherId }).sort('-createdAt').limit(5),
-      MCQBank.find({ createdBy: teacherId }).sort('-createdAt').limit(5),
-      User.countDocuments({ role: 'student', isActive: true }),
-      Result.find({ session: { $in: await Session.find({ createdBy: teacherId }).distinct('_id') } })
-            .populate('student', 'firstName lastName studentId')
-            .populate('session', 'title')
-            .sort('-submittedAt')
-            .limit(10),
+    const [sessions, mcqBanks, totalStudents] = await Promise.all([
+      Session.find({}).sort('-createdAt').limit(10),
+      MCQBank.find({ createdBy: req.user._id }).sort('-createdAt').limit(10),
+      User.countDocuments({ role: 'student' }),
     ]);
 
     const activeSessions = sessions.filter(s => s.status === 'active').length;
-    const totalSessions  = sessions.length;
 
     res.json({
       success : true,
       data    : {
-        stats         : { activeSessions, totalSessions, totalStudents, totalMCQBanks: mcqBanks.length },
-        recentSessions: sessions,
+        stats: { 
+          activeSessions, 
+          totalSessions: sessions.length, 
+          totalStudents, 
+          totalMCQBanks: mcqBanks.length 
+        },
+        recentSessions: sessions.map(s => ({
+          _id: s._id,
+          title: s.examId,
+          status: s.status,
+          scheduledStart: s.startTime,
+          durationMinutes: s.duration,
+          submissions: 0
+        })),
         recentMCQBanks: mcqBanks,
-        recentResults,
+        recentResults: [] 
       },
     });
   } catch (err) {
+    console.error('FULL DASHBOARD ERROR:', err);
     logger.error(`Teacher dashboard error: ${err.message}`);
-    res.status(500).json({ success: false, message: 'Failed to load dashboard.' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to load dashboard.', 
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined 
+    });
   }
 };
 
-/* ─── UPLOAD PDF & EXTRACT MCQs ───────────────────────────────────── */
+/* ─── UPLOAD DOCUMENT & EXTRACT MCQs ──────────────────────────────── */
 exports.uploadPDF = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ success: false, message: 'PDF file is required.' });
-    }
+    if (!req.file) return res.status(400).json({ success: false, message: 'File is required.' });
 
-    const { title, subject, chapter, numQuestions } = req.body;
+    const { title, subject, numQuestions } = req.body;
     if (!title || !subject) {
-      fs.unlink(req.file.path, () => {});
+      if (req.file) fs.unlink(req.file.path, () => {});
       return res.status(400).json({ success: false, message: 'Title and subject are required.' });
     }
 
-    logger.info(`PDF upload: ${req.file.originalname} by teacher ${req.user._id}`);
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    let questions, meta;
 
-    /* Extract MCQs via AI */
-    const { questions, meta } = await extractMCQsFromPDF(
-      req.file.path,
-      subject,
-      parseInt(numQuestions) || 20
-    );
+    if (ext === '.docx') {
+      /* ─── DOCX Structured Parser (with images) ─── */
+      logger.info(`Using DOCX structured parser for: ${req.file.originalname}`);
+      const result = await extractMCQsFromDocx(req.file.path);
+      questions = result.questions;
+      meta = result.meta;
+
+      /* If structured parsing found 0 questions, fall back to AI */
+      if (!questions || questions.length === 0) {
+        logger.warn('DOCX structured parser found 0 questions — falling back to AI extraction');
+        const aiFallback = await extractMCQsFromDocument(
+          req.file.path,
+          subject,
+          parseInt(numQuestions) || 20
+        );
+        questions = aiFallback.questions;
+        meta = aiFallback.meta;
+      }
+    } else {
+      /* ─── PDF / Legacy Word: AI-based extraction ─── */
+      const result = await extractMCQsFromDocument(
+        req.file.path,
+        subject,
+        parseInt(numQuestions) || 20
+      );
+      questions = result.questions;
+      meta = result.meta;
+    }
 
     if (!questions || questions.length === 0) {
       fs.unlink(req.file.path, () => {});
-      return res.status(422).json({ success: false, message: 'No MCQs could be extracted from this PDF.' });
+      return res.status(422).json({ success: false, message: 'No MCQs could be extracted from the document.' });
     }
 
     /* Save to MCQBank */
     const bank = await MCQBank.create({
       title,
       subject,
-      chapter    : chapter || '',
-      createdBy  : req.user._id,
-      questions,
-      aiExtracted: true,
-      sourceFile : {
-        originalName: req.file.originalname,
-        storedName  : req.file.filename,
-        size        : req.file.size,
-        mimetype    : req.file.mimetype,
-      },
-      extractionMeta: {
-        model      : meta.model,
-        tokens     : meta.totalTokens,
-        extractedAt: new Date(),
-      },
+      createdBy: req.user._id,
+      questions
     });
 
-    logger.info(`MCQ bank created: ${bank._id} with ${questions.length} questions`);
-
+    /* Return full question data for preview */
     res.status(201).json({
       success : true,
-      message : `Successfully extracted ${questions.length} MCQs from PDF.`,
+      message : `Successfully extracted ${questions.length} MCQs.`,
       data    : {
-        bankId    : bank._id,
-        title     : bank.title,
-        subject   : bank.subject,
+        bankId: bank._id,
+        title: bank.title,
+        subject: bank.subject,
         questionCount: bank.questions.length,
-        totalMarks: bank.totalMarks,
-        questions : bank.questions.map(q => ({
-          _id         : q._id,
-          questionText: q.questionText,
-          options     : q.options,
-          correctAnswer: q.correctAnswer,
-          difficulty  : q.difficulty,
-          topic       : q.topic,
-          marks       : q.marks,
-        })),
+        questions: bank.questions,
+        meta
       },
     });
   } catch (err) {
     if (req.file) fs.unlink(req.file.path, () => {});
-    logger.error(`PDF upload error: ${err.message}`);
-    res.status(500).json({ success: false, message: `Failed to process PDF: ${err.message}` });
+    logger.error(`Upload error: ${err.message}`);
+    res.status(500).json({ success: false, message: `Failed to process document: ${err.message}` });
   }
 };
 
 /* ─── GET ALL MCQ BANKS ───────────────────────────────────────────── */
 exports.getMCQBanks = async (req, res) => {
   try {
-    const { page = 1, limit = 10, subject } = req.query;
-    const filter = { createdBy: req.user._id };
-    if (subject) filter.subject = new RegExp(subject, 'i');
-
-    const [banks, total] = await Promise.all([
-      MCQBank.find(filter)
-             .select('-questions.correctAnswer')
-             .sort('-createdAt')
-             .limit(parseInt(limit))
-             .skip((parseInt(page) - 1) * parseInt(limit)),
-      MCQBank.countDocuments(filter),
-    ]);
-
-    res.json({
-      success    : true,
-      data       : banks,
-      pagination : { total, page: parseInt(page), limit: parseInt(limit), pages: Math.ceil(total / parseInt(limit)) },
-    });
+    const banks = await MCQBank.find({ createdBy: req.user._id }).sort('-createdAt');
+    res.json({ success: true, data: banks });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch MCQ banks.' });
   }
 };
 
-/* ─── GET MCQ BANK DETAIL (with correct answers for teacher) ──────── */
+/* ─── GET MCQ BANK DETAIL ─────────────────────────────────────────── */
 exports.getMCQBankDetail = async (req, res) => {
   try {
     const bank = await MCQBank.findOne({ _id: req.params.bankId, createdBy: req.user._id });
@@ -190,13 +189,12 @@ exports.getMCQBankDetail = async (req, res) => {
 /* ─── UPDATE MCQ BANK ─────────────────────────────────────────────── */
 exports.updateMCQBank = async (req, res) => {
   try {
-    const bank = await MCQBank.findOne({ _id: req.params.bankId, createdBy: req.user._id });
+    const bank = await MCQBank.findOneAndUpdate(
+      { _id: req.params.bankId, createdBy: req.user._id },
+      req.body,
+      { new: true }
+    );
     if (!bank) return res.status(404).json({ success: false, message: 'MCQ bank not found.' });
-
-    const allowed = ['title', 'subject', 'chapter', 'description', 'questions', 'tags', 'isPublished'];
-    allowed.forEach(f => { if (req.body[f] !== undefined) bank[f] = req.body[f]; });
-
-    await bank.save();
     res.json({ success: true, message: 'MCQ bank updated.', data: bank });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to update MCQ bank.' });
@@ -208,13 +206,6 @@ exports.deleteMCQBank = async (req, res) => {
   try {
     const bank = await MCQBank.findOneAndDelete({ _id: req.params.bankId, createdBy: req.user._id });
     if (!bank) return res.status(404).json({ success: false, message: 'MCQ bank not found.' });
-
-    /* Delete source PDF if stored */
-    if (bank.sourceFile?.storedName) {
-      const filePath = path.join(__dirname, '../../uploads', bank.sourceFile.storedName);
-      fs.unlink(filePath, () => {});
-    }
-
     res.json({ success: true, message: 'MCQ bank deleted.' });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to delete MCQ bank.' });
@@ -224,56 +215,15 @@ exports.deleteMCQBank = async (req, res) => {
 /* ─── CREATE EXAM SESSION ─────────────────────────────────────────── */
 exports.createSession = async (req, res) => {
   try {
-    const {
-      title, description, mcqBankId, scheduledStart, durationMinutes,
-      passingScore, negativeMarking, settings, numQuestions, shuffleQuestions,
-    } = req.body;
-
-    /* Validate MCQ bank ownership */
-    const bank = await MCQBank.findOne({ _id: mcqBankId, createdBy: req.user._id });
-    if (!bank) return res.status(404).json({ success: false, message: 'MCQ bank not found.' });
-
-    /* Select questions */
-    let selectedQuestions = shuffleQuestions
-      ? bank.getRandomQuestions(numQuestions || bank.questions.length)
-      : bank.questions.slice(0, numQuestions || bank.questions.length);
-
-    if (selectedQuestions.length === 0) {
-      return res.status(400).json({ success: false, message: 'No questions available.' });
-    }
-
-    const start   = new Date(scheduledStart);
-    const end     = new Date(start.getTime() + durationMinutes * 60000);
-    const code    = Session.generateAccessCode();
-
+    const { title, scheduledStart, durationMinutes } = req.body;
     const session = await Session.create({
-      title,
-      description,
-      createdBy      : req.user._id,
-      mcqBank        : mcqBankId,
-      questions      : selectedQuestions,
-      scheduledStart : start,
-      scheduledEnd   : end,
-      durationMinutes: parseInt(durationMinutes),
-      passingScore   : passingScore || 50,
-      negativeMarking: negativeMarking || false,
-      accessCode     : code,
-      status         : 'scheduled',
-      settings       : settings || {},
+      examId: title,
+      startTime: new Date(scheduledStart),
+      duration: parseInt(durationMinutes),
+      status: 'active'
     });
-
-    /* Update bank usage */
-    await MCQBank.findByIdAndUpdate(mcqBankId, { $addToSet: { usedInSessions: session._id } });
-
-    logger.info(`Session created: ${session._id} by teacher ${req.user._id}`);
-
-    res.status(201).json({
-      success : true,
-      message : 'Exam session created.',
-      data    : { ...session.toObject(), accessCode: session.accessCode },
-    });
+    res.status(201).json({ success: true, message: 'Session created.', data: session });
   } catch (err) {
-    logger.error(`Create session error: ${err.message}`);
     res.status(500).json({ success: false, message: 'Failed to create session.' });
   }
 };
@@ -281,24 +231,16 @@ exports.createSession = async (req, res) => {
 /* ─── GET ALL SESSIONS ────────────────────────────────────────────── */
 exports.getSessions = async (req, res) => {
   try {
-    const { status, page = 1, limit = 10 } = req.query;
-    const filter = { createdBy: req.user._id };
-    if (status) filter.status = status;
-
-    const [sessions, total] = await Promise.all([
-      Session.find(filter)
-             .select('-questions.correctAnswer')
-             .populate('mcqBank', 'title subject')
-             .sort('-scheduledStart')
-             .limit(parseInt(limit))
-             .skip((parseInt(page) - 1) * parseInt(limit)),
-      Session.countDocuments(filter),
-    ]);
-
+    const sessions = await Session.find({}).sort('-createdAt');
     res.json({
-      success    : true,
-      data       : sessions,
-      pagination : { total, page: parseInt(page), limit: parseInt(limit), pages: Math.ceil(total / parseInt(limit)) },
+      success : true,
+      data    : sessions.map(s => ({
+        _id: s._id,
+        title: s.examId,
+        scheduledStart: s.startTime,
+        durationMinutes: s.duration,
+        status: s.status
+      }))
     });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch sessions.' });
@@ -308,12 +250,17 @@ exports.getSessions = async (req, res) => {
 /* ─── GET SESSION DETAIL ──────────────────────────────────────────── */
 exports.getSessionDetail = async (req, res) => {
   try {
-    const session = await Session.findOne({ _id: req.params.sessionId, createdBy: req.user._id })
-      .populate('enrolledStudents', 'firstName lastName studentId email')
-      .populate('submittedStudents', 'firstName lastName studentId');
-
+    const session = await Session.findById(req.params.sessionId);
     if (!session) return res.status(404).json({ success: false, message: 'Session not found.' });
-    res.json({ success: true, data: session });
+    res.json({ success: true, data: {
+      _id: session._id,
+      title: session.examId,
+      scheduledStart: session.startTime,
+      durationMinutes: session.duration,
+      status: session.status,
+      enrolledStudents: [],
+      submittedStudents: []
+    }});
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch session.' });
   }
@@ -323,146 +270,229 @@ exports.getSessionDetail = async (req, res) => {
 exports.updateSessionStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    const allowed    = ['scheduled', 'active', 'completed', 'cancelled'];
-    if (!allowed.includes(status)) {
-      return res.status(400).json({ success: false, message: 'Invalid status.' });
-    }
-
-    const session = await Session.findOneAndUpdate(
-      { _id: req.params.sessionId, createdBy: req.user._id },
-      {
-        status,
-        ...(status === 'active'    && { actualStart: new Date() }),
-        ...(status === 'completed' && { actualEnd  : new Date() }),
-      },
-      { new: true }
-    );
-
+    const session = await Session.findByIdAndUpdate(req.params.sessionId, { status }, { new: true });
     if (!session) return res.status(404).json({ success: false, message: 'Session not found.' });
-
-    /* Notify via Socket.io */
-    const io = req.app.get('io');
-    if (io) {
-      io.to(session._id.toString()).emit(`exam:status_changed`, { status, sessionId: session._id });
-    }
-
-    res.json({ success: true, message: `Session status updated to ${status}.`, data: session });
+    res.json({ success: true, message: 'Status updated.', data: session });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Failed to update session.' });
+    res.status(500).json({ success: false, message: 'Failed to update status.' });
   }
 };
 
-/* ─── GET SESSION RESULTS (teacher view) ─────────────────────────── */
+/* ─── GET SESSION RESULTS (Teacher Analytics) ────────────────────── */
 exports.getSessionResults = async (req, res) => {
   try {
-    /* Validate ownership */
-    const session = await Session.findOne({ _id: req.params.sessionId, createdBy: req.user._id });
+    const session = await Session.findById(req.params.sessionId);
     if (!session) return res.status(404).json({ success: false, message: 'Session not found.' });
 
-    const results = await Result.find({ session: req.params.sessionId, isFinalized: true })
-      .populate('student', 'firstName lastName studentId email program semester')
-      .sort('-submittedAt');
+    const results = await Result.find({ examId: session.examId }).sort('-createdAt');
+    
+    const mappedResults = await Promise.all(results.map(async r => {
+      const student = await User.findById(r.studentId).select('name email');
+      return {
+        _id: r._id,
+        student: student || { name: 'Unknown Student' },
+        percentage: r.score,
+        grade: r.score >= 50 ? 'A' : 'F',
+        isPassed: r.score >= 50,
+        submittedAt: r.createdAt
+      };
+    }));
 
     const stats = {
-      total       : results.length,
-      passed      : results.filter(r => r.isPassed).length,
-      failed      : results.filter(r => !r.isPassed).length,
-      avgPercent  : results.length
-                      ? +(results.reduce((s, r) => s + r.percentage, 0) / results.length).toFixed(2)
-                      : 0,
-      highScore   : results.length ? Math.max(...results.map(r => r.percentage)) : 0,
-      lowScore    : results.length ? Math.min(...results.map(r => r.percentage)) : 0,
+      total: mappedResults.length,
+      passed: mappedResults.filter(r => r.isPassed).length,
+      failed: mappedResults.filter(r => !r.isPassed).length,
+      avgPercent: mappedResults.length 
+        ? +(mappedResults.reduce((s, r) => s + r.percentage, 0) / mappedResults.length).toFixed(2)
+        : 0,
+      highScore: mappedResults.length ? Math.max(...mappedResults.map(r => r.percentage)) : 0,
+      lowScore: mappedResults.length ? Math.min(...mappedResults.map(r => r.percentage)) : 0,
       gradeBreakdown: {
-        'A+': results.filter(r => r.grade === 'A+').length,
-        'A' : results.filter(r => r.grade === 'A' ).length,
-        'B' : results.filter(r => r.grade === 'B' ).length,
-        'C' : results.filter(r => r.grade === 'C' ).length,
-        'D' : results.filter(r => r.grade === 'D' ).length,
-        'F' : results.filter(r => r.grade === 'F' ).length,
-      },
+        'A': mappedResults.filter(r => r.grade === 'A').length,
+        'F': mappedResults.filter(r => r.grade === 'F').length,
+      }
     };
 
-    res.json({ success: true, data: { session, results, stats } });
+    res.json({ success: true, data: { session: { title: session.examId }, results: mappedResults, stats } });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Failed to fetch results.' });
+    logger.error(`Analytics error: ${err.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch analytics.' });
   }
 };
 
 /* ─── GET ALL STUDENTS ────────────────────────────────────────────── */
 exports.getAllStudents = async (req, res) => {
   try {
-    const { search, page = 1, limit = 20 } = req.query;
-    const filter = { role: 'student', isActive: true };
-    if (search) {
-      filter.$or = [
-        { firstName  : new RegExp(search, 'i') },
-        { lastName   : new RegExp(search, 'i') },
-        { email      : new RegExp(search, 'i') },
-        { studentId  : new RegExp(search, 'i') },
-      ];
-    }
-
-    const [students, total] = await Promise.all([
-      User.find(filter)
-          .select('-password -refreshToken -notifications')
-          .sort('firstName')
-          .limit(parseInt(limit))
-          .skip((parseInt(page) - 1) * parseInt(limit)),
-      User.countDocuments(filter),
-    ]);
-
-    res.json({
-      success    : true,
-      data       : students,
-      pagination : { total, page: parseInt(page), limit: parseInt(limit), pages: Math.ceil(total / parseInt(limit)) },
-    });
+    const students = await User.find({ role: 'student' }).select('name email').sort('name');
+    res.json({ success: true, data: students });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch students.' });
   }
 };
 
-/* ─── GET STUDENT DETAIL (teacher view) ──────────────────────────── */
+/* ─── GET STUDENT DETAIL ─────────────────────────────────────────── */
 exports.getStudentDetail = async (req, res) => {
   try {
-    const [student, results] = await Promise.all([
-      User.findOne({ _id: req.params.studentId, role: 'student' }).select('-password -refreshToken'),
-      Result.find({ student: req.params.studentId, isFinalized: true })
-            .populate('session', 'title scheduledStart')
-            .sort('-submittedAt'),
-    ]);
-
+    const student = await User.findOne({ _id: req.params.studentId, role: 'student' }).select('-password');
     if (!student) return res.status(404).json({ success: false, message: 'Student not found.' });
 
-    res.json({ success: true, data: { student, results } });
+    const results = await Result.find({ studentId: student._id.toString() }).sort('-createdAt');
+    const mapped = results.map(r => ({
+      _id: r._id,
+      session: { title: r.examId },
+      submittedAt: r.createdAt,
+      percentage: r.score,
+      isPassed: r.score >= 50
+    }));
+
+    res.json({ success: true, data: { student, results: mapped } });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch student detail.' });
   }
 };
 
-/* ─── LIVE MONITORING: GET ACTIVE SESSION STUDENTS ───────────────── */
+/* ─── LIVE MONITORING ────────────────────────────────────────────── */
 exports.getLiveMonitoring = async (req, res) => {
   try {
-    const session = await Session.findOne({ _id: req.params.sessionId, createdBy: req.user._id })
-      .populate('enrolledStudents', 'firstName lastName studentId');
-
+    const session = await Session.findById(req.params.sessionId);
     if (!session) return res.status(404).json({ success: false, message: 'Session not found.' });
 
-    const submitted = await Result.find({ session: session._id })
-      .select('student percentage grade isPassed tabSwitches submittedAt')
-      .populate('student', 'firstName lastName studentId');
+    // Get all results for this session's exam
+    const results = await Result.find({ examId: session.examId }).sort('-createdAt');
+
+    // Get enrolled students (participants)
+    let enrolled = [];
+    if (session.participants && session.participants.length > 0) {
+      enrolled = await User.find({ _id: { $in: session.participants } }).select('name email');
+    } else {
+      // Fallback: get all students who submitted results
+      const studentIds = results.map(r => r.studentId);
+      enrolled = await User.find({ _id: { $in: studentIds } }).select('name email');
+    }
+
+    // Map enrolled with submission status
+    const submittedIds = new Set(results.map(r => r.studentId));
+    const enrolledData = enrolled.map(s => ({
+      _id: s._id,
+      firstName: s.name ? s.name.split(' ')[0] : 'Student',
+      lastName: s.name ? s.name.split(' ').slice(1).join(' ') : '',
+      studentId: s.email || s._id,
+      hasSubmitted: submittedIds.has(s._id.toString())
+    }));
 
     res.json({
-      success : true,
-      data    : {
-        sessionId     : session._id,
-        status        : session.status,
-        enrolledCount : session.enrolledStudents.length,
-        submittedCount: submitted.length,
-        enrolled      : session.enrolledStudents,
-        submitted,
-      },
+      success: true,
+      data: {
+        sessionId: session._id,
+        title: session.examId,
+        status: session.status,
+        enrolledCount: enrolledData.length,
+        submittedCount: results.length,
+        enrolled: enrolledData,
+        submitted: results.map(r => ({
+          studentId: r.studentId,
+          score: r.score,
+          correctCount: r.correctCount || 0,
+          totalQuestions: r.totalQuestions || 0,
+          timeTaken: r.timeTaken || 0,
+          violations: r.violations || 0,
+          submittedAt: r.createdAt
+        }))
+      }
     });
   } catch (err) {
+    logger.error(`Monitor error: ${err.message}`);
     res.status(500).json({ success: false, message: 'Failed to fetch monitoring data.' });
+  }
+};
+
+/* ─── GET SESSION RESULTS (Analytics) ────────────────────────────── */
+exports.getSessionResults = async (req, res) => {
+  try {
+    const session = await Session.findById(req.params.sessionId);
+    if (!session) return res.status(404).json({ success: false, message: 'Session not found.' });
+
+    // Fetch all results for this session's exam
+    const results = await Result.find({ examId: session.examId }).sort('-createdAt');
+
+    if (results.length === 0) {
+      return res.json({
+        success: true,
+        data: {
+          sessionTitle: session.examId,
+          stats: {
+            total: 0,
+            passed: 0,
+            failed: 0,
+            avgPercent: 0,
+            highScore: 0,
+            lowScore: 0,
+            gradeBreakdown: { A: 0, B: 0, C: 0, D: 0, F: 0 }
+          },
+          results: []
+        }
+      });
+    }
+
+    // Calculate stats
+    const scores = results.map(r => r.score);
+    const passed = scores.filter(s => s >= 50).length;
+    const avgPercent = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    const highScore = Math.max(...scores);
+    const lowScore = Math.min(...scores);
+
+    // Grade breakdown
+    const gradeBreakdown = { 'A+': 0, A: 0, B: 0, C: 0, D: 0, F: 0 };
+    scores.forEach(s => {
+      if (s >= 90) gradeBreakdown['A+']++;
+      else if (s >= 80) gradeBreakdown.A++;
+      else if (s >= 70) gradeBreakdown.B++;
+      else if (s >= 60) gradeBreakdown.C++;
+      else if (s >= 50) gradeBreakdown.D++;
+      else gradeBreakdown.F++;
+    });
+
+    // Get student names
+    const studentIds = results.map(r => r.studentId);
+    const students = await User.find({ _id: { $in: studentIds } }).select('name email');
+    const studentMap = {};
+    students.forEach(s => { studentMap[s._id.toString()] = s; });
+
+    const resultData = results.map(r => {
+      const student = studentMap[r.studentId] || {};
+      return {
+        _id: r._id,
+        studentName: student.name || 'Unknown',
+        studentEmail: student.email || '',
+        score: r.score,
+        correctCount: r.correctCount || 0,
+        totalQuestions: r.totalQuestions || 0,
+        timeTaken: r.timeTaken || 0,
+        violations: r.violations || 0,
+        isPassed: r.score >= 50,
+        grade: r.score >= 90 ? 'A+' : r.score >= 80 ? 'A' : r.score >= 70 ? 'B' : r.score >= 60 ? 'C' : r.score >= 50 ? 'D' : 'F',
+        submittedAt: r.createdAt
+      };
+    });
+
+    res.json({
+      success: true,
+      data: {
+        sessionTitle: session.examId,
+        stats: {
+          total: results.length,
+          passed,
+          failed: results.length - passed,
+          avgPercent,
+          highScore,
+          lowScore,
+          gradeBreakdown
+        },
+        results: resultData
+      }
+    });
+  } catch (err) {
+    logger.error(`Session results error: ${err.message}`);
+    res.status(500).json({ success: false, message: 'Failed to load results.' });
   }
 };

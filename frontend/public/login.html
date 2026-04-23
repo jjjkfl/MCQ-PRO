@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Surgical Exam Platform</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <style>
+    body {
+      background: #000;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-container {
+      width: 400px;
+      padding: 48px;
+    }
+    .tab-header {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .tab-btn {
+      background: none;
+      color: var(--text-dim);
+      font-size: 16px;
+      font-weight: 600;
+      padding-bottom: 8px;
+      border-bottom: 2px solid transparent;
+      transition: var(--transition);
+    }
+    .tab-btn.active {
+      color: var(--text-main);
+      border-bottom-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glass-card login-container animate-fade-in">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h1 class="h2" style="letter-spacing: -1px;">SURGICAL<span style="color: var(--primary)">EXAM</span></h1>
+      <p class="p-dim">Secure Medical Examination Portal</p>
+    </div>
+
+    <div class="tab-header">
+      <button onclick="toggleTab('login')" id="login-tab" class="tab-btn active">Login</button>
+      <button onclick="toggleTab('register')" id="register-tab" class="tab-btn">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" name="email" class="input-control" placeholder="dr.smith@hospital.com" required>
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" name="password" class="input-control" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px;">Sign In</button>
+    </form>
+
+    <!-- Register Form (Hidden) -->
+    <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
+      <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" name="name" class="input-control" placeholder="Dr. John Doe" required>
+      </div>
+      <div class="input-group">
+
+        <label>Email Address</label>
+        <input type="email" name="email" class="input-control" required>
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" name="password" class="input-control" minlength="8" required>
+      </div>
+      <div class="input-group">
+        <label>Role</label>
+        <select name="role" class="input-control">
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px;">Create Account</button>
+    </form>
+  </div>
+
+  <!-- Shared JS -->
+  <script src="/js/shared/api.js"></script>
+  <script src="/js/shared/auth.js"></script>
+  <script src="/js/shared/notifications.js"></script>
+  
+  <script>
+    function toggleTab(type) {
+      const loginForm = document.getElementById('login-form');
+      const regForm = document.getElementById('register-form');
+      const loginTab = document.getElementById('login-tab');
+      const regTab = document.getElementById('register-tab');
+
+      if (type === 'login') {
+        loginForm.style.display = 'block';
+        regForm.style.display = 'none';
+        loginTab.classList.add('active');
+        regTab.classList.remove('active');
+      } else {
+        loginForm.style.display = 'none';
+        regForm.style.display = 'block';
+        loginTab.classList.remove('active');
+        regTab.classList.add('active');
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const { email, password } = Object.fromEntries(formData);
+      
+      try {
+        await auth.login(email, password);
+        notifications.success('Welcome back!');
+      } catch (err) {
+        notifications.error(err.message);
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const userData = Object.fromEntries(formData);
+      
+      try {
+        await auth.register(userData);
+        notifications.success('Account created successfully!');
+      } catch (err) {
+        notifications.error(err.message);
+      }
+    }
+
+    // Redirect if already logged in
+    if (auth.isAuthenticated()) {
+      auth.redirectByRole(auth.getUser().role);
+    }
+  </script>
+</body>
+</html>

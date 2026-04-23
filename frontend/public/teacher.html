@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Command Center | Surgical Exam</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/teacher.css">
+</head>
+<body>
+
+  <div class="container">
+    <div id="nav-container"></div>
+
+    <!-- VIEW: Dashboard -->
+    <main id="view-dashboard" class="view">
+      <header class="flex-between animate-fade-in" style="margin-bottom: 48px;">
+        <div>
+          <h2 class="h1">Command Center</h2>
+          <p class="p-dim">Manage examinations, questions, and live monitoring.</p>
+        </div>
+        <div>
+          <button onclick="document.getElementById('pdf-upload').click()" class="btn btn-primary">
+            + Upload PDF or Word Document
+          </button>
+          <input type="file" id="pdf-upload" style="display: none" accept=".pdf,.doc,.docx" onchange="PDFUpload.handleUpload(event)">
+        </div>
+      </header>
+
+      <div class="metrics-grid animate-fade-in">
+        <div class="glass-card">
+          <p class="p-dim">Active Sessions</p>
+          <div class="metric-value" id="stat-active">0</div>
+        </div>
+        <div class="glass-card">
+          <p class="p-dim">Total Students</p>
+          <div class="metric-value" id="stat-total-students">0</div>
+        </div>
+        <div class="glass-card">
+          <p class="p-dim">MCQ Banks</p>
+          <div class="metric-value" id="stat-banks">0</div>
+        </div>
+        <div class="glass-card">
+          <p class="p-dim">Total Exams</p>
+          <div class="metric-value" id="stat-total-exams">0</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px;">
+        <section>
+          <h3 class="h3" style="margin-bottom: 24px;">MCQ Banks</h3>
+          <div id="mcq-banks-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;"></div>
+        </section>
+        <section>
+          <h3 class="h3" style="margin-bottom: 24px;">Recent Sessions</h3>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Scheduled</th>
+                  <th>Status</th>
+                  <th>Submissions</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="recent-sessions"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- VIEW: Monitoring -->
+    <main id="view-monitor" class="view" style="display: none;">
+      <header class="flex-between" style="margin-bottom: 32px;">
+        <div>
+          <h2 class="h2" id="session-title">Monitoring</h2>
+          <p id="student-count" class="p-dim"></p>
+        </div>
+        <div class="flex-center" style="gap:12px;">
+           <button onclick="TeacherSocket.pauseExam()" class="btn btn-outline">Pause</button>
+           <button onclick="TeacherSocket.resumeExam()" class="btn btn-primary">Resume</button>
+           <button onclick="TeacherSocket.forceEnd()" class="btn btn-outline" style="color:var(--danger); border-color:var(--danger)">End Exam</button>
+        </div>
+      </header>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Status</th>
+              <th>Progress</th>
+              <th>Proctor Alerts</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="monitor-list"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- VIEW: Analytics -->
+    <main id="view-analytics" class="view" style="display: none;">
+       <div id="analytics-overview"></div>
+       <div class="glass-card" style="margin-top:40px;">
+          <h3 class="h3" style="margin-bottom:24px;">Grade Distribution</h3>
+          <div class="chart-container">
+             <canvas id="grade-distribution-chart"></canvas>
+          </div>
+       </div>
+    </main>
+  </div>
+
+  <!-- Shared Libs -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/js/shared/api.js"></script>
+  <script src="/js/shared/auth.js"></script>
+  <script src="/js/shared/utils.js"></script>
+  <script src="/js/shared/notifications.js"></script>
+  
+  <!-- Components -->
+  <script src="/js/components/navbar.js"></script>
+  <script src="/js/components/modal.js"></script>
+  <script src="/js/components/loader.js"></script>
+  <script src="/js/components/chart.js"></script>
+  
+  <!-- Teacher Modules -->
+  <script src="/js/teacher/socket.js"></script>
+  <script src="/js/teacher/upload.js"></script>
+  <script src="/js/teacher/examManager.js"></script>
+  <script src="/js/teacher/monitor.js"></script>
+  <script src="/js/teacher/analytics.js"></script>
+  <script src="/js/teacher/teacher.js"></script>
+
+</body>
+</html>

@@ -29,22 +29,11 @@ const sendTokenResponse = (user, statusCode, res, message = 'Success') => {
   user.save({ validateBeforeSave: false });
 
   const safeUser = {
-    _id         : user._id,
-    firstName   : user.firstName,
-    lastName    : user.lastName,
-    fullName    : user.fullName,
-    email       : user.email,
-    role        : user.role,
-    studentId   : user.studentId,
-    employeeId  : user.employeeId,
-    program     : user.program,
-    semester    : user.semester,
-    cgpa        : user.cgpa,
-    department  : user.department,
-    designation : user.designation,
-    isVerified  : user.isVerified,
-    lastLogin   : user.lastLogin,
-    createdAt   : user.createdAt,
+    _id       : user._id,
+    name      : user.name,
+    email     : user.email,
+    role      : user.role,
+    createdAt : user.createdAt,
   };
 
   res.status(statusCode).json({
@@ -65,13 +54,7 @@ exports.register = async (req, res) => {
   }
 
   try {
-    const { firstName, lastName, email, password, role, program, semester, department, designation, phone } = req.body;
-
-    /* Validate role */
-    const allowedRoles = ['student', 'teacher'];
-    if (role && !allowedRoles.includes(role)) {
-      return res.status(400).json({ success: false, message: 'Invalid role.' });
-    }
+    const { name, email, password, role } = req.body;
 
     /* Check duplicate */
     const existing = await User.findOne({ email: email.toLowerCase() });
@@ -79,15 +62,7 @@ exports.register = async (req, res) => {
       return res.status(409).json({ success: false, message: 'Email already registered.' });
     }
 
-    /* Build user */
-    const userData = { firstName, lastName, email, password, role: role || 'student' };
-    if (phone)       userData.phone = phone;
-    if (program)     userData.program = program;
-    if (semester)    userData.semester = semester;
-    if (department)  userData.department = department;
-    if (designation) userData.designation = designation;
-
-    const user = await User.create(userData);
+    const user = await User.create({ name, email, password, role: role || 'student' });
     logger.info(`New user registered: ${user._id} (${user.role})`);
 
     sendTokenResponse(user, 201, res, 'Registration successful');
@@ -110,34 +85,19 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    /* Find user and include password */
-    const user = await User.findByEmail(email);
+    /* Find user */
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res.status(401).json({ success: false, message: 'Invalid email or password.' });
-    }
-
-    /* Account lock check */
-    if (user.isLocked) {
-      return res.status(423).json({
-        success: false,
-        message: `Account locked. Try again after ${new Date(user.lockUntil).toLocaleString()}.`,
-      });
     }
 
     /* Password match */
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      await user.incLoginAttempts();
       return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
 
-    /* Active check */
-    if (!user.isActive) {
-      return res.status(403).json({ success: false, message: 'Account deactivated. Contact admin.' });
-    }
-
     /* Success */
-    await user.resetLoginAttempts();
     logger.info(`User logged in: ${user._id} (${user.role})`);
     sendTokenResponse(user, 200, res, 'Login successful');
   } catch (err) {

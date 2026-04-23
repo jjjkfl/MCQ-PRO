@@ -82,7 +82,8 @@ app.use(xssClean());
 app.use(compression());
 
 /* ─── Static Files ───────────────────────────────────────────────── */
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 /* ─── Request Logger ─────────────────────────────────────────────── */
 app.use((req, _res, next) => {
@@ -106,9 +107,10 @@ app.get('/api/health', (_req, res) => {
 });
 
 /* ─── SPA Fallback ───────────────────────────────────────────────── */
-app.get('/',          (_req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
-app.get('/student',   (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-app.get('/teacher',   (_req, res) => res.sendFile(path.join(__dirname, 'public', 'teacher.html')));
+app.get('/',          (_req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'login.html')));
+app.get('/student',   (_req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'index.html')));
+app.get('/teacher',   (_req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'teacher.html')));
+app.get('/exam',      (_req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'exam.html')));
 
 /* ─── 404 Handler ────────────────────────────────────────────────── */
 app.use((_req, res) => {

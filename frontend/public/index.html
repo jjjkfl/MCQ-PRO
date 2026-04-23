@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scholara Dashboard | Student Portal</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/student.css">
+  <style>
+    .sidebar { width: 240px; background: #fff; height: 100vh; position: fixed; border-right: 1px solid #eee; padding: 24px; }
+    .main-content { margin-left: 240px; padding: 40px; background: #f8fafc; min-height: 100vh; }
+    .nav-item { padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: #64748b; display: flex; align-items: center; gap: 12px; transition: all 0.2s; }
+    .nav-item:hover { background: #f1f5f9; color: #1e293b; }
+    .nav-item.active { background: #eff6ff; color: #2563eb; font-weight: 500; }
+    
+    .scholara-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+    .metric-pill { background: #fff; padding: 24px; border-radius: 16px; border: 1px solid #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+    .badge-med { background: #fef3c7; color: #92400e; }
+    
+    .subject-list { list-style: none; }
+    .subject-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+    .subject-item:last-child { border: none; }
+    
+    .deadline-card { background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid #2563eb; }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h1 class="h3" style="color: #2563eb; margin-bottom: 32px;">Scholara</h1>
+    <div class="nav-item active"><span>📊</span> Overview</div>
+    <div class="nav-item"><span>📚</span> My Courses</div>
+    <div class="nav-item"><span>📅</span> Schedule</div>
+    <div class="nav-item"><span>💬</span> Messages</div>
+    <div class="nav-item"><span>✍️</span> Live Exams</div>
+    <div class="nav-item"><span>📝</span> Exam Results</div>
+    <div class="nav-item" onclick="auth.logout()"><span>🚪</span> Logout</div>
+  </div>
+
+  <div class="main-content">
+    <!-- VIEW: Dashboard -->
+    <main id="view-dashboard" class="view">
+      <header class="flex-between" style="margin-bottom: 32px;">
+        <div>
+          <h2 class="h2">Good Afternoon, <span id="prof-name">Aarav</span></h2>
+          <p class="p-dim">Reviewing your performance trajectory for Academic Term IV.</p>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-weight: 600;" id="prof-section">Sec 11-A</div>
+          <div class="p-dim" style="font-size: 12px;">2026 Academic Cycle</div>
+        </div>
+      </header>
+
+      <!-- Scholara Top Stats -->
+      <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 32px;">
+        <div class="metric-pill">
+          <p class="p-dim" style="font-size: 12px;">GPA</p>
+          <div class="h2" id="stat-gpa">7.8</div>
+          <p class="p-dim" style="font-size: 11px;">Current Standing</p>
+        </div>
+        <div class="metric-pill">
+          <p class="p-dim" style="font-size: 12px;">Presence</p>
+          <div class="h2" id="stat-attendance">83%</div>
+          <p class="p-dim" style="font-size: 11px;" id="stat-sessions">25 / 30 sessions</p>
+        </div>
+        <div class="metric-pill">
+          <p class="p-dim" style="font-size: 12px;">Queue Tasks</p>
+          <div class="h2" id="stat-tasks">4</div>
+          <p class="p-dim" style="font-size: 11px;">Active Submissions</p>
+        </div>
+        <div class="metric-pill">
+          <p class="p-dim" style="font-size: 12px;">Ranking</p>
+          <div class="h2" id="stat-rank">17th</div>
+          <p class="p-dim" style="font-size: 11px;" id="stat-peers">vs 31 Peer Dataset</p>
+        </div>
+      </div>
+
+      <div class="scholara-grid">
+        <section>
+          <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+            <h3 class="h3" style="margin-bottom: 20px;">Subject Performance</h3>
+            <div id="subject-performance-list" class="subject-list">
+              <!-- JS Injected -->
+            </div>
+          </div>
+
+          <div class="glass-card" style="padding: 24px;">
+            <h3 class="h3" style="margin-bottom: 20px;">Live Exams</h3>
+            <div id="available-exams"></div>
+          </div>
+        </section>
+
+        <aside>
+          <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+            <h3 class="h3" style="margin-bottom: 20px;">Deadlines</h3>
+            <div id="deadlines-list">
+              <!-- JS Injected -->
+            </div>
+          </div>
+
+          <div class="glass-card" style="padding: 24px;">
+            <h3 class="h3" style="margin-bottom: 20px;">Recent Results</h3>
+            <div id="recent-results-simple">
+              <!-- JS Injected -->
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- VIEW: Exam -->
+    <main id="view-exam" class="view" style="display: none;">
+      <div class="exam-container">
+        <header class="flex-between" style="margin-bottom: 40px;">
+          <div id="exam-timer" class="timer-pill">00:00</div>
+        </header>
+        <div id="question-area" class="glass-card"></div>
+        <div class="flex-between" style="margin-top: 32px;">
+          <button id="prev-btn" class="btn btn-outline" onclick="ExamEngine.prev()">Previous</button>
+          <button id="next-btn" class="btn btn-primary" onclick="ExamEngine.next()">Next</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- VIEW: Result -->
+    <main id="view-result" class="view" style="display: none;">
+      <div id="result-content"></div>
+    </main>
+  </div>
+
+  <!-- Shared Libs -->
+  <script src="/js/shared/api.js"></script>
+  <script src="/js/shared/auth.js"></script>
+  <script src="/js/shared/utils.js"></script>
+  <script src="/js/shared/notifications.js"></script>
+  <script src="/js/student/student.js"></script>
+  <script src="/js/student/exam.js"></script>
+  <script src="/js/student/result.js"></script>
+  
+  <script>
+    // Initialize student dashboard
+    document.addEventListener('DOMContentLoaded', () => {
+      if (auth.checkAuth()) {
+        StudentDashboard.init();
+      }
+    });
+  </script>
+
+</body>
+</html>

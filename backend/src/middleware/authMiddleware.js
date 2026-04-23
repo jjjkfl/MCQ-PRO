@@ -39,25 +39,7 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'User no longer exists.' });
     }
 
-    /* 4. Check if user is active */
-    if (!user.isActive) {
-      return res.status(403).json({ success: false, message: 'Account has been deactivated.' });
-    }
-
-    /* 5. Check if user is locked */
-    if (user.isLocked) {
-      return res.status(423).json({ success: false, message: 'Account is temporarily locked.' });
-    }
-
-    /* 6. Check if password changed after token issued */
-    if (user.changedPasswordAfter(decoded.iat)) {
-      return res.status(401).json({
-        success: false,
-        message: 'Password was recently changed. Please log in again.',
-      });
-    }
-
-    /* 7. Attach user to request */
+    /* 4. Attach user to request */
     req.user = user;
     next();
   } catch (err) {
