@@ -89,7 +89,7 @@ const ExamEngine = {
           </div>
         </div>
 
-        <h2 style="font-size: 20px; font-weight: 500; margin: 20px 0 24px; line-height: 1.6; color: #fff;">
+        <h2 style="font-size: 20px; font-weight: 500; margin: 20px 0 24px; line-height: 1.6; color: #1e293b;">
           ${this._escapeHtml(q.questionText)}
         </h2>
 
@@ -234,7 +234,11 @@ const ExamEngine = {
     }
   },
 
+  isSubmitting: false,
+
   async submit() {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
     try {
       const payload = {
         sessionId: this.sessionId,

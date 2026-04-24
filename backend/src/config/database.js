@@ -1,22 +1,15 @@
-/**
- * backend/src/config/database.js
- * MongoDB connection configuration using Mongoose
- */
-
 const mongoose = require('mongoose');
+const logger = require('../utils/logger');
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/surgical_exam_db';
-    
-    const conn = await mongoose.connect(mongoURI, {
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error(`❌ MongoDB Connection Error: ${error.message}`);
+    logger.info(`✅ MongoDB Connected: ${conn.connection.host}`);
+  } catch (err) {
+    logger.error(`❌ MongoDB Connection Error: ${err.message}`);
     process.exit(1);
   }
 };

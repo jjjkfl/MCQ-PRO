@@ -467,3 +467,118 @@
 [2026-04-23 23:53:23] INFO: Socket disconnected: f-2_fyyAi40pgA-_AAAJ | reason=transport close
 [2026-04-23 23:53:32] INFO: GET /api/portal/student/dashboard — IP: ::1
 [2026-04-23 23:53:35] INFO: GET /api/portal/student/dashboard — IP: ::1
+[2026-04-24 00:04:48] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-24 00:04:48] INFO: 🚀 Server running on http://localhost:5000 [development]
+[2026-04-24 00:05:37] INFO: POST /api/auth/login — IP: ::1
+[2026-04-24 00:05:37] INFO: User logged in: 69ea0c2e807d4e73dda82c35 (student)
+[2026-04-24 00:05:38] INFO: GET /api/portal/student/dashboard — IP: ::1
+[2026-04-24 00:05:41] INFO: GET /api/portal/student/exams/69ea0c2e807d4e73dda82c6c — IP: ::1
+[2026-04-24 00:05:42] INFO: Socket connected: bI5DnDkH7g8iF2nCAAAB | user=69ea0c2e807d4e73dda82c35 | role=student
+[2026-04-24 00:05:42] INFO: User 69ea0c2e807d4e73dda82c35 joined exam room 69ea0c2e807d4e73dda82c6c
+[2026-04-24 00:05:56] WARN: Tab switch detected: user=69ea0c2e807d4e73dda82c35 session=69ea0c2e807d4e73dda82c6c count=1
+[2026-04-24 00:06:12] WARN: Tab switch detected: user=69ea0c2e807d4e73dda82c35 session=69ea0c2e807d4e73dda82c6c count=2
+[2026-04-24 00:07:00] WARN: Tab switch detected: user=69ea0c2e807d4e73dda82c35 session=69ea0c2e807d4e73dda82c6c count=3
+[2026-04-24 00:07:00] INFO: POST /api/portal/student/exams/submit — IP: ::1
+[2026-04-24 00:07:00] INFO: Exam submitted: student=69ea0c2e807d4e73dda82c35 score=0% correct=0/21
+[2026-04-24 00:07:16] WARN: Tab switch detected: user=69ea0c2e807d4e73dda82c35 session=69ea0c2e807d4e73dda82c6c count=4
+[2026-04-24 00:07:16] INFO: Socket disconnected: bI5DnDkH7g8iF2nCAAAB | reason=transport close
+[2026-04-24 00:07:17] INFO: GET /api/portal/student/results/69ea66cc1f08df42adfaf556 — IP: ::1
+[2026-04-24 00:07:47] INFO: GET /api/portal/student/dashboard — IP: ::1
+[2026-04-24 00:08:26] INFO: POST /api/auth/login — IP: ::1
+[2026-04-24 00:08:26] INFO: User logged in: 69ea0c2e807d4e73dda82c25 (teacher)
+[2026-04-24 00:08:26] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:08:27] INFO: GET /api/portal/teacher/sessions?limit=5 — IP: ::1
+[2026-04-24 00:08:28] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 00:08:31] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/monitor — IP: ::1
+[2026-04-24 00:08:31] INFO: Socket connected: qEr1QW7e4_7ipfLTAAAD | user=69ea0c2e807d4e73dda82c25 | role=teacher
+[2026-04-24 00:08:31] INFO: User 69ea0c2e807d4e73dda82c25 joined exam room 69ea58ae5d365bf4cae00327
+[2026-04-24 00:08:37] INFO: Socket disconnected: qEr1QW7e4_7ipfLTAAAD | reason=transport close
+[2026-04-24 00:08:37] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/monitor — IP: ::1
+[2026-04-24 00:08:38] INFO: Socket connected: bmg8VKLuwJocQ91aAAAF | user=69ea0c2e807d4e73dda82c25 | role=teacher
+[2026-04-24 00:08:39] INFO: User 69ea0c2e807d4e73dda82c25 joined exam room 69ea58ae5d365bf4cae00327
+[2026-04-24 00:08:45] INFO: Socket disconnected: bmg8VKLuwJocQ91aAAAF | reason=transport close
+[2026-04-24 00:08:45] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/monitor — IP: ::1
+[2026-04-24 00:08:46] INFO: Socket connected: Csq5FfWZgt908f3UAAAH | user=69ea0c2e807d4e73dda82c25 | role=teacher
+[2026-04-24 00:08:46] INFO: User 69ea0c2e807d4e73dda82c25 joined exam room 69ea58ae5d365bf4cae00327
+[2026-04-24 00:08:49] INFO: Socket disconnected: Csq5FfWZgt908f3UAAAH | reason=transport close
+[2026-04-24 00:08:49] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:08:50] INFO: GET /api/portal/teacher/sessions?limit=5 — IP: ::1
+[2026-04-24 00:08:50] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 00:08:54] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/results — IP: ::1
+[2026-04-24 00:17:05] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-24 00:17:05] INFO: 🚀 Server running on http://localhost:5000 [development]
+[2026-04-24 00:17:47] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/results — IP: ::1
+[2026-04-24 00:17:55] INFO: GET /favicon.ico — IP: ::1
+[2026-04-24 00:18:02] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:18:02] INFO: GET /api/portal/teacher/sessions?limit=5 — IP: ::1
+[2026-04-24 00:18:02] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 00:18:06] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/results — IP: ::1
+[2026-04-24 00:21:26] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:21:28] INFO: GET /api/portal/teacher/sessions?limit=5 — IP: ::1
+[2026-04-24 00:21:28] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 00:24:56] INFO: GET /api/portal/teacher/sessions/69ea0c2e807d4e73dda82c6c/monitor — IP: ::1
+[2026-04-24 00:24:56] INFO: Socket connected: EZYT0cDvyZzql8FKAAAB | user=69ea0c2e807d4e73dda82c25 | role=teacher
+[2026-04-24 00:24:56] INFO: User 69ea0c2e807d4e73dda82c25 joined exam room 69ea0c2e807d4e73dda82c6c
+[2026-04-24 00:25:11] INFO: Socket disconnected: EZYT0cDvyZzql8FKAAAB | reason=transport close
+[2026-04-24 00:25:11] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:25:13] INFO: GET /api/portal/teacher/sessions?limit=5 — IP: ::1
+[2026-04-24 00:25:14] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 00:25:20] INFO: GET /api/portal/teacher/sessions/69ea0c2e807d4e73dda82c6c/monitor — IP: ::1
+[2026-04-24 00:25:20] INFO: Socket connected: 2p38DUCjYSZpioNIAAAD | user=69ea0c2e807d4e73dda82c25 | role=teacher
+[2026-04-24 00:25:20] INFO: User 69ea0c2e807d4e73dda82c25 joined exam room 69ea0c2e807d4e73dda82c6c
+[2026-04-24 00:25:25] INFO: Socket disconnected: 2p38DUCjYSZpioNIAAAD | reason=transport close
+[2026-04-24 00:25:25] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:25:26] INFO: GET /api/portal/teacher/sessions?limit=5 — IP: ::1
+[2026-04-24 00:25:26] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 00:25:27] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/monitor — IP: ::1
+[2026-04-24 00:25:27] INFO: Socket connected: SQBUONxM1cIdBeorAAAF | user=69ea0c2e807d4e73dda82c25 | role=teacher
+[2026-04-24 00:25:27] INFO: User 69ea0c2e807d4e73dda82c25 joined exam room 69ea58ae5d365bf4cae00327
+[2026-04-24 00:25:32] INFO: Teacher force-ended exam: 69ea58ae5d365bf4cae00327
+[2026-04-24 00:44:13] INFO: Socket disconnected: SQBUONxM1cIdBeorAAAF | reason=transport close
+[2026-04-24 00:44:13] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:44:15] INFO: GET /api/portal/teacher/sessions?limit=5 — IP: ::1
+[2026-04-24 00:44:16] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 00:44:18] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/monitor — IP: ::1
+[2026-04-24 00:44:19] INFO: Socket connected: lC0Bbc5qYPf_dwdpAAAH | user=69ea0c2e807d4e73dda82c25 | role=teacher
+[2026-04-24 00:44:19] INFO: User 69ea0c2e807d4e73dda82c25 joined exam room 69ea58ae5d365bf4cae00327
+[2026-04-24 00:44:25] INFO: Socket disconnected: lC0Bbc5qYPf_dwdpAAAH | reason=transport close
+[2026-04-24 00:44:25] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:44:26] INFO: GET /api/portal/teacher/sessions?limit=5 — IP: ::1
+[2026-04-24 00:44:26] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 00:44:28] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/results — IP: ::1
+[2026-04-24 00:44:35] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:44:36] INFO: GET /api/portal/teacher/sessions?limit=5 — IP: ::1
+[2026-04-24 00:44:36] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 00:54:47] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 00:54:50] INFO: GET /api/portal/teacher/analytics — IP: ::1
+[2026-04-24 00:55:03] INFO: GET /api/portal/teacher/analytics — IP: ::1
+[2026-04-24 01:03:30] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-24 01:03:30] INFO: 🚀 Server running on http://localhost:5000 [development]
+[2026-04-24 01:04:51] INFO: GET /api/portal/teacher/analytics — IP: ::1
+[2026-04-24 01:05:26] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 01:05:27] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 01:05:35] INFO: GET /api/portal/teacher/sessions/69ea0c2e807d4e73dda82c6c/monitor — IP: ::1
+[2026-04-24 01:05:35] INFO: Socket connected: 27V6-SIhLaVidUNAAAAB | user=69ea0c2e807d4e73dda82c25 | role=teacher
+[2026-04-24 01:05:36] INFO: User 69ea0c2e807d4e73dda82c25 joined exam room 69ea0c2e807d4e73dda82c6c
+[2026-04-24 01:05:42] INFO: Socket disconnected: 27V6-SIhLaVidUNAAAAB | reason=transport close
+[2026-04-24 01:05:42] INFO: GET /api/portal/teacher/dashboard — IP: ::1
+[2026-04-24 01:05:43] INFO: GET /api/portal/teacher/mcq — IP: ::1
+[2026-04-24 01:05:45] INFO: GET /api/portal/teacher/sessions/69ea58ae5d365bf4cae00327/monitor — IP: ::1
+[2026-04-24 01:05:45] INFO: Socket connected: 2wDyXi9MA4vwuu1JAAAD | user=69ea0c2e807d4e73dda82c25 | role=teacher
+[2026-04-24 01:05:45] INFO: User 69ea0c2e807d4e73dda82c25 joined exam room 69ea58ae5d365bf4cae00327
+[2026-04-24 01:05:51] INFO: Teacher force-ended exam: 69ea58ae5d365bf4cae00327
+[2026-04-24 01:05:51] INFO: Teacher force-ended exam: 69ea58ae5d365bf4cae00327
+[2026-04-24 01:05:51] INFO: Teacher force-ended exam: 69ea58ae5d365bf4cae00327
+[2026-04-24 01:16:31] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 01:21:30] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 01:26:00] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 01:35:03] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 10:36:06] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 10:54:55] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 11:00:50] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 11:07:19] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 11:13:17] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 11:23:06] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[2026-04-24 11:28:13] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[2026-04-24 11:38:44] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[2026-04-24 11:41:25] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017

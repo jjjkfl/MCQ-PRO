@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teacher Command Center | Surgical Exam</title>
+  <title>Teacher Command Center | MCQ Pro</title>
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" href="/css/teacher.css">
 </head>
@@ -48,10 +48,6 @@
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px;">
         <section>
-          <h3 class="h3" style="margin-bottom: 24px;">MCQ Banks</h3>
-          <div id="mcq-banks-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;"></div>
-        </section>
-        <section>
           <h3 class="h3" style="margin-bottom: 24px;">Recent Sessions</h3>
           <div class="table-container">
             <table>
@@ -68,11 +64,35 @@
             </table>
           </div>
         </section>
+        <section>
+          <h3 class="h3" style="margin-bottom: 24px;">Recent Results</h3>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Exam</th>
+                  <th>Score</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody id="recent-results"></tbody>
+            </table>
+          </div>
+        </section>
       </div>
+
+      <section style="margin-top: 40px;">
+        <h3 class="h3" style="margin-bottom: 24px;">MCQ Banks</h3>
+        <div id="mcq-banks-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;"></div>
+      </section>
     </main>
 
     <!-- VIEW: Monitoring -->
     <main id="view-monitor" class="view" style="display: none;">
+      <div style="margin-bottom: 24px;">
+        <button onclick="window.location.href='/teacher.html'" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; margin-bottom: 16px;">← Back to Dashboard</button>
+      </div>
       <header class="flex-between" style="margin-bottom: 32px;">
         <div>
           <h2 class="h2" id="session-title">Monitoring</h2>
@@ -100,13 +120,33 @@
       </div>
     </main>
 
-    <!-- VIEW: Analytics -->
+    <!-- VIEW: Analytics (Session Specific) -->
     <main id="view-analytics" class="view" style="display: none;">
+       <div style="margin-bottom: 24px;">
+         <button onclick="window.location.href='/teacher.html'" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; margin-bottom: 16px;">← Back to Dashboard</button>
+       </div>
        <div id="analytics-overview"></div>
        <div class="glass-card" style="margin-top:40px;">
           <h3 class="h3" style="margin-bottom:24px;">Grade Distribution</h3>
           <div class="chart-container">
              <canvas id="grade-distribution-chart"></canvas>
+          </div>
+       </div>
+    </main>
+
+    <!-- VIEW: All Analytics (Global) -->
+    <main id="view-analytics-all" class="view" style="display: none;">
+       <header style="margin-bottom: 48px;">
+         <h2 class="h2">Academic Performance Overview</h2>
+         <p class="p-dim">Aggregated data across all active and completed exam sessions.</p>
+       </header>
+       
+       <div id="global-analytics-stats"></div>
+       
+       <div class="glass-card" style="margin-top:40px;">
+          <h3 class="h3" style="margin-bottom:24px;">Global Grade Distribution</h3>
+          <div class="chart-container">
+             <canvas id="global-grade-chart"></canvas>
           </div>
        </div>
     </main>

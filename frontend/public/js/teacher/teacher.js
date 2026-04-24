@@ -9,19 +9,31 @@ const TeacherDashboard = {
     Navbar.render('nav-container', 'dashboard');
     
     const params = new URLSearchParams(window.location.search);
-    if (params.has('sessionId')) {
-      if (params.has('view') && params.get('view') === 'analytics') {
+    const view = params.get('view');
+
+    if (view === 'analytics-all') {
+      Navbar.render('nav-container', 'analytics');
+      this.switchView('analytics-all');
+      this.loadAllAnalytics();
+    } else if (params.has('sessionId')) {
+      if (view === 'analytics') {
+        Navbar.render('nav-container', 'analytics');
         this.switchView('analytics');
         Analytics.init(params.get('sessionId'));
       } else {
+        Navbar.render('nav-container', 'dashboard');
         this.switchView('monitor');
         Monitor.init();
       }
     } else {
+      Navbar.render('nav-container', 'dashboard');
       this.switchView('dashboard');
-      await this.loadStats();
-      await this.loadRecentSessions();
+      await this.loadDashboardData();
       await this.loadMCQBanks();
+      
+      // Real-time polling every 5 seconds
+      if (this._pollingInterval) clearInterval(this._pollingInterval);
+      this._pollingInterval = setInterval(() => this.loadDashboardData(), 5000);
     }
   },
 
@@ -30,45 +42,77 @@ const TeacherDashboard = {
     utils.$(`#view-${viewName}`).style.display = 'block';
   },
 
-  async loadStats() {
+  async loadDashboardData() {
     try {
       const { data } = await api.get('/portal/teacher/dashboard');
-      const stats = data.stats;
+      const { stats, recentSessions, recentResults } = data;
       
-      document.getElementById('stat-active').innerText = stats.activeSessions;
-      document.getElementById('stat-total-exams').innerText = stats.totalSessions;
-      document.getElementById('stat-total-students').innerText = stats.totalStudents;
-      document.getElementById('stat-banks').innerText = stats.totalMCQBanks;
+      // Helper to update with pulse
+      const updateStat = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && el.innerText != val) {
+          el.innerText = val;
+          el.classList.remove('real-time-update');
+          void el.offsetWidth; // trigger reflow
+          el.classList.add('real-time-update');
+        }
+      };
+
+      // Update stats
+      updateStat('stat-active', stats.activeSessions);
+      updateStat('stat-total-exams', stats.totalSessions);
+      updateStat('stat-total-students', stats.totalStudents);
+      updateStat('stat-banks', stats.totalMCQBanks);
+
+      // Render Sessions
+      this.renderSessions(recentSessions);
+      
+      // Render Results
+      this.renderResults(recentResults);
     } catch (err) {
-      notifications.error(err.message || 'Failed to load dashboard');
+      console.error(err.message || 'Failed to load dashboard');
     }
   },
 
-  async loadRecentSessions() {
+  renderSessions(sessions) {
     const list = document.getElementById('recent-sessions');
-    try {
-      const { data } = await api.get('/portal/teacher/sessions?limit=5');
-      
-      if (data.length === 0) {
-        list.innerHTML = '<tr><td colspan="5" class="p-dim" style="text-align:center">No sessions created yet</td></tr>';
-        return;
-      }
-
-      list.innerHTML = data.map(s => `
-        <tr>
-          <td>${s.title || s.examId}</td>
-          <td>${utils.formatDate(s.scheduledStart || s.startTime)}</td>
-          <td><span class="status-pill ${s.status === 'active' ? 'status-online' : 'status-offline'}">${s.status.toUpperCase()}</span></td>
-          <td>${(s.submittedStudents || []).length} Students</td>
-          <td style="display:flex; gap:8px;">
-            <button onclick="TeacherDashboard.goToMonitor('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Monitor</button>
-            <button onclick="TeacherDashboard.goToAnalytics('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Results</button>
-          </td>
-        </tr>
-      `).join('');
-    } catch (err) {
-      console.error(err);
+    if (sessions.length === 0) {
+      list.innerHTML = '<tr><td colspan="5" class="p-dim" style="text-align:center">No sessions created yet</td></tr>';
+      return;
     }
+
+    list.innerHTML = sessions.map(s => `
+      <tr>
+        <td>
+          ${s.title || s.examId} 
+          ${s.division ? `<span class="p-dim" style="font-size:12px; margin-left:8px;">(Div ${s.division})</span>` : ''}
+        </td>
+        <td>${utils.formatDate(s.scheduledStart || s.startTime)}</td>
+        <td><span class="status-pill ${s.status === 'active' ? 'status-online' : 'status-offline'}">${s.status.toUpperCase()}</span></td>
+        <td>${s.submissions || 0} Students</td>
+        <td style="display:flex; gap:8px;">
+          <button onclick="TeacherDashboard.goToMonitor('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Monitor</button>
+          <button onclick="TeacherDashboard.goToAnalytics('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Results</button>
+        </td>
+      </tr>
+    `).join('');
+  },
+
+  renderResults(results) {
+    const list = document.getElementById('recent-results');
+    if (!results || results.length === 0) {
+      list.innerHTML = '<tr><td colspan="4" class="p-dim" style="text-align:center">No submissions yet</td></tr>';
+      return;
+    }
+
+    list.innerHTML = results.map(r => `
+      <tr>
+        <td><strong>${r.studentName}</strong></td>
+        <td>${r.examTitle}</td>
+        <td style="font-weight:700; color:${r.score >= 50 ? 'var(--success)' : 'var(--danger)'}">${r.score}%</td>
+        <td>${utils.formatDate(r.submittedAt)}</td>
+      </tr>
+    `).join('');
   },
 
   async loadMCQBanks() {
@@ -95,6 +139,36 @@ const TeacherDashboard = {
       `).join('');
     } catch (err) {
       console.error(err);
+    }
+  },
+
+  async loadAllAnalytics() {
+    try {
+      const { data } = await api.get('/portal/teacher/analytics');
+      
+      const container = document.getElementById('global-analytics-stats');
+      container.innerHTML = `
+        <div class="metrics-grid">
+          <div class="glass-card">
+            <p class="p-dim">Total Submissions</p>
+            <div class="metric-value">${data.totalSubmissions}</div>
+          </div>
+          <div class="glass-card">
+            <p class="p-dim">Average Score</p>
+            <div class="metric-value">${data.avgScore}%</div>
+          </div>
+          <div class="glass-card">
+            <p class="p-dim">Overall Pass Rate</p>
+            <div class="metric-value" style="color: var(--primary)">${data.passRate}%</div>
+          </div>
+        </div>
+      `;
+
+      if (typeof Charts !== 'undefined') {
+        Charts.renderGrades('global-grade-chart', data.gradeBreakdown);
+      }
+    } catch (err) {
+      notifications.error('Failed to load global analytics');
     }
   },
 

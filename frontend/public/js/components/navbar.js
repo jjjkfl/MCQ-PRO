@@ -22,7 +22,7 @@ const Navbar = {
             <a href="#" style="font-size: 14px; font-weight: 500; opacity: 0.6;">Profile</a>
           ` : `
             <a href="/teacher.html" class="${activeLink === 'dashboard' ? 'active' : ''}" style="font-size: 14px; font-weight: 500;">Dashboard</a>
-            <a href="#" style="font-size: 14px; font-weight: 500; opacity: 0.6;">Analytics</a>
+            <a href="/teacher.html?view=analytics-all" class="${activeLink === 'analytics' ? 'active' : ''}" style="font-size: 14px; font-weight: 500;">Analytics</a>
           `}
         </div>
         <div class="flex-center" style="gap: 16px;">

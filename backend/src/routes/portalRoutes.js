@@ -1,90 +1,34 @@
-/**
- * src/routes/portalRoutes.js
- * Student and Teacher portal API routes
- */
-
-const router  = require('express').Router();
-const { authMiddleware }    = require('../middleware/authMiddleware');
-const { rbac }              = require('../middleware/rbacMiddleware');
-
+const router = require('express').Router();
+const { authMiddleware } = require('../middleware/authMiddleware');
+const { rbac } = require('../middleware/rbacMiddleware');
 const studentCtrl = require('../controllers/studentController');
 const teacherCtrl = require('../controllers/teacherController');
-
-const { blockchainHealthCheck, getBlockchainStats, verifyResultOnBlockchain } =
-  require('../services/blockchain/blockchainService');
-
-/* ─── All routes require authentication ───────────────────────────── */
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 router.use(authMiddleware);
 
-/* ══════════════════════════════════════════════════════════════════
-   STUDENT ROUTES  (/api/portal/student/*)
-   ══════════════════════════════════════════════════════════════════ */
-router.get('/student/dashboard',          rbac('student'), studentCtrl.getDashboard);
-router.get('/student/exams',              rbac('student'), studentCtrl.getAvailableExams);
-router.post('/student/exams/join',        rbac('student'), studentCtrl.joinExamByCode);
-router.get('/student/exams/:sessionId',   rbac('student'), studentCtrl.getExamQuestions);
-router.post('/student/exams/submit',      rbac('student'), studentCtrl.submitExam);
-router.get('/student/results',            rbac('student'), studentCtrl.getMyResults);
-router.get('/student/results/:resultId',  rbac('student'), studentCtrl.getResultDetail);
-router.get('/student/cgpa',               rbac('student'), studentCtrl.getCGPA);
-router.post('/student/verify',            rbac('student'), studentCtrl.verifyCertificate);
-router.get('/student/notifications',      rbac('student'), studentCtrl.getNotifications);
-router.patch('/student/notifications/read', rbac('student'), studentCtrl.markNotificationsRead);
+// ══════════════════════════════════════════════════════════════════
+// TEACHER PORTAL ROUTES (/api/portal/teacher/*)
+// ══════════════════════════════════════════════════════════════════
+router.get('/portal/teacher/dashboard', rbac(['teacher']), teacherCtrl.getDashboard);
+router.get('/portal/teacher/students',  rbac(['teacher']), teacherCtrl.getStudents);
+router.get('/portal/teacher/analytics', rbac(['teacher']), teacherCtrl.getGeneralAnalytics);
 
-/* ══════════════════════════════════════════════════════════════════
-   TEACHER ROUTES  (/api/portal/teacher/*)
-   ══════════════════════════════════════════════════════════════════ */
-router.get('/teacher/dashboard', rbac('teacher', 'admin'), teacherCtrl.getDashboard);
+// MCQ / Session Management
+router.get ('/portal/teacher/mcq',                        rbac(['teacher']), teacherCtrl.getMCQBanks);
+router.post('/portal/teacher/mcq/upload',                 rbac(['teacher']), upload.single('pdf'), teacherCtrl.uploadMCQ);
+router.post('/portal/teacher/sessions',                   rbac(['teacher']), teacherCtrl.createSession);
+router.get ('/portal/teacher/sessions',                   rbac(['teacher']), teacherCtrl.getSessions);
+router.patch('/portal/teacher/sessions/:sessionId/status', rbac(['teacher']), teacherCtrl.updateSessionStatus);
+router.get ('/portal/teacher/sessions/:sessionId/results', rbac(['teacher']), teacherCtrl.getSessionResults);
 
-/* MCQ Bank */
-router.post('/teacher/mcq/upload',
-  rbac('teacher', 'admin'),
-  teacherCtrl.uploadPDFMiddleware,
-  teacherCtrl.uploadPDF
-);
-router.get ('/teacher/mcq',              rbac('teacher', 'admin'), teacherCtrl.getMCQBanks);
-router.get ('/teacher/mcq/:bankId',      rbac('teacher', 'admin'), teacherCtrl.getMCQBankDetail);
-router.put ('/teacher/mcq/:bankId',      rbac('teacher', 'admin'), teacherCtrl.updateMCQBank);
-router.delete('/teacher/mcq/:bankId',   rbac('teacher', 'admin'), teacherCtrl.deleteMCQBank);
-
-/* Sessions / Exams */
-router.post('/teacher/sessions',                   rbac('teacher', 'admin'), teacherCtrl.createSession);
-router.get ('/teacher/sessions',                   rbac('teacher', 'admin'), teacherCtrl.getSessions);
-router.get ('/teacher/sessions/:sessionId',        rbac('teacher', 'admin'), teacherCtrl.getSessionDetail);
-router.patch('/teacher/sessions/:sessionId/status',rbac('teacher', 'admin'), teacherCtrl.updateSessionStatus);
-router.get ('/teacher/sessions/:sessionId/results',rbac('teacher', 'admin'), teacherCtrl.getSessionResults);
-router.get ('/teacher/sessions/:sessionId/monitor',rbac('teacher', 'admin'), teacherCtrl.getLiveMonitoring);
-
-/* Students */
-router.get('/teacher/students',           rbac('teacher', 'admin'), teacherCtrl.getAllStudents);
-router.get('/teacher/students/:studentId',rbac('teacher', 'admin'), teacherCtrl.getStudentDetail);
-
-/* ══════════════════════════════════════════════════════════════════
-   SHARED / BLOCKCHAIN ROUTES  (/api/portal/blockchain/*)
-   ══════════════════════════════════════════════════════════════════ */
-router.get('/blockchain/health', async (_req, res) => {
-  const status = await blockchainHealthCheck();
-  res.json({ success: true, data: status });
-});
-
-router.get('/blockchain/stats', rbac('teacher', 'admin'), async (_req, res) => {
-  try {
-    const stats = await getBlockchainStats();
-    res.json({ success: true, data: stats });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
-
-router.post('/blockchain/verify', async (req, res) => {
-  try {
-    const { resultHash } = req.body;
-    if (!resultHash) return res.status(400).json({ success: false, message: 'resultHash required.' });
-    const data = await verifyResultOnBlockchain(resultHash);
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
+// ══════════════════════════════════════════════════════════════════
+// STUDENT PORTAL ROUTES (/api/portal/student/*)
+// ══════════════════════════════════════════════════════════════════
+router.get ('/portal/student/dashboard',        rbac(['student']), studentCtrl.getDashboard);
+router.get ('/portal/student/exams',            rbac(['student']), studentCtrl.getAvailableExams);
+router.get ('/portal/student/exams/:sessionId', rbac(['student']), studentCtrl.getExamQuestions);
+router.post('/portal/student/exams/submit',     rbac(['student']), studentCtrl.submitExam);
+router.get ('/portal/student/results',          rbac(['student']), studentCtrl.getMyResults);
 
 module.exports = router;

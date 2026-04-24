@@ -21,8 +21,13 @@ const ExamManager = {
             <input type="number" name="durationMinutes" class="input-control" value="60" required>
           </div>
           <div class="input-group" style="flex: 1">
-            <label>Passing Score (%)</label>
-            <input type="number" name="passingScore" class="input-control" value="50" required>
+            <label>Target Division</label>
+            <select name="division" class="input-control" required>
+              <option value="A">Division A</option>
+              <option value="B">Division B</option>
+              <option value="C">Division C</option>
+              <option value="D">Division D</option>
+            </select>
           </div>
         </div>
         <div class="input-group">
@@ -46,7 +51,9 @@ const ExamManager = {
       await api.post('/portal/teacher/sessions', payload);
       notifications.success('Exam session created successfully!');
       Modal.close();
-      TeacherDashboard.loadRecentSessions();
+      if (typeof TeacherDashboard !== 'undefined') {
+        TeacherDashboard.loadDashboardData();
+      }
     } catch (err) {
       notifications.error(err.message);
     }

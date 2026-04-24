@@ -35,8 +35,10 @@
 /* ─── Monitoring Table ─────────────────────────────────────────── */
 .table-container {
   overflow-x: auto;
-  border-radius: 12px;
+  border-radius: 16px;
   border: 1px solid var(--border);
+  background: var(--bg-dark-soft);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
 table {
@@ -79,17 +81,18 @@ tr:hover td {
 
 /* ─── Upload Area ────────────────────────────────────────────────── */
 .upload-dropzone {
-  border: 2px dashed var(--border);
+  border: 2px dashed rgba(92, 147, 250, 0.4);
   border-radius: 24px;
   padding: 60px;
   text-align: center;
   transition: var(--transition);
   cursor: pointer;
+  background: rgba(92, 147, 250, 0.02);
 }
 
 .upload-dropzone:hover {
   border-color: var(--primary);
-  background: rgba(0, 113, 227, 0.05);
+  background: rgba(92, 147, 250, 0.08);
 }
 
 /* ─── Analytics ─────────────────────────────────────────────────── */
