@@ -12,6 +12,15 @@ const seed = async () => {
     await User.deleteMany({});
     await Course.deleteMany({});
 
+    // Create Admin
+    await User.create({
+      name: 'System Admin',
+      email: 'admin@exam.com',
+      password: 'password123',
+      role: 'admin'
+    });
+    console.log('Created Admin User: admin@exam.com');
+
     // Create 10 Teachers and Courses
     const courses = [];
     for (let i = 1; i <= 10; i++) {
@@ -19,16 +28,17 @@ const seed = async () => {
         name: `Teacher ${i}`,
         email: `teacher${i}@exam.com`,
         password: 'password123',
-        role: 'teacher'
+        role: 'teacher',
+        courseIds: []
       });
 
       const course = await Course.create({
         courseName: `Course ${i}`,
-        teacherId: teacher._id
+        teacherIds: [teacher._id]
       });
 
-      // Update teacher with courseId
-      teacher.courseId = course._id;
+      // Update teacher with courseIds
+      teacher.courseIds.push(course._id);
       await teacher.save();
       courses.push(course);
     }

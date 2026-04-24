@@ -5,12 +5,16 @@ const User = require('../models/User');
 // Global mock state for real-time simulation
 let mockActiveSubmissions = 12;
 let mockTotalSubmissions = 342;
+const sampleQuestions = [
+  { questionText: "Sample mock question text?", options: [{label: 'A', text: 'Option A'}, {label: 'B', text: 'Option B'}], correctAnswer: 'A' }
+];
+
 let mockBanks = [
-  { _id: 'bank_001', title: 'Anatomy Basics', subject: 'General Surgery', questions: new Array(50).fill({}) },
-  { _id: 'bank_002', title: 'Advanced Pathology', subject: 'Pathology', questions: new Array(120).fill({}) },
-  { _id: 'bank_003', title: 'Surgical Instruments', subject: 'Practical', questions: new Array(35).fill({}) },
-  { _id: 'bank_004', title: 'Patient Care Ethics', subject: 'Ethics', questions: new Array(25).fill({}) },
-  { _id: 'bank_005', title: 'Pharmacology 101', subject: 'Pharmacy', questions: new Array(80).fill({}) }
+  { _id: 'bank_001', title: 'Anatomy Basics', subject: 'General Surgery', questions: sampleQuestions },
+  { _id: 'bank_002', title: 'Advanced Pathology', subject: 'Pathology', questions: sampleQuestions },
+  { _id: 'bank_003', title: 'Surgical Instruments', subject: 'Practical', questions: sampleQuestions },
+  { _id: 'bank_004', title: 'Patient Care Ethics', subject: 'Ethics', questions: sampleQuestions },
+  { _id: 'bank_005', title: 'Pharmacology 101', subject: 'Pharmacy', questions: sampleQuestions }
 ];
 
 let mockSessions = [
@@ -30,6 +34,9 @@ exports.getDashboard = async (req, res) => {
   try {
     const teacher = req.user;
     
+    // Fetch courses the teacher is assigned to
+    const courses = await Course.find({ _id: { $in: teacher.courseIds } }).select('courseName');
+
     // Create rich mock results
     const recentResults = [
       { _id: 'res_001', studentName: 'Alice Johnson', examTitle: 'Quiz: General Surgery', score: 92, submittedAt: new Date(Date.now() - 50000) },
@@ -49,7 +56,8 @@ exports.getDashboard = async (req, res) => {
           totalMCQBanks: mockBanks.length
         },
         recentSessions: mockSessions,
-        recentResults
+        recentResults,
+        courses // pass the courses back to the frontend
       }
     });
   } catch (err) {
@@ -59,15 +67,24 @@ exports.getDashboard = async (req, res) => {
 
 exports.createSession = async (req, res) => {
   try {
-    const { title, scheduledStart, durationMinutes, mcqBankId, division } = req.body;
+    const { title, scheduledStart, durationMinutes, mcqBankId, division, courseId } = req.body;
     
     // Fallback to empty array if bank not found
     let questions = [];
     if (mcqBankId) {
       const bank = mockBanks.find(b => b._id === mcqBankId);
       if (bank && bank.questions) {
-        questions = bank.questions;
+        // Map UI mock format to Mongoose Session schema
+        questions = bank.questions.map(q => ({
+          text: q.questionText || q.text,
+          options: (q.options || []).map(opt => typeof opt === 'string' ? opt : opt.text),
+          correctAnswer: q.correctAnswer
+        }));
       }
+    }
+
+    if (!courseId || !req.user.courseIds.includes(courseId)) {
+      return res.status(403).json({ success: false, message: 'Invalid or unauthorized courseId' });
     }
 
     const session = await Session.create({
@@ -76,7 +93,7 @@ exports.createSession = async (req, res) => {
       questions: questions,
       startTime: new Date(scheduledStart),
       duration: durationMinutes,
-      courseId: req.user.courseId
+      courseId: courseId
     });
 
     // Also push to mock sessions for real-time frontend updates
@@ -98,8 +115,47 @@ exports.createSession = async (req, res) => {
 
 exports.getSessions = async (req, res) => {
   try {
-    const sessions = await Session.find({ courseId: req.user.courseId }).sort('-createdAt');
+    const sessions = await Session.find({ courseId: { $in: req.user.courseIds } }).sort('-createdAt');
     res.json({ success: true, data: sessions });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.updateSession = async (req, res) => {
+  try {
+    const { title, durationMinutes, division, scheduledStart } = req.body;
+    const updateData = { title, duration: durationMinutes, division };
+    if (scheduledStart) updateData.startTime = new Date(scheduledStart);
+
+    const session = await Session.findOneAndUpdate(
+      { _id: req.params.id, courseId: req.user.courseId },
+      updateData,
+      { new: true }
+    );
+    if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
+
+    // Update in mock memory as well
+    const mIdx = mockSessions.findIndex(s => s._id.toString() === req.params.id);
+    if (mIdx !== -1) {
+      mockSessions[mIdx] = { ...mockSessions[mIdx], ...updateData };
+    }
+
+    res.json({ success: true, data: session });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.deleteSession = async (req, res) => {
+  try {
+    const session = await Session.findOneAndDelete({ _id: req.params.id, courseId: { $in: req.user.courseIds } });
+    if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
+    
+    // Remove from mock memory
+    mockSessions = mockSessions.filter(s => s._id.toString() !== req.params.id);
+
+    res.json({ success: true, message: 'Session deleted' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -109,7 +165,7 @@ exports.updateSessionStatus = async (req, res) => {
   try {
     const { status } = req.body;
     const session = await Session.findOneAndUpdate(
-      { _id: req.params.sessionId, courseId: req.user.courseId },
+      { _id: req.params.sessionId, courseId: { $in: req.user.courseIds } },
       { status },
       { new: true }
     );
@@ -121,7 +177,7 @@ exports.updateSessionStatus = async (req, res) => {
 
 exports.getStudents = async (req, res) => {
   try {
-    const students = await User.find({ courseId: req.user.courseId, role: 'student' }).select('-password');
+    const students = await User.find({ courseId: { $in: req.user.courseIds }, role: 'student' }).select('-password');
     res.json({ success: true, data: students });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -203,6 +259,16 @@ exports.uploadMCQ = async (req, res) => {
         meta: newBank.meta
       }
     });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.deleteMCQBank = async (req, res) => {
+  try {
+    const idx = mockBanks.findIndex(b => b._id === req.params.id);
+    if (idx !== -1) mockBanks.splice(idx, 1);
+    res.json({ success: true, message: 'MCQ Bank deleted' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

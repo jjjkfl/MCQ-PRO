@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Command Center | MCQ Pro</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/teacher.css">
+</head>
+<body>
+
+  <div class="container">
+    <div id="nav-container"></div>
+
+    <main class="view">
+      <header class="flex-between animate-fade-in" style="margin-bottom: 48px;">
+        <div>
+          <h2 class="h1">System Admin</h2>
+          <p class="p-dim">Manage users, courses, and view global activity.</p>
+        </div>
+        <div style="display: flex; gap: 16px;">
+          <button onclick="AdminDashboard.switchTab('overview')" class="btn btn-outline">Overview</button>
+          <button onclick="AdminDashboard.switchTab('users')" class="btn btn-outline">Users</button>
+          <button onclick="AdminDashboard.switchTab('courses')" class="btn btn-outline">Courses</button>
+        </div>
+      </header>
+
+      <!-- VIEW: Overview -->
+      <div id="tab-overview" class="animate-fade-in">
+        <div class="metrics-grid">
+          <div class="glass-card" id="metric-teachers">
+            <p class="p-dim">Total Teachers</p>
+            <div class="metric-value">--</div>
+          </div>
+          <div class="glass-card" id="metric-students">
+            <p class="p-dim">Total Students</p>
+            <div class="metric-value">--</div>
+          </div>
+          <div class="glass-card" id="metric-courses">
+            <p class="p-dim">Total Courses</p>
+            <div class="metric-value">--</div>
+          </div>
+          <div class="glass-card" id="metric-active">
+            <p class="p-dim">Active Exams</p>
+            <div class="metric-value">--</div>
+          </div>
+        </div>
+
+        <section style="margin-top: 40px;">
+          <h3 class="h3" style="margin-bottom: 24px;">Global Recent Exams</h3>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Course</th>
+                  <th>Division</th>
+                  <th>Start Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="global-sessions">
+                <tr><td colspan="5" class="p-dim" style="text-align:center">Loading data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW: Users -->
+      <div id="tab-users" style="display: none;" class="animate-fade-in">
+        <section>
+          <div class="flex-between" style="margin-bottom: 24px;">
+            <h3 class="h3">User Management</h3>
+            <button onclick="AdminDashboard.showCreateUserModal()" class="btn btn-primary">+ Add User</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Course / Div</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-list">
+                <tr><td colspan="5" class="p-dim" style="text-align:center">Loading data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW: Courses -->
+      <div id="tab-courses" style="display: none;" class="animate-fade-in">
+        <section>
+          <div class="flex-between" style="margin-bottom: 24px;">
+            <h3 class="h3">Course Management</h3>
+            <button onclick="AdminDashboard.showCreateCourseModal()" class="btn btn-primary">+ Add Course</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Course Name</th>
+                  <th>Assigned Teacher</th>
+                  <th>Created At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="courses-list">
+                <tr><td colspan="4" class="p-dim" style="text-align:center">Loading data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/js/shared/api.js"></script>
+  <script src="/js/shared/auth.js"></script>
+  <script src="/js/shared/utils.js"></script>
+  <script src="/js/shared/notifications.js"></script>
+  <script src="/js/components/navbar.js"></script>
+  <script src="/js/components/modal.js"></script>
+  <script src="/js/admin/admin.js"></script>
+
+</body>
+</html>

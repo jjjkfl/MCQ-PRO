@@ -20,6 +20,8 @@ const Navbar = {
           ${user.role === 'student' ? `
             <a href="/index.html" class="${activeLink === 'dashboard' ? 'active' : ''}" style="font-size: 14px; font-weight: 500;">Dashboard</a>
             <a href="#" style="font-size: 14px; font-weight: 500; opacity: 0.6;">Profile</a>
+          ` : user.role === 'admin' ? `
+            <a href="/admin.html" class="${activeLink === 'dashboard' ? 'active' : ''}" style="font-size: 14px; font-weight: 500;">Admin Center</a>
           ` : `
             <a href="/teacher.html" class="${activeLink === 'dashboard' ? 'active' : ''}" style="font-size: 14px; font-weight: 500;">Dashboard</a>
             <a href="/teacher.html?view=analytics-all" class="${activeLink === 'analytics' ? 'active' : ''}" style="font-size: 14px; font-weight: 500;">Analytics</a>

@@ -582,3 +582,7 @@
 [2026-04-24 11:28:13] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
 [2026-04-24 11:38:44] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
 [2026-04-24 11:41:25] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[2026-04-24 12:04:09] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 12:10:11] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 12:29:34] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 12:57:16] INFO: ✅ MongoDB Connected: localhost

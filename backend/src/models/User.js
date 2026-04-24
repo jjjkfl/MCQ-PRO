@@ -5,8 +5,13 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['student', 'teacher'], required: true },
-  courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+  role: { 
+    type: String, 
+    enum: ['student', 'teacher', 'admin'], 
+    default: 'student' 
+  },
+  courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' }, // For students
+  courseIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }], // For teachers
   division: { type: String, enum: ['A', 'B', 'C', 'D'], required: function() { return this.role === 'student'; } }
 }, { timestamps: true });
 

@@ -93,9 +93,36 @@ const TeacherDashboard = {
         <td style="display:flex; gap:8px;">
           <button onclick="TeacherDashboard.goToMonitor('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Monitor</button>
           <button onclick="TeacherDashboard.goToAnalytics('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Results</button>
+          <button onclick="TeacherDashboard.deleteSession('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; color:#ef4444;"><i class="fas fa-trash"></i></button>
         </td>
       </tr>
     `).join('');
+  },
+
+  async deleteSession(sessionId) {
+    if (!confirm('Are you sure you want to delete this session?')) return;
+    try {
+      const res = await api.delete(`/portal/teacher/sessions/${sessionId}`);
+      if (res.success) {
+        notifications.success('Session deleted');
+        this.loadDashboardData();
+      }
+    } catch (e) {
+      notifications.error('Failed to delete session');
+    }
+  },
+
+  async deleteMCQBank(bankId) {
+    if (!confirm('Are you sure you want to delete this MCQ bank?')) return;
+    try {
+      const res = await api.delete(`/portal/teacher/mcq/${bankId}`);
+      if (res.success) {
+        notifications.success('MCQ Bank deleted');
+        this.loadDashboardData();
+      }
+    } catch (e) {
+      notifications.error('Failed to delete MCQ Bank');
+    }
   },
 
   renderResults(results) {
@@ -131,7 +158,10 @@ const TeacherDashboard = {
             <div style="padding: 8px; background: rgba(0, 113, 227, 0.1); border-radius: 8px;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
-            <button onclick="ExamManager.showCreateSession('${bank._id}')" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px;">Create Exam</button>
+            <div style="display:flex; gap:8px;">
+              <button onclick="ExamManager.showCreateSession('${bank._id}')" class="btn btn-primary" style="flex:1; padding:6px; font-size:13px;">Create Exam</button>
+              <button onclick="TeacherDashboard.deleteMCQBank('${bank._id}')" class="btn btn-outline" style="padding:6px; font-size:13px; color:#ef4444; border-color:#ef4444;"><i class="fas fa-trash"></i></button>
+            </div>
           </div>
           <h4 style="font-weight: 600; margin-bottom: 4px;">${bank.title || 'Question'}</h4>
           <p class="p-dim" style="font-size: 12px;">${bank.subject || 'General'} • ${bank.questions ? bank.questions.length : 1} Questions</p>
