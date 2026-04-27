@@ -341,6 +341,14 @@ const ExamEngine = {
       Proctor.destroy();
       ExamTimer.stop();
 
+      // Clear any security blur/filter effects
+      document.body.style.filter = '';
+
+      // Exit fullscreen gracefully
+      if (document.fullscreenElement) {
+        try { await document.exitFullscreen(); } catch (e) { }
+      }
+
       if (!result.success) throw new Error(result.message);
 
       const d = result.data;

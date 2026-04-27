@@ -52,6 +52,12 @@ router.post('/portal/teacher/mcq-banks/upload', rbac(['teacher']), upload.single
 router.put('/portal/teacher/mcq-banks/:id', rbac(['teacher']), (req, res) => teacherCtrl().updateMCQBank(req, res));
 router.delete('/portal/teacher/mcq-banks/:id', rbac(['teacher']), (req, res) => teacherCtrl().deleteMCQBank(req, res));
 
+// Marks Management (Teacher)
+router.get('/portal/teacher/marks', rbac(['teacher']), (req, res) => teacherCtrl().getMarks(req, res));
+router.post('/portal/teacher/marks', rbac(['teacher']), (req, res) => teacherCtrl().addMark(req, res));
+router.post('/portal/teacher/marks/bulk', rbac(['teacher']), (req, res) => teacherCtrl().addBulkMarks(req, res));
+router.delete('/portal/teacher/marks/:id', rbac(['teacher']), (req, res) => teacherCtrl().deleteMark(req, res));
+
 // Student Management (Teacher)
 router.get('/portal/teacher/students', rbac(['teacher']), (req, res) => teacherCtrl().getStudents(req, res));
 router.post('/portal/teacher/students', rbac(['teacher']), (req, res) => teacherCtrl().createStudent(req, res));
@@ -75,6 +81,7 @@ router.get('/portal/student/courses', rbac(['student']), (req, res) => studentCt
 router.get('/portal/student/exams', rbac(['student']), (req, res) => studentCtrl().getAvailableExams(req, res));
 router.get('/portal/student/exams/:sessionId', rbac(['student']), (req, res) => studentCtrl().getExamQuestions(req, res));
 router.post('/portal/student/exams/submit', rbac(['student']), (req, res) => studentCtrl().submitExam(req, res));
+router.get('/portal/student/marks', rbac(['student']), (req, res) => studentCtrl().getMyMarks(req, res));
 router.get('/portal/student/results', rbac(['student']), (req, res) => studentCtrl().getMyResults(req, res));
 router.get('/portal/student/announcements', rbac(['student']), (req, res) => studentCtrl().getAnnouncements(req, res));
 router.get('/portal/student/results/:resultId', rbac(['student']), (req, res) => studentCtrl().getResultDetail(req, res));

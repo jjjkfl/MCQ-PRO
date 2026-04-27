@@ -7,6 +7,7 @@ const Course = require('../models/Course');
 const blockchain = require('../services/blockchain/blockchainService');
 const hashService = require('../services/blockchain/hashService');
 const Attendance = require('../models/Attendance');
+const Mark = require('../models/Mark');
 
 const scoreToGpa = (avgPercent) => {
   if (avgPercent == null || Number.isNaN(avgPercent)) return 0;
@@ -200,11 +201,21 @@ exports.submitExam = async (req, res) => {
     let correct = 0;
     const totalQuestions = session.questions.length;
 
-    session.questions.forEach((q) => {
+    // Build per-question answer breakdown
+    const answerBreakdown = session.questions.map((q) => {
       const userAns = answers.find(a => String(a.questionId) === String(q._id));
-      if (userAns && userAns.selectedOption === q.correctAnswer) {
-        correct++;
-      }
+      const selectedOption = userAns ? userAns.selectedOption : null;
+      const isCorrect = selectedOption === q.correctAnswer;
+      if (isCorrect) correct++;
+
+      return {
+        questionText: q.questionText || q.text || '',
+        image: q.image || null,
+        options: (q.options || []).map(opt => ({ label: opt.label, text: opt.text })),
+        selectedAnswer: selectedOption,
+        correctAnswer: q.correctAnswer,
+        isCorrect: !!selectedOption && isCorrect
+      };
     });
 
     const percentage = totalQuestions > 0 ? Math.round((correct / totalQuestions) * 100) : 0;
@@ -215,6 +226,8 @@ exports.submitExam = async (req, res) => {
       courseId: session.courseId,
       sessionId: session._id,
       score: percentage,
+      answers: answerBreakdown,
+      timeTaken: Math.floor(parseInt(req.body.timeTaken, 10) || 0),
       marksObtained: correct,
       totalMarks: totalQuestions,
       percentage: percentage,
@@ -297,30 +310,55 @@ exports.getResultDetail = async (req, res) => {
       studentId: req.user._id
     }).populate('sessionId', 'title questions');
 
-    if (!result) return res.status(404).json({ message: 'Result not found' });
+    if (!result) return res.status(404).json({ success: false, message: 'Result not found' });
 
-    const totalQuestions = result.sessionId ? result.sessionId.questions.length : 0;
+    let answers = result.answers || [];
     const score = result.score || 0;
-    const correctCount = Math.round((score / 100) * totalQuestions);
+
+    // Fallback: reconstruct answers from Session questions for old results
+    if (answers.length === 0 && result.sessionId && result.sessionId.questions) {
+      answers = result.sessionId.questions.map(q => ({
+        questionText: q.questionText || q.text || '',
+        image: q.image || null,
+        options: (q.options || []).map(opt => ({ label: opt.label, text: opt.text })),
+        selectedAnswer: null,  // Unknown for old results
+        correctAnswer: q.correctAnswer,
+        isCorrect: false
+      }));
+    }
+
+    const correctCount = result.answers && result.answers.length > 0
+      ? answers.filter(a => a.isCorrect).length
+      : Math.round((score / 100) * answers.length);
 
     res.json({
       success: true,
       data: {
-        session: { title: result.sessionId ? result.sessionId.title : 'Deleted Exam' },
+        session: { title: result.sessionId ? result.sessionId.title : 'Exam' },
         percentage: score,
         correctCount,
-        totalQuestions,
-        marksObtained: correctCount,
-        totalMarks: totalQuestions,
+        totalQuestions: answers.length,
         isPassed: score >= 50,
         grade: score >= 90 ? 'A+' : score >= 80 ? 'A' : score >= 70 ? 'B' : score >= 60 ? 'C' : score >= 50 ? 'D' : 'F',
-        timeTaken: 0,
+        timeTaken: result.timeTaken || 0,
+        answers,
         resultHash: result.blockchainHash || null,
         blockchainTx: result.blockchainTx || null
       }
     });
   } catch (err) {
     console.error('ResultDetail error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+exports.getMyMarks = async (req, res) => {
+  try {
+    const marks = await Mark.find({ studentId: req.user._id })
+      .populate('courseId', 'name')
+      .populate('teacherId', 'name')
+      .sort({ subject: 1, examType: 1 });
+    res.json({ success: true, data: marks });
+  } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };

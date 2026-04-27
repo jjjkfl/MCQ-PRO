@@ -17,7 +17,7 @@
 
     <!-- VIEW: Dashboard -->
     <main id="view-dashboard" class="view">
-      <header class="dashboard-header animate-fade-in">
+      <header class="dashboard-header animate-fade-in" style="margin-top: 20px;">
         <div class="monitor-info">
           <div style="display: flex; align-items: center; gap: 12px;">
             <h1 class="dashboard-title">Command Center</h1>
@@ -27,13 +27,23 @@
           </div>
           <p class="dashboard-subtitle">Manage examinations, question banks, and monitor live proctored sessions.</p>
         </div>
-        <div class="dashboard-actions">
-          <button onclick="TeacherDashboard.broadcastAnnouncement()" class="btn btn-secondary"><i
-              class="fas fa-bullhorn"></i> Broadcast</button>
-          <button onclick="utils.setUrlParam('view', 'materials')" class="btn btn-secondary"><i class="fas fa-book"></i>
-            Curriculum</button>
-          <button onclick="document.getElementById('pdf-upload').click()" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Upload Document
+        <div class="glass-card"
+          style="padding: 12px; display: flex; gap: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.4);">
+          <button onclick="TeacherDashboard.broadcastAnnouncement()" class="btn btn-secondary"
+            style="border:none; background: rgba(0,0,0,0.03);">
+            <i class="fas fa-bullhorn" style="color: #6366f1;"></i> Broadcast
+          </button>
+          <button onclick="utils.setUrlParam('view', 'materials')" class="btn btn-secondary"
+            style="border:none; background: rgba(0,0,0,0.03);">
+            <i class="fas fa-book" style="color: #0ea5e9;"></i> Curriculum
+          </button>
+          <button onclick="utils.setUrlParam('view', 'marks')" class="btn btn-secondary"
+            style="border:none; background: rgba(0,0,0,0.03);">
+            <i class="fas fa-edit" style="color: #8b5cf6;"></i> Marks
+          </button>
+          <button onclick="document.getElementById('pdf-upload').click()" class="btn-premium"
+            style="padding: 10px 24px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-plus-circle"></i> Upload Document
           </button>
           <input type="file" id="pdf-upload" style="display: none" accept=".pdf,.doc,.docx"
             onchange="PDFUpload.handleUpload(event)">
@@ -183,23 +193,27 @@
       <header class="flex-between" style="margin-bottom: 32px;">
         <div>
           <h2 class="h2">Curriculum & Materials</h2>
-          <p class="p-dim">Manage course documents, videos, and study resources.</p>
+          <p class="p-dim">Manage course documents, videos, and study resources for student enrichment.</p>
         </div>
-        <button onclick="TeacherDashboard.showUploadMaterial()" class="btn btn-primary">+ Upload Material</button>
+        <button onclick="TeacherDashboard.showUploadMaterial()" class="btn-premium"
+          style="padding: 10px 20px; border: none; font-weight: 700; cursor: pointer;">
+          <i class="fas fa-file-upload"></i> Upload Material
+        </button>
       </header>
-      <div id="teacher-materials-grid" class="table-container">
-        <table style="width:100%">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Course</th>
-              <th>Type</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="materials-table-body"></tbody>
-        </table>
-      </div>
+      <div class="glass-card" style="padding: 0; overflow: hidden;">
+        <div id="teacher-materials-grid" class="table-container" style="border: none;">
+          <table style="width:100%">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Course</th>
+                <th>Type</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="materials-table-body"></tbody>
+          </table>
+        </div>
     </main>
 
     <!-- VIEW: Attendance & Analytics -->
@@ -246,6 +260,40 @@
           </thead>
           <tbody id="student-roster-table-body"></tbody>
         </table>
+      </div>
+    </main>
+
+    <!-- VIEW: Marks Management -->
+    <main id="view-marks" class="view" style="display: none;">
+      <header class="flex-between" style="margin-bottom: 32px;">
+        <div>
+          <h2 class="h2">Internal Assessment Marks</h2>
+          <p class="p-dim">Manage ISA 1, ISA 2, and Lab assessment records for your assigned students.</p>
+        </div>
+        <div class="flex-center" style="gap:12px;">
+          <button onclick="TeacherDashboard.showAddMarkModal()" class="btn-premium"
+            style="padding: 10px 20px; border: none; font-weight: 700; cursor: pointer;">
+            <i class="fas fa-user-plus"></i> Add Mark Entry
+          </button>
+        </div>
+      </header>
+
+      <div class="glass-card" style="padding: 0; overflow: hidden;">
+        <div class="table-wrapper" style="border: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Subject</th>
+                <th>Phase</th>
+                <th>Marks</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="marks-list"></tbody>
+          </table>
+        </div>
       </div>
     </main>
 

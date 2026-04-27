@@ -9,6 +9,7 @@ const Result = require('../models/Result');
 const User = require('../models/User');
 const Course = require('../models/Course');
 const MCQBank = require('../models/MCQBank');
+const Mark = require('../models/Mark');
 const aiParserSvc = require('../services/aiParserService');
 const blockchain = require('../services/blockchain/blockchainService');
 
@@ -483,3 +484,96 @@ exports.deleteMCQBank = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+// ─── Marks Management ─────────────────────────────────────────────────
+
+exports.getMarks = async (req, res) => {
+  try {
+    const marks = await Mark.find({ teacherId: req.user._id })
+      .populate('studentId', 'name email division')
+      .populate('courseId', 'name')
+      .sort({ subject: 1, examType: 1, createdAt: -1 })
+      .lean();
+    res.json({ success: true, data: marks });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.addMark = async (req, res) => {
+  try {
+    const { studentId, courseId, subject, examType, marksObtained, totalMarks, remarks } = req.body;
+
+    if (!studentId || !subject || !examType || marksObtained == null || !totalMarks) {
+      return res.status(400).json({ success: false, message: 'All fields are required' });
+    }
+
+    if (Number(marksObtained) > Number(totalMarks)) {
+      return res.status(400).json({ success: false, message: 'Marks obtained cannot exceed total marks' });
+    }
+
+    // Upsert: update if exists, create if new
+    const mark = await Mark.findOneAndUpdate(
+      { studentId, subject, examType },
+      {
+        studentId,
+        courseId: courseId || req.user.courseIds?.[0],
+        teacherId: req.user._id,
+        subject,
+        examType,
+        marksObtained: Number(marksObtained),
+        totalMarks: Number(totalMarks),
+        remarks: remarks || ''
+      },
+      { upsert: true, new: true, runValidators: true }
+    );
+
+    res.json({ success: true, data: mark, message: 'Marks saved successfully' });
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ success: false, message: 'Duplicate entry for this student/subject/exam type' });
+    }
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.addBulkMarks = async (req, res) => {
+  try {
+    const { marks } = req.body; // Array of { studentId, subject, examType, marksObtained, totalMarks }
+    if (!Array.isArray(marks) || marks.length === 0) {
+      return res.status(400).json({ success: false, message: 'Marks array is required' });
+    }
+
+    const results = [];
+    for (const m of marks) {
+      if (!m.studentId || !m.subject || !m.examType || m.marksObtained == null || !m.totalMarks) continue;
+      const saved = await Mark.findOneAndUpdate(
+        { studentId: m.studentId, subject: m.subject, examType: m.examType },
+        {
+          ...m,
+          teacherId: req.user._id,
+          courseId: m.courseId || req.user.courseIds?.[0],
+          marksObtained: Number(m.marksObtained),
+          totalMarks: Number(m.totalMarks)
+        },
+        { upsert: true, new: true, runValidators: true }
+      );
+      results.push(saved);
+    }
+
+    res.json({ success: true, data: results, message: `${results.length} marks saved` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.deleteMark = async (req, res) => {
+  try {
+    const mark = await Mark.findOneAndDelete({ _id: req.params.id, teacherId: req.user._id });
+    if (!mark) return res.status(404).json({ success: false, message: 'Mark not found' });
+    res.json({ success: true, message: 'Mark deleted' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+

@@ -74,6 +74,7 @@ const StudentDashboard = {
       if (viewId === 'messages') this.loadMessages();
       if (viewId === 'live-exams') this.loadLiveExams();
       if (viewId === 'exam-results') this.loadResults();
+      if (viewId === 'internal-marks') this.loadInternalMarks();
       if (viewId === 'certificates') this.loadCertificates();
     }
   },
@@ -312,6 +313,41 @@ const StudentDashboard = {
     } catch (err) { notifications.error('Failed to load results'); }
   },
 
+  async loadInternalMarks() {
+    const container = document.getElementById('student-marks-list');
+    if (!container) return;
+    container.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:32px;">Syncing Assessment Data...</td></tr>';
+
+    try {
+      const res = await api.get('/portal/student/marks');
+      const marks = res.data || [];
+
+      if (marks.length === 0) {
+        container.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:32px;" class="p-dim">No internal marks recorded by faculty yet.</td></tr>';
+        return;
+      }
+
+      container.innerHTML = marks.map(m => `
+        <tr class="animate-fade-in">
+          <td><div style="font-weight:600;">${m.subject}</div></td>
+          <td>${m.teacherId?.name || 'Faculty Member'}</td>
+          <td><span class="badge badge-info" style="font-size:10px;">${m.examType}</span></td>
+          <td>
+            <div style="font-weight:700;">${m.marksObtained} / ${m.totalMarks}</div>
+            <div style="font-size:11px; opacity:0.7;">${Math.round((m.marksObtained / m.totalMarks) * 100)}%</div>
+          </td>
+          <td>
+            <div style="width: 100px; height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden;">
+              <div style="width: ${(m.marksObtained / m.totalMarks) * 100}%; height: 100%; background: ${m.marksObtained / m.totalMarks >= 0.5 ? '#10b981' : '#f43f5e'};"></div>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      notifications.error('Failed to load internal assessment marks');
+    }
+  },
+
   async loadCertificates() {
     const list = document.getElementById('certificates-list');
     if (!list) return;
@@ -501,6 +537,7 @@ const StudentDashboard = {
           'messages': 'messages',
           'live-exams': 'live-exams',
           'exam-results': 'exam-results',
+          'internal-marks': 'internal-marks',
           'certificates': 'certificates'
         };
         const viewId = viewIdMap[action] || 'dashboard';

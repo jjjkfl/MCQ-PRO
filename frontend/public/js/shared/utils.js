@@ -44,10 +44,19 @@ const utils = {
    */
   debounce(fn, delay) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
       clearTimeout(timeout);
       timeout = setTimeout(() => fn.apply(this, args), delay);
     };
+  },
+
+  /**
+   * Update URL parameter and reload
+   */
+  setUrlParam(key, value) {
+    const url = new URL(window.location);
+    url.searchParams.set(key, value);
+    window.location.href = url.toString();
   }
 };
 

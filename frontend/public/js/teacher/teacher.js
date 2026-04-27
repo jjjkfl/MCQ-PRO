@@ -32,7 +32,8 @@ const TeacherDashboard = {
       const viewMap = {
         'materials': () => this.loadMaterials(),
         'students': () => this.loadStudentsView(),
-        'forum': () => this.loadForum()
+        'forum': () => this.loadForum(),
+        'marks': () => this.loadMarks()
       };
 
       Navbar.render('nav-container', view || 'dashboard');
@@ -770,6 +771,127 @@ const TeacherDashboard = {
       Modal.close();
     } catch (err) {
       notifications.error('Failed to send announcement');
+    }
+  },
+
+  // ─── Marks Management ─────────────────────────────────────────────────
+
+  async loadMarks() {
+    const list = document.getElementById('marks-list');
+    list.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:32px;">Loading...</td></tr>';
+
+    try {
+      const { data } = await api.get('/portal/teacher/marks');
+      if (!data || data.length === 0) {
+        list.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:32px;" class="p-dim">No marks recorded yet.</td></tr>';
+        return;
+      }
+
+      list.innerHTML = data.map(m => `
+        <tr class="animate-fade-in">
+          <td>
+            <div style="font-weight:600;">${m.studentId?.name || 'Unknown'}</div>
+            <div style="font-size:11px; color:#94a3b8;">Div: ${m.studentId?.division || 'N/A'}</div>
+          </td>
+          <td>${m.courseId?.name || 'N/A'}</td>
+          <td>${m.subject}</td>
+          <td><span class="badge badge-info">${m.examType}</span></td>
+          <td>
+            <div style="font-weight:700;">${m.marksObtained} / ${m.totalMarks}</div>
+            <div style="font-size:11px; color:#94a3b8;">${Math.round((m.marksObtained / m.totalMarks) * 100)}%</div>
+          </td>
+          <td>
+            <button onclick="TeacherDashboard.handleDeleteMark('${m._id}')" class="btn btn-outline btn-sm" style="color:var(--danger); border-color:#fee2e2;">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      notifications.error('Failed to load marks');
+    }
+  },
+
+  async showAddMarkModal() {
+    // We need the student list to populate a dropdown
+    try {
+      const { data: students } = await api.get('/portal/teacher/students');
+
+      Modal.show('add-mark-modal', `
+        <form onsubmit="TeacherDashboard.handleAddMark(event)" class="form-container">
+          <div class="form-group">
+            <label>Student</label>
+            <select name="studentId" class="form-control" required>
+              <option value="">Select Student</option>
+              ${students.map(s => `<option value="${s._id}">${s.name} (${s.division})</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <input type="text" name="subject" class="form-control" placeholder="e.g. Anatomy" required>
+          </div>
+          <div class="form-group">
+            <label>Exam Type</label>
+            <select name="examType" class="form-control" required>
+              <option value="ISA1">ISA 1</option>
+              <option value="ISA2">ISA 2</option>
+              <option value="ESA">ESA</option>
+              <option value="Assignment">Assignment</option>
+              <option value="Lab">Lab</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label>Marks Obtained</label>
+              <input type="number" name="marksObtained" class="form-control" required min="0">
+            </div>
+            <div class="form-group">
+              <label>Total Marks</label>
+              <input type="number" name="totalMarks" class="form-control" value="20" required min="1">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Remarks (Optional)</label>
+            <input type="text" name="remarks" class="form-control" placeholder="e.g. Good performance">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:16px;">Save Marks</button>
+        </form>
+      `, { title: 'Add/Update Marks' });
+    } catch (err) {
+      notifications.error('Error fetching student list');
+    }
+  },
+
+  async handleAddMark(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const payload = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await api.post('/portal/teacher/marks', payload);
+      if (res.success) {
+        notifications.success('Marks saved successfully');
+        Modal.close();
+        this.loadMarks();
+      } else {
+        notifications.error(res.message);
+      }
+    } catch (err) {
+      notifications.error(err.message);
+    }
+  },
+
+  async handleDeleteMark(id) {
+    if (!confirm('Are you sure you want to delete this mark entry?')) return;
+    try {
+      const res = await api.delete(`/portal/teacher/marks/${id}`);
+      if (res.success) {
+        notifications.success('Entry deleted');
+        this.loadMarks();
+      }
+    } catch (err) {
+      notifications.error('Failed to delete entry');
     }
   }
 };

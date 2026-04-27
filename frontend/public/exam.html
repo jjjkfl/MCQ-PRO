@@ -527,28 +527,30 @@
     }
 
     .sec-pill.good {
-      background: var(--success-light);
-      color: var(--success);
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #10b981;
     }
 
-    .sec-pill.bad {
-      background: var(--danger-light);
-      color: var(--danger);
+    .sec-pill.bad,
+    .sec-pill.danger {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #ef4444;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
     }
 
     .sec-pill.secure {
-      background: var(--success-light);
-      color: var(--success);
+      background: #f0f9ff;
+      color: #0284c7;
+      border: 1px solid #0ea5e9;
     }
 
     .sec-pill.warning {
-      background: var(--warning-light);
-      color: var(--warning);
-    }
-
-    .sec-pill.danger {
-      background: var(--danger-light);
-      color: var(--danger);
+      background: #fffbeb;
+      color: #d97706;
+      border: 1px solid #f59e0b;
     }
 
     .counter-box {
@@ -970,10 +972,6 @@
     </div>
   </div>
 
-  <!-- Face Detection (tracking.js) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tracking.js/1.1.3/tracking-min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tracking.js/1.1.3/data/face-min.js"></script>
-
   <!-- Shared Libs -->
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script src="/js/shared/api.js"></script>
@@ -983,6 +981,7 @@
   <script src="/js/components/loader.js"></script>
   <script src="/js/components/modal.js"></script>
   <script src="/js/student/timer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
   <script src="/js/student/proctor.js"></script>
   <script src="/js/student/socket.js"></script>
   <script src="/js/student/exam.js"></script>

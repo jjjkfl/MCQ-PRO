@@ -40,6 +40,9 @@
       <div class="nav-item" data-action="exam-results">
         <i class="fas fa-poll-h"></i> Exam Results
       </div>
+      <div class="nav-item" data-action="internal-marks">
+        <i class="fas fa-edit"></i> Internal Marks
+      </div>
       <div class="nav-item" data-action="certificates">
         <i class="fas fa-award"></i> Certificates
       </div>
@@ -178,6 +181,30 @@
         </header>
         <div id="results-detailed-list">
           <!-- Populated by JS -->
+        </div>
+      </main>
+
+      <!-- VIEW: Internal Marks -->
+      <main id="view-internal-marks" class="view" style="display: none;">
+        <header>
+          <h1 class="h1">Internal Assessments</h1>
+          <p class="p-dim">View your ISA 1, ISA 2, and Lab marks provided by teachers.</p>
+        </header>
+        <div class="glass-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Teacher</th>
+                  <th>Type</th>
+                  <th>Marks</th>
+                  <th>Performance</th>
+                </tr>
+              </thead>
+              <tbody id="student-marks-list"></tbody>
+            </table>
+          </div>
         </div>
       </main>
 

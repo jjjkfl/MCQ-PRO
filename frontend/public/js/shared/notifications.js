@@ -25,7 +25,7 @@ const notifications = {
 
     const toast = document.createElement('div');
     toast.className = 'glass-card animate-fade-in';
-    
+
     const colors = {
       success: '#34c759',
       error: '#ff3b30',
@@ -37,13 +37,16 @@ const notifications = {
       padding: 14px 24px;
       min-width: 300px;
       border-left: 4px solid ${colors[type]};
-      background: rgba(28, 28, 30, 0.9);
+      background: rgba(28, 28, 30, 0.95);
+      color: #fff;
       backdrop-filter: blur(10px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
       font-size: 14px;
+      font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-radius: 12px;
     `;
 
     toast.innerHTML = `

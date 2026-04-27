@@ -913,3 +913,388 @@
 [2026-04-27 11:37:36] INFO: ✅ MongoDB Connected: localhost
 [2026-04-27 11:58:50] INFO: ✅ MongoDB Connected: localhost
 [2026-04-27 11:59:14] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 12:11:17] INFO: Socket connected: vFbUgxq8j2_M3l2iAAAB | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 12:11:17] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69ef0079d100ff23d69c09e5
+[2026-04-27 12:12:54] INFO: Socket disconnected: vFbUgxq8j2_M3l2iAAAB | reason=transport close
+[2026-04-27 12:19:52] INFO: Socket connected: volU91iNMe2GbhDcAAAD | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 12:19:53] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69ef070b60673de76bf09de8
+[2026-04-27 12:20:21] INFO: Socket disconnected: volU91iNMe2GbhDcAAAD | reason=transport close
+[2026-04-27 12:20:55] INFO: Socket connected: jID4pygu3CxR01uyAAAF | user=69ed9e4ae48bfa42d7d83d08 | role=student
+[2026-04-27 12:20:55] INFO: User 69ed9e4ae48bfa42d7d83d08 joined exam room 69ef070b60673de76bf09de8
+[2026-04-27 12:21:00] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272660841]
+[2026-04-27 12:21:00] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272660841 hash=415023b489c0d337e4ae17f65b611d135aca8fc2e1e25af47a34d791bfe9b286
+[2026-04-27 12:21:00] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=fullscreen-exit
+[2026-04-27 12:21:01] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272661032]
+[2026-04-27 12:21:01] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272661032 hash=f45e020a8aa5fecaa13a3f9ae9c86cd6b19c900e9949a00cf2aa314888b9f0fa
+[2026-04-27 12:21:01] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=tab-switch
+[2026-04-27 12:21:01] WARN: Tab switch detected: user=69ed9e4ae48bfa42d7d83d08 session=69ef070b60673de76bf09de8 count=1
+[2026-04-27 12:21:01] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272661111]
+[2026-04-27 12:21:01] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272661111 hash=15a751d2e1cf1f2137ccd68f1e453d004a2b9cff765fa714aa30f050ffb1e95f
+[2026-04-27 12:21:01] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:01] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:01] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:01] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:01] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:01] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:01] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:01] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:01] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:06] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272666245]
+[2026-04-27 12:21:06] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272666245 hash=9c7c6fa1638494320acdde070df3ccc2226c764e5cc4f2365807087b35489b05
+[2026-04-27 12:21:06] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=tab-switch
+[2026-04-27 12:21:06] WARN: Tab switch detected: user=69ed9e4ae48bfa42d7d83d08 session=69ef070b60673de76bf09de8 count=2
+[2026-04-27 12:21:06] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272666946]
+[2026-04-27 12:21:06] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272666946 hash=49cd6bebe29800d1b455af5e91e74868507bb4976af1d422e7ef82ac89e9dc9b
+[2026-04-27 12:21:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:07] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:07] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:07] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:07] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:24] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272684932]
+[2026-04-27 12:21:24] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272684932 hash=aa2375282a50d6a6bf54abf7ebd79cdd9bf1e54aeb8b309e3abe373247b0fbb7
+[2026-04-27 12:21:24] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=tab-switch
+[2026-04-27 12:21:25] WARN: Tab switch detected: user=69ed9e4ae48bfa42d7d83d08 session=69ef070b60673de76bf09de8 count=3
+[2026-04-27 12:21:25] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272685317]
+[2026-04-27 12:21:25] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272685317 hash=25b0ace102f18b8a76db74f364041bf900d3fe297a5553066e1774223ec327b0
+[2026-04-27 12:21:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:25] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:25] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:41] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272701145]
+[2026-04-27 12:21:41] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272701145 hash=5145be09ff275280f2528dd93c97472d5dca98b0116d35b1bd0c19520c906df4
+[2026-04-27 12:21:41] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=tab-switch
+[2026-04-27 12:21:41] WARN: Tab switch detected: user=69ed9e4ae48bfa42d7d83d08 session=69ef070b60673de76bf09de8 count=4
+[2026-04-27 12:21:41] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272701667]
+[2026-04-27 12:21:41] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272701667 hash=f31b93a84df0c996f1d0b91fc8f7c63256703e7780dacabc876ac4a5563e1d0d
+[2026-04-27 12:21:41] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272701897]
+[2026-04-27 12:21:41] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272701897 hash=8966576dd9de43c527ffe214e2fb58315f32dc6b8ef200e39009ee937ff54b01
+[2026-04-27 12:21:41] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=fullscreen-exit
+[2026-04-27 12:21:42] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:42] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:42] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:42] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:42] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:42] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:42] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:42] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:42] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:21:42] INFO: Blockchain: sealing result 69ef077e60673de76bf0a2dd hash=36a5f7e1d888288c818e8da52d1717966fc6f622ba94ae4b99b8e677fc3e1e88
+[2026-04-27 12:21:42] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:03] INFO: Socket disconnected: jID4pygu3CxR01uyAAAF | reason=transport close
+[2026-04-27 12:22:15] INFO: Socket connected: 43YRRL8qTHUtoitYAAAH | user=69ed9e4ae48bfa42d7d83d08 | role=student
+[2026-04-27 12:22:15] INFO: User 69ed9e4ae48bfa42d7d83d08 joined exam room 69ef070b60673de76bf09de8
+[2026-04-27 12:22:32] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272752966]
+[2026-04-27 12:22:32] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272752966 hash=b576942e0de2a0a25242bd2e8922039d84fb2b7ca9f8f5583c51be57abc64d18
+[2026-04-27 12:22:32] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=right-click
+[2026-04-27 12:22:33] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:33] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:33] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:42] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272762970]
+[2026-04-27 12:22:43] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272762970 hash=5a6ee9101d091912c163656bc181bbfb26b8839ee26efab86e2afeeb39e8124d
+[2026-04-27 12:22:43] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=tab-switch
+[2026-04-27 12:22:43] WARN: Tab switch detected: user=69ed9e4ae48bfa42d7d83d08 session=69ef070b60673de76bf09de8 count=1
+[2026-04-27 12:22:43] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272763370]
+[2026-04-27 12:22:43] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272763370 hash=15a751d2e1cf1f2137ccd68f1e453d004a2b9cff765fa714aa30f050ffb1e95f
+[2026-04-27 12:22:43] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272763443]
+[2026-04-27 12:22:43] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272763443 hash=bc04b0f194f50ef19b7ff473e0dce5b6bddaac0dbe21fcb1c1ad137d36599af3
+[2026-04-27 12:22:43] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=fullscreen-exit
+[2026-04-27 12:22:43] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:43] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:43] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:43] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:43] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:43] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:43] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:43] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:43] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:22:44] INFO: Blockchain: sealing result 69ef07bc60673de76bf0a347 hash=90eec1e653c0d6d2339642c288a17c8e554dce484d48d080fa8cb4de7cd73459
+[2026-04-27 12:22:44] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:23:55] INFO: Socket disconnected: 43YRRL8qTHUtoitYAAAH | reason=transport close
+[2026-04-27 12:24:10] INFO: Socket connected: yayn9wgpDypk2ZCJAAAJ | user=69ed9e4ae48bfa42d7d83d08 | role=student
+[2026-04-27 12:24:10] INFO: User 69ed9e4ae48bfa42d7d83d08 joined exam room 69ef070b60673de76bf09de8
+[2026-04-27 12:24:45] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272885176]
+[2026-04-27 12:24:45] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272885176 hash=d9301714ced9010c7690bbdd2a066fb3a4296f79200cc2185b1ed7c6bd80c0ec
+[2026-04-27 12:24:45] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=tab-switch
+[2026-04-27 12:24:45] WARN: Tab switch detected: user=69ed9e4ae48bfa42d7d83d08 session=69ef070b60673de76bf09de8 count=1
+[2026-04-27 12:24:45] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272885357]
+[2026-04-27 12:24:45] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272885357 hash=15a751d2e1cf1f2137ccd68f1e453d004a2b9cff765fa714aa30f050ffb1e95f
+[2026-04-27 12:24:45] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777272885455]
+[2026-04-27 12:24:45] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777272885455 hash=b4cfa3d3c7a21891714ba27e4119ff1a9cfa2a06e695e875de0c9ca0ca945ebe
+[2026-04-27 12:24:45] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=fullscreen-exit
+[2026-04-27 12:24:45] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:45] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:45] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:46] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:46] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:46] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:46] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:46] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:46] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:46] INFO: Blockchain: sealing result 69ef083660673de76bf0a3b1 hash=d3bbc81cb336f2cd9930d3ffb9cef79afe1d8412e14b916b29bfab76ce0df923
+[2026-04-27 12:24:46] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:24:51] INFO: Socket disconnected: yayn9wgpDypk2ZCJAAAJ | reason=transport close
+[2026-04-27 12:26:21] INFO: Socket connected: Y4ChFXt1Q1wMeZkvAAAL | user=69ed9e4ae48bfa42d7d83d08 | role=student
+[2026-04-27 12:26:21] INFO: User 69ed9e4ae48bfa42d7d83d08 joined exam room 69ef070b60673de76bf09de8
+[2026-04-27 12:27:19] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777273039365]
+[2026-04-27 12:27:19] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777273039365 hash=6fcf34e0884fa5384810aebe4a3c9e838ed2d09b33dd81a5b91b31775b3ae3c0
+[2026-04-27 12:27:19] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=tab-switch
+[2026-04-27 12:27:19] WARN: Tab switch detected: user=69ed9e4ae48bfa42d7d83d08 session=69ef070b60673de76bf09de8 count=1
+[2026-04-27 12:27:19] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777273039386]
+[2026-04-27 12:27:19] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777273039386 hash=15a751d2e1cf1f2137ccd68f1e453d004a2b9cff765fa714aa30f050ffb1e95f
+[2026-04-27 12:27:19] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:19] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:19] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:19] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:19] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:19] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:19] INFO: Blockchain: sealing violation [69ed9e4ae48bfa42d7d83d08:1777273039420]
+[2026-04-27 12:27:19] INFO: Blockchain: sealing result violation:69ed9e4ae48bfa42d7d83d08:1777273039420 hash=5d1ca458f731161914e6c295fea8089a0aeb5c004417cd4cb4533f4f54952a17
+[2026-04-27 12:27:19] WARN: Security violation: user=69ed9e4ae48bfa42d7d83d08 type=fullscreen-exit
+[2026-04-27 12:27:19] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:19] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:19] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:19] INFO: Blockchain: sealing result 69ef08cf60673de76bf0a41b hash=17f7bbad7a863e43d57bb223521422692b81f542c8a5773807f5e979edf3bac0
+[2026-04-27 12:27:19] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:27:26] INFO: Socket disconnected: Y4ChFXt1Q1wMeZkvAAAL | reason=transport close
+[2026-04-27 12:28:28] INFO: Fetched 6 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 12:31:12] INFO: Fetched 6 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 12:31:27] INFO: Blockchain: sealing result CERT-D83CE3-D83D08 hash=4203c64923d305e051adcb78450181961a7ee67e3a2007415820c6e0611dadaa
+[2026-04-27 12:31:27] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:31:45] INFO: Fetched 6 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 12:35:55] INFO: Blockchain: sealing mcqbank [69ef0ad260673de76bf0a98e]
+[2026-04-27 12:35:55] INFO: Blockchain: sealing result mcqbank:69ef0ad260673de76bf0a98e hash=26784cf98787e10876a86713941338a7b1b891c2883b2c45b180075a9266551a
+[2026-04-27 12:35:55] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:35:55] ERROR: sealGenericData error [mcqbank]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:36:51] INFO: Socket connected: Ydi0D52q6N6dFCY5AAAN | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 12:36:51] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69ef0af860673de76bf0ab33
+[2026-04-27 12:38:13] INFO: Socket disconnected: Ydi0D52q6N6dFCY5AAAN | reason=transport close
+[2026-04-27 12:44:01] INFO: Socket connected: Nw51y5faPKFVl39cAAAP | user=69ed9e49e48bfa42d7d83cf8 | role=student
+[2026-04-27 12:44:01] INFO: User 69ed9e49e48bfa42d7d83cf8 joined exam room 69ef0af860673de76bf0ab33
+[2026-04-27 12:44:17] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777274057392]
+[2026-04-27 12:44:17] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777274057392 hash=167d77c2d6cd02c99046aed3f9bdd7c8d1a1f3e5f247486c3dc83623dac69a50
+[2026-04-27 12:44:17] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-27 12:44:17] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ef0af860673de76bf0ab33 count=1
+[2026-04-27 12:44:17] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777274057423]
+[2026-04-27 12:44:17] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777274057423 hash=32d175ac64803e97e764e8072d0874e69575d572ead64e5eb3956c568278afd2
+[2026-04-27 12:44:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:17] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:17] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:32] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777274072708]
+[2026-04-27 12:44:32] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777274072708 hash=4974eb7421921a3eaf3b68918a6240da529b90dad6da800680faf5bdbcc04c60
+[2026-04-27 12:44:32] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-27 12:44:32] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ef0af860673de76bf0ab33 count=2
+[2026-04-27 12:44:32] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777274072717]
+[2026-04-27 12:44:32] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777274072717 hash=91f45e32dce89ade29f335d6e232c4f181fc3133b35dcb4d281cca087fb4e9fc
+[2026-04-27 12:44:32] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777274072722]
+[2026-04-27 12:44:32] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777274072722 hash=243a08241fdaba015bc217bd228db101ba920e2a346123d83c2f869511cdd447
+[2026-04-27 12:44:32] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=fullscreen-exit
+[2026-04-27 12:44:32] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:32] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:32] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:32] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:32] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:32] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:32] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:32] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:32] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:33] INFO: Blockchain: sealing result 69ef0cd960673de76bf0b60f hash=35529ec8d3307f16816eeb540b3384b625f3cdf7b0488af382158e88f155dc15
+[2026-04-27 12:44:33] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:44:48] INFO: Socket disconnected: Nw51y5faPKFVl39cAAAP | reason=transport close
+[2026-04-27 12:47:35] INFO: Socket connected: aDdxIVTqtq5ktuqCAAAR | user=69ed9e49e48bfa42d7d83ce1 | role=teacher
+[2026-04-27 12:47:35] INFO: User 69ed9e49e48bfa42d7d83ce1 joined exam room 69ed9e49e48bfa42d7d83ced
+[2026-04-27 12:47:41] INFO: Socket disconnected: aDdxIVTqtq5ktuqCAAAR | reason=transport close
+[2026-04-27 12:51:21] INFO: Blockchain: sealing mcqbank [69ef0e7160673de76bf0b966]
+[2026-04-27 12:51:21] INFO: Blockchain: sealing result mcqbank:69ef0e7160673de76bf0b966 hash=e8ffc4786d6268cfeefd33549fbdc8804d1df28023c205ddd61b2badca7c5d1d
+[2026-04-27 12:51:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:51:21] ERROR: sealGenericData error [mcqbank]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 12:52:28] INFO: Socket connected: _IloH8GXb04TMRxkAAAT | user=69ed9e49e48bfa42d7d83ce1 | role=teacher
+[2026-04-27 12:52:28] INFO: User 69ed9e49e48bfa42d7d83ce1 joined exam room 69ed9e49e48bfa42d7d83ced
+[2026-04-27 12:52:34] INFO: Socket disconnected: _IloH8GXb04TMRxkAAAT | reason=transport close
+[2026-04-27 12:52:35] INFO: Socket connected: qpe84fDSn99OiULaAAAV | user=69ed9e49e48bfa42d7d83ce1 | role=teacher
+[2026-04-27 12:52:35] INFO: User 69ed9e49e48bfa42d7d83ce1 joined exam room 69ed9e49e48bfa42d7d83ced
+[2026-04-27 12:52:39] INFO: Socket disconnected: qpe84fDSn99OiULaAAAV | reason=transport close
+[2026-04-27 12:52:45] INFO: Socket connected: b8SJxFlT6CIgyGpAAAAX | user=69ed9e49e48bfa42d7d83ce1 | role=teacher
+[2026-04-27 12:52:45] INFO: User 69ed9e49e48bfa42d7d83ce1 joined exam room 69ef0eaf60673de76bf0bb30
+[2026-04-27 12:52:49] INFO: Socket disconnected: b8SJxFlT6CIgyGpAAAAX | reason=transport close
+[2026-04-27 12:57:43] INFO: Socket connected: HBNLeM9n6gPJqEiCAAAZ | user=69ed9e49e48bfa42d7d83ce1 | role=teacher
+[2026-04-27 12:57:43] INFO: User 69ed9e49e48bfa42d7d83ce1 joined exam room 69ed9e49e48bfa42d7d83ced
+[2026-04-27 12:57:59] INFO: Socket disconnected: HBNLeM9n6gPJqEiCAAAZ | reason=transport close
+[2026-04-27 13:07:28] INFO: Blockchain: sealing mcqbank [69ef123860673de76bf0c645]
+[2026-04-27 13:07:28] INFO: Blockchain: sealing result mcqbank:69ef123860673de76bf0c645 hash=39422129c1169caeac8e98eb7ee07506d150c828e99c84c3d4b81e861ce8cf9a
+[2026-04-27 13:07:28] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 13:07:28] ERROR: sealGenericData error [mcqbank]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 13:08:11] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 13:08:12] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 14:40:02] INFO: Blockchain: sealing result 69ef27ea1c2ec7c2e0810031 hash=dd887725414860634bafda253c638e6542f3e952e1c1b8144c58ab76d9e12046
+[2026-04-27 14:40:02] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 14:41:29] INFO: Fetched 6 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 15:05:03] INFO: Socket connected: L6qkXfrHfR7SiJTjAAAB | user=69ed9e49e48bfa42d7d83cf8 | role=student
+[2026-04-27 15:05:03] INFO: User 69ed9e49e48bfa42d7d83cf8 joined exam room 69ef0af860673de76bf0ab33
+[2026-04-27 15:05:12] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777282512399]
+[2026-04-27 15:05:12] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777282512399 hash=852ad4d2e1a01bffb436834d8480e0d3d8b3575458ffa21d823f291a8f1efed4
+[2026-04-27 15:05:12] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-27 15:05:12] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ef0af860673de76bf0ab33 count=1
+[2026-04-27 15:05:12] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777282512419]
+[2026-04-27 15:05:12] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777282512419 hash=32d175ac64803e97e764e8072d0874e69575d572ead64e5eb3956c568278afd2
+[2026-04-27 15:05:12] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:12] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:12] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:12] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:12] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:12] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:25] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777282525682]
+[2026-04-27 15:05:25] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777282525682 hash=3026041f5f2cff6d50ac891fa7cd8dc64bca58b9672bd75e6749b7ccf282f35e
+[2026-04-27 15:05:25] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=fullscreen-exit
+[2026-04-27 15:05:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:25] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777282547715]
+[2026-04-27 15:05:47] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777282547715 hash=73098f58824f327a0f85bbb7f8a12737f4d355fb95833beae152af73b3add5b1
+[2026-04-27 15:05:47] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-27 15:05:47] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ef0af860673de76bf0ab33 count=2
+[2026-04-27 15:05:47] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777282547731]
+[2026-04-27 15:05:47] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777282547731 hash=91f45e32dce89ade29f335d6e232c4f181fc3133b35dcb4d281cca087fb4e9fc
+[2026-04-27 15:05:47] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777282547749]
+[2026-04-27 15:05:47] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777282547749 hash=d234a9870e2b9462865966bbb6fd03c71b08a606e3d021185ce1b677cc7073a8
+[2026-04-27 15:05:47] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=fullscreen-exit
+[2026-04-27 15:05:47] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:47] INFO: Blockchain: sealing result 69ef2df31c2ec7c2e0810475 hash=ddf227b43ceb11534b76bb5fe641c871a709bd3cb158cfc10f7e1f32d52e4dbd
+[2026-04-27 15:05:47] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:05:55] INFO: Socket disconnected: L6qkXfrHfR7SiJTjAAAB | reason=transport close
+[2026-04-27 15:16:14] INFO: Socket connected: V7utP5ep2Xv_x2m7AAAD | user=69ed9e49e48bfa42d7d83cf8 | role=student
+[2026-04-27 15:16:14] INFO: User 69ed9e49e48bfa42d7d83cf8 joined exam room 69ef0af860673de76bf0ab33
+[2026-04-27 15:16:25] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283185217]
+[2026-04-27 15:16:25] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283185217 hash=cd0f9715ca075d387b89c82c6be67aed06543ac90127b300db0da314385bd4c6
+[2026-04-27 15:16:25] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-27 15:16:25] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ef0af860673de76bf0ab33 count=1
+[2026-04-27 15:16:25] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283185235]
+[2026-04-27 15:16:25] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283185235 hash=32d175ac64803e97e764e8072d0874e69575d572ead64e5eb3956c568278afd2
+[2026-04-27 15:16:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:25] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:25] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:39] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283199750]
+[2026-04-27 15:16:39] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283199750 hash=462d4a16ff699a07257db324e8540895a1e451801cc42df505cee6306e28bbb1
+[2026-04-27 15:16:39] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:16:39] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:39] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:39] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:40] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283200468]
+[2026-04-27 15:16:40] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283200468 hash=fd40c353706f14e8db37acdb837044489598051c2e51f0316de0ec297f4fc8f6
+[2026-04-27 15:16:40] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:16:40] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:40] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:40] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:41] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283201447]
+[2026-04-27 15:16:41] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283201447 hash=32738972e74a30ebf4eb282dabdf15e92bbda8416025b55e90da25b4f34f569c
+[2026-04-27 15:16:41] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:16:41] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:41] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:41] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:47] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283207530]
+[2026-04-27 15:16:47] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283207530 hash=916d30f615e231d830b1cce17d6d5e0765efd03153989d2513372a10844c7564
+[2026-04-27 15:16:47] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:16:47] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:47] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:47] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:48] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283208442]
+[2026-04-27 15:16:48] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283208442 hash=b6bd3fd31625a8f504648b7fd380cf7b92c53e1529ca04f4490cda00a63f99bb
+[2026-04-27 15:16:48] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:16:48] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:48] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:16:48] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:09] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283229461]
+[2026-04-27 15:17:09] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283229461 hash=c8ab8532ac37c087ec2cdba55b594a551a55e43747053e0a4e4822dbdcb2164c
+[2026-04-27 15:17:09] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:09] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:09] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:09] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:10] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283230474]
+[2026-04-27 15:17:10] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283230474 hash=951ae53f75dda993aaad0d3e8e5b2490e92301f5ef738e51f6feb9b235184d74
+[2026-04-27 15:17:10] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:10] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:10] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:10] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:11] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283231490]
+[2026-04-27 15:17:11] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283231490 hash=50accb1165abb7d9d29755cfc29940bbf444b8f7649d81ea1a0034875bd2c1a2
+[2026-04-27 15:17:11] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:11] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:12] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283232473]
+[2026-04-27 15:17:12] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283232473 hash=ac1a679e9167d49667c6764babd195503bef92975a1fdd5b5293a5816edd81c5
+[2026-04-27 15:17:12] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:12] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:12] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:12] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:16] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283236469]
+[2026-04-27 15:17:16] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283236469 hash=ea84f72a57033a00e2268386db0367b2fe0d5a9109fc886e1d1f7e6c6e83afa6
+[2026-04-27 15:17:16] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:16] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:16] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:16] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:17] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283237475]
+[2026-04-27 15:17:17] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283237475 hash=a8b513221c30eb1be3679374395a2bd6d3dd021d3500b856a50041add4a8180a
+[2026-04-27 15:17:17] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:17] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:21] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283241517]
+[2026-04-27 15:17:21] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283241517 hash=c5dbadd25ea9637e1897bc22ebf07876997da96f424ac9d057f9f76f21211223
+[2026-04-27 15:17:21] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:21] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:22] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283242494]
+[2026-04-27 15:17:22] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283242494 hash=81a937186473772e40b7fcc8ac86a2bb79f3c5e1554d37afac23b4c8510844a3
+[2026-04-27 15:17:22] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:22] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:22] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:45] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283265480]
+[2026-04-27 15:17:45] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283265480 hash=76b9b1d6b8931cef7a9e34e3f901589231cf7aa79a5c479d4bf2fb856506fe64
+[2026-04-27 15:17:45] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:45] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:45] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:45] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:46] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283266456]
+[2026-04-27 15:17:46] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283266456 hash=e2db6ed4e91fb5dae4847fc6860a571ef78155d707513617d1bbc2c9eb31e265
+[2026-04-27 15:17:46] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:46] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:46] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:46] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:50] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283270461]
+[2026-04-27 15:17:50] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283270461 hash=db9bc1700ec1ceadf92262116b17deb77007854507927e85557485de5c59a879
+[2026-04-27 15:17:50] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:50] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:50] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:50] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:51] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283271460]
+[2026-04-27 15:17:51] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283271460 hash=289c56ad6d4d10e486d011d2b96459404ce5f0d6d54fc105e62b9b2db0d72970
+[2026-04-27 15:17:51] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:51] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:51] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:51] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:52] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283272469]
+[2026-04-27 15:17:52] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777283272469 hash=d596d253d658a7b45d8255d3d2c35b93a3b6c6c636aa4c6aa19feeb2d5f8d045
+[2026-04-27 15:17:52] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=no-face
+[2026-04-27 15:17:52] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:52] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:52] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 15:17:53] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777283273688]
