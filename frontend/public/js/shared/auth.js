@@ -87,9 +87,9 @@ const auth = {
       return false;
     }
 
-    // Prevent teacher from accessing student dashboard
-    if ((path.includes('index.html') || path === '/student' || path === '/student/')
-      && user.role === 'teacher') {
+    // Prevent teacher/admin from accessing student dashboard
+    if ((path === '/' || path.includes('index.html') || path === '/student' || path === '/student/')
+      && user.role !== 'student') {
       this.redirectByRole(user.role);
       return false;
     }

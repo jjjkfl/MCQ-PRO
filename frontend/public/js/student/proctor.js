@@ -59,8 +59,17 @@ const Proctor = {
       // Block PrintScreen
       if (e.key === 'PrintScreen') {
         e.preventDefault();
+        try { navigator.clipboard.writeText(''); } catch (err) { }
         this.logViolation('screenshot', 'PrintScreen key blocked');
         notifications.error('🚫 Screenshots are not allowed!');
+      }
+
+      // Block Snipping Tools: Win+Shift+S or Cmd+Shift+3/4/5
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && ['s', 'S', '3', '4', '5'].includes(e.key)) {
+        e.preventDefault();
+        try { navigator.clipboard.writeText(''); } catch (err) { }
+        this.logViolation('screenshot', 'Snipping tool attempted');
+        notifications.error('🚫 Snipping Tools are strictly prohibited!');
       }
       // Block Ctrl+Shift+I (DevTools)
       if (e.ctrlKey && e.shiftKey && e.key === 'I') {
@@ -107,6 +116,14 @@ const Proctor = {
       // Block Ctrl+S (Save)
       if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
+      }
+    });
+
+    // Enforce clipboard flush strictly upon keyup of PrintScreen
+    document.addEventListener('keyup', (e) => {
+      if (this.isDestroyed) return;
+      if (e.key === 'PrintScreen') {
+        try { navigator.clipboard.writeText(''); } catch (err) { }
       }
     });
 
@@ -166,6 +183,8 @@ const Proctor = {
       video.muted = true;
       video.playsInline = true;
       video.id = 'proctor-video';
+      video.width = 320;
+      video.height = 240;
 
       target.innerHTML = '';
       target.appendChild(video);
@@ -179,6 +198,9 @@ const Proctor = {
 
       // Monitor camera stream
       this.monitorCamera(video);
+
+      // Initialize AI Face Tracking
+      this.initFaceTracking(video);
 
       return this.cameraStream;
 
@@ -196,6 +218,55 @@ const Proctor = {
       target.innerHTML = errorHTML;
       throw err;
     }
+  },
+
+  initFaceTracking(video) {
+    if (typeof tracking === 'undefined') return;
+
+    // Register the face tracker
+    const tracker = new tracking.ObjectTracker('face');
+    tracker.setInitialScale(4);
+    tracker.setStepSize(2);
+    tracker.setEdgesDensity(0.1);
+
+    // Bind tracker to specific video element
+    tracking.track(video, tracker);
+
+    let noFaceCount = 0;
+
+    tracker.on('track', (event) => {
+      if (this.isDestroyed || !this.cameraActive) return;
+
+      const faces = event.data;
+
+      const readinessView = document.getElementById('readiness-view');
+      const isExamStarted = readinessView && readinessView.style.display === 'none';
+
+      if (faces.length === 0) {
+        noFaceCount++;
+        // If zero faces for ~4-5 seconds (tracking fires fast, roughly 20 misses)
+        if (noFaceCount > 25) {
+          if (isExamStarted) this.logViolation('face-missing', 'No face detected in camera feed');
+          notifications.warn('⚠️ Face not detected! Please look directly at the camera.');
+          noFaceCount = 0; // Reset 
+        }
+      } else if (faces.length > 1) {
+        // Strict >1 person enforcement
+        if (isExamStarted) this.logViolation('multiple-faces', 'Multiple people detected in frame');
+        notifications.error('🚫 Security Violation: Multiple people detected!');
+
+        // Auto-terminate exam on strict ML failure ONLY if exam has started
+        if (isExamStarted) {
+          this.isDestroyed = true;
+          setTimeout(() => {
+            if (typeof ExamEngine !== 'undefined') ExamEngine.submit();
+          }, 2000);
+        }
+      } else {
+        // Exactly 1 person
+        noFaceCount = 0;
+      }
+    });
   },
 
   monitorCamera(video) {

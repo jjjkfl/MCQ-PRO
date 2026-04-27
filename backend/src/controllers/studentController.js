@@ -159,10 +159,11 @@ exports.getCourses = async (req, res) => {
 
 exports.getAvailableExams = async (req, res) => {
   try {
-    const exams = await Session.find({
-      courseId: req.user.courseId,
-      division: req.user.division
-    }).select('-questions.correctAnswer');
+    const query = {};
+    if (req.user.courseId) {
+      query.courseId = req.user.courseId;
+    }
+    const exams = await Session.find(query).select('-questions.correctAnswer');
     res.json({ success: true, data: exams });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -171,11 +172,13 @@ exports.getAvailableExams = async (req, res) => {
 
 exports.getExamQuestions = async (req, res) => {
   try {
-    const exam = await Session.findOne({
-      _id: req.params.sessionId,
-      courseId: req.user.courseId,
-      division: req.user.division
-    }).select('-questions.correctAnswer');
+    const query = {
+      _id: req.params.sessionId
+    };
+    if (req.user.courseId) {
+      query.courseId = req.user.courseId;
+    }
+    const exam = await Session.findOne(query).select('-questions.correctAnswer');
 
     if (!exam) return res.status(404).json({ success: false, message: 'Exam not found or access denied' });
     res.json({ success: true, data: exam });
@@ -191,9 +194,6 @@ exports.submitExam = async (req, res) => {
     if (!session) return res.status(404).json({ message: 'Exam not found' });
 
     if (!req.user.courseId || String(session.courseId) !== String(req.user.courseId)) {
-      return res.status(403).json({ success: false, message: 'Not allowed' });
-    }
-    if (String(session.division) !== String(req.user.division)) {
       return res.status(403).json({ success: false, message: 'Not allowed' });
     }
 
