@@ -31,16 +31,20 @@
 
 .auth-body::after {
     width: 400px;
-    height: 400px;
     background: var(--secondary-soft);
     bottom: -50px;
     left: -50px;
+    height: 100vh;
+    margin: 0;
 }
 
 .auth-container {
     width: 100%;
     max-width: 460px;
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 👈 this is key */
     z-index: 1;
 }
 
@@ -59,20 +63,7 @@
     margin-bottom: 2.5rem;
 }
 
-.auth-logo {
-    width: 80px;
-    height: 80px;
-    background: var(--gradient-primary);
-    border-radius: var(--radius-lg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-    font-size: 2rem;
-    color: white;
-    box-shadow: 0 12px 32px var(--primary-glow);
-    animation: float 4s ease-in-out infinite;
-}
+
 
 .auth-title {
     font-family: var(--font-heading);
