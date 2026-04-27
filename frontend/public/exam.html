@@ -1,117 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Exam | MCQ Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
-    input, textarea { user-select: text; -webkit-user-select: text; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; color: #1a1a2e; }
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --primary-light: #c7d2fe;
+      --secondary: #10b981;
+      --secondary-dark: #059669;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --info: #3b82f6;
+      --info-light: #eff6ff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 18px;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    input,
+    textarea {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f0f2f5 0%, #e6eef5 100%);
+      color: var(--gray-800);
+      line-height: 1.6;
+    }
 
     /* ─── Layout ─── */
     .exam-wrapper {
       display: grid;
-      grid-template-columns: 1fr 200px;
-      gap: 20px;
-      max-width: 1100px;
+      grid-template-columns: 1fr 220px;
+      gap: 24px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 24px;
       min-height: 100vh;
     }
-    .exam-main { display: flex; flex-direction: column; gap: 16px; }
+
+    .exam-main {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
     /* ─── Top Bar ─── */
     .exam-top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 14px 20px;
+      padding: 16px 24px;
       background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--gray-200);
     }
-    .exam-title { font-weight: 700; font-size: 16px; color: #1a1a2e; }
+
+    .exam-title {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--gray-800);
+      letter-spacing: -0.02em;
+    }
+
     .timer-pill {
-      padding: 6px 18px;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 20px;
-      color: #dc2626;
+      padding: 8px 20px;
+      background: var(--danger-light);
+      border-radius: 24px;
+      color: var(--danger);
       font-weight: 700;
       font-variant-numeric: tabular-nums;
       font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .timer-pill i {
+      font-size: 14px;
     }
 
     /* ─── Question Area ─── */
     #question-area {
       padding: 32px;
-      border-radius: 16px;
+      border-radius: var(--radius-lg);
       background: #fff;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      min-height: 320px;
+      box-shadow: var(--shadow-md);
+      min-height: 340px;
       flex: 1;
+      border: 1px solid var(--gray-200);
     }
 
     .exam-q-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 20px;
     }
+
     .q-marks-badge {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 6px;
-      background: #eff6ff;
-      color: #2563eb;
+      padding: 5px 12px;
+      border-radius: var(--radius-md);
+      background: var(--info-light);
+      color: var(--info);
+    }
+
+    .question-text {
+      font-size: 16px;
+      color: var(--gray-800);
+      line-height: 1.7;
+      margin-bottom: 24px;
     }
 
     /* ─── Options ─── */
-    .options-list { margin-top: 8px; }
+    .options-list {
+      margin-top: 8px;
+    }
+
     .option-item {
       display: flex;
       align-items: center;
-      padding: 14px 18px;
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      margin-top: 10px;
+      padding: 16px 20px;
+      background: var(--gray-50);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      margin-top: 12px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: var(--transition);
     }
+
     .option-item:hover {
-      background: #f0f4ff;
-      border-color: #93c5fd;
+      background: var(--gray-100);
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
     }
+
     .option-item.selected {
-      background: #eff6ff;
-      border-color: #2563eb;
+      background: var(--info-light);
+      border-color: var(--primary);
     }
+
     .option-label {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: #e2e8f0;
-      margin-right: 14px;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: var(--gray-200);
+      margin-right: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
-      color: #475569;
+      color: var(--gray-600);
       flex-shrink: 0;
+      transition: var(--transition);
     }
+
     .selected .option-label {
-      background: #2563eb;
+      background: var(--primary);
       color: #fff;
     }
+
     .option-text {
-      font-size: 14px;
-      color: #1e293b;
+      font-size: 15px;
+      color: var(--gray-700);
       line-height: 1.5;
     }
 
@@ -121,151 +216,721 @@
       justify-content: space-between;
       align-items: center;
     }
-    .btn { padding: 10px 24px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; }
-    .btn-primary { background: #2563eb; color: #fff; }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-outline { background: transparent; color: #475569; border: 1px solid #cbd5e1; }
-    .btn-outline:hover { background: #f1f5f9; }
-    .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-finish { background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff; padding: 12px 28px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; }
-    .btn-finish:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--gray-600);
+      border: 1px solid var(--gray-300);
+    }
+
+    .btn-outline:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-400);
+    }
+
+    .btn-outline:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-finish {
+      background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-finish:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    }
 
     .btn-clear-answer {
-      background: none; border: 1px solid #fecaca; color: #dc2626;
-      padding: 6px 14px; border-radius: 8px; font-size: 12px; cursor: pointer;
+      background: none;
+      border: 1px solid var(--gray-300);
+      color: var(--gray-600);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      cursor: pointer;
+      margin-left: auto;
+      display: block;
+      margin-top: 12px;
     }
-    .btn-clear-answer:hover { background: #fef2f2; }
+
+    .btn-clear-answer:hover {
+      background: var(--gray-50);
+    }
 
     /* ─── Progress Grid ─── */
     #exam-progress {
-      padding: 16px 20px;
+      padding: 20px 24px;
       background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-200);
     }
-    .progress-legend { display: flex; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #64748b; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
-    .legend-dot.answered { background: #16a34a; }
-    .legend-dot.skipped { background: #f59e0b; }
-    .legend-dot.not-visited { background: #e2e8f0; }
-    .legend-dot.current { background: #2563eb; }
 
-    .question-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 6px; }
-    .q-dot {
-      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-      border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    .progress-legend {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
     }
-    .q-dot.answered { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
-    .q-dot.skipped { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
-    .q-dot.not-visited { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
-    .q-dot.current { background: #dbeafe; color: #2563eb; border: 2px solid #2563eb; transform: scale(1.1); box-shadow: 0 0 10px rgba(37,99,235,0.2); }
-    .q-dot:hover:not(.current) { transform: scale(1.05); border-color: #93c5fd; }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .legend-dot.answered {
+      background: var(--success);
+    }
+
+    .legend-dot.skipped {
+      background: var(--warning);
+    }
+
+    .legend-dot.not-visited {
+      background: var(--gray-300);
+    }
+
+    .legend-dot.current {
+      background: var(--primary);
+    }
+
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+      gap: 8px;
+    }
+
+    .q-dot {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .q-dot.answered {
+      background: var(--success-light);
+      color: var(--success);
+      border: 1px solid var(--success);
+    }
+
+    .q-dot.skipped {
+      background: var(--warning-light);
+      color: var(--warning);
+      border: 1px solid var(--warning);
+    }
+
+    .q-dot.not-visited {
+      background: var(--gray-100);
+      color: var(--gray-500);
+      border: 1px solid var(--gray-300);
+    }
+
+    .q-dot.current {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      transform: scale(1.1);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    }
+
+    .q-dot:hover:not(.current) {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
 
     /* ─── Proctor Sidebar ─── */
-    .proctor-sidebar { display: flex; flex-direction: column; gap: 12px; position: sticky; top: 20px; height: fit-content; }
+    .proctor-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: 24px;
+      height: fit-content;
+    }
+
     .proctor-camera-box {
-      background: #1e293b; border: 2px solid #e2e8f0; border-radius: 12px;
-      overflow: hidden; position: relative; aspect-ratio: 4/3;
+      background: var(--gray-900);
+      border: 2px solid var(--gray-300);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 4/3;
+      box-shadow: var(--shadow-md);
     }
-    .proctor-camera-box.camera-active { border-color: #86efac; }
-    .proctor-camera-box video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+    .proctor-camera-box.camera-active {
+      border-color: var(--success);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .proctor-camera-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
     .camera-header {
-      position: absolute; top: 0; left: 0; right: 0;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 6px 10px; background: linear-gradient(180deg, rgba(0,0,0,0.6), transparent); z-index: 2;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent);
+      z-index: 2;
     }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .status-dot.active { background: #22c55e; box-shadow: 0 0 6px #22c55e; animation: pulse-dot 2s infinite; }
-    .status-dot.inactive { background: #ef4444; }
-    @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-    .camera-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; padding: 2px 6px; border-radius: 4px; }
-    .camera-label.live { background: rgba(34,197,94,0.2); color: #22c55e; }
-    .camera-label.off { background: rgba(239,68,68,0.2); color: #ef4444; }
-    .camera-denied { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #ef4444; }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .status-dot.active {
+      background: var(--success);
+      box-shadow: 0 0 6px var(--success);
+      animation: pulse-dot 2s infinite;
+    }
+
+    .status-dot.inactive {
+      background: var(--danger);
+    }
+
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    .camera-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .camera-label.live {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+    }
+
+    .camera-label.off {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--danger);
+    }
+
+    .camera-denied {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--danger);
+      padding: 20px;
+      text-align: center;
+    }
 
     .security-box {
-      background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
-      padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
     }
-    .security-box h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 10px; }
-    .security-pills { display: flex; flex-direction: column; gap: 5px; }
-    .sec-pill { font-size: 11px; padding: 5px 8px; border-radius: 6px; font-weight: 500; }
-    .sec-pill.good { background: #f0fdf4; color: #16a34a; }
-    .sec-pill.bad { background: #fef2f2; color: #dc2626; }
-    .sec-pill.secure { background: #f0fdf4; color: #16a34a; }
-    .sec-pill.warning { background: #fffbeb; color: #d97706; }
-    .sec-pill.danger { background: #fef2f2; color: #dc2626; }
+
+    .security-box h4 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .security-pills {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sec-pill {
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sec-pill.good {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .sec-pill.bad {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .sec-pill.secure {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .sec-pill.warning {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+
+    .sec-pill.danger {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
 
     .counter-box {
-      background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
-      padding: 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
     }
-    .counter-box .big-number { font-size: 28px; font-weight: 800; color: #2563eb; }
+
+    .counter-box .big-number {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
 
     /* ─── Image ─── */
-    .exam-image-container { margin: 0 0 20px; text-align: center; }
-    .exam-question-image {
-      max-width: 100%; max-height: 280px; border-radius: 10px;
-      border: 1px solid #e2e8f0; object-fit: contain; cursor: zoom-in;
+    .exam-image-container {
+      margin: 0 0 24px;
+      text-align: center;
     }
-    .exam-question-image:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+
+    .exam-question-image {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--gray-200);
+      object-fit: contain;
+      cursor: zoom-in;
+      transition: var(--transition);
+    }
+
+    .exam-question-image:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
 
     /* Image Zoom */
-    .image-zoom-overlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-    .image-zoom-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); cursor: pointer; }
-    .image-zoom-content { position: relative; z-index: 1; max-width: 90vw; max-height: 90vh; }
-    .image-zoom-content img { max-width: 90vw; max-height: 85vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-    .image-zoom-close {
-      position: absolute; top: -12px; right: -12px; width: 32px; height: 32px;
-      border-radius: 50%; background: #fff; border: 1px solid #e2e8f0; color: #1e293b;
-      font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    .image-zoom-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
     }
-    .image-zoom-close:hover { background: #fef2f2; color: #dc2626; }
+
+    .image-zoom-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+    }
+
+    .image-zoom-content {
+      position: relative;
+      z-index: 1;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+
+    .image-zoom-content img {
+      max-width: 90vw;
+      max-height: 85vh;
+      border-radius: var(--radius-md);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .image-zoom-close {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      color: var(--gray-700);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+    }
+
+    .image-zoom-close:hover {
+      background: var(--danger-light);
+      color: var(--danger);
+      transform: rotate(90deg);
+    }
 
     /* ─── Helpers ─── */
-    .p-dim { color: #64748b; }
-    .animate-fade-in { animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    .exam-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; }
-    .spinner { width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .p-dim {
+      color: var(--gray-500);
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .exam-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ─── Readiness View ─── */
+    #readiness-view {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #f0f2f5 0%, #e6eef5 100%);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .readiness-card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 640px;
+      padding: 48px;
+      box-shadow: var(--shadow-lg);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      transition: var(--transition);
+    }
+
+    .check-item.done {
+      border-color: var(--success);
+      background: var(--success-light);
+    }
+
+    .check-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--gray-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .done .check-icon {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    .camera-preview-mini {
+      width: 100%;
+      height: 180px;
+      background: var(--gray-900);
+      border-radius: var(--radius-md);
+      margin-top: 12px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .camera-preview-mini video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    /* Checkbox styling */
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* Button adjustments for readiness view */
+    #btn-allow-camera,
+    #btn-enter-fullscreen {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    #btn-start-exam {
+      padding: 16px;
+      font-size: 16px;
+      border-radius: var(--radius-md);
+      margin-top: 24px;
+      transition: var(--transition);
+    }
+
+    #btn-start-exam:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    #btn-start-exam:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
 
     @media (max-width: 768px) {
-      .exam-wrapper { grid-template-columns: 1fr; }
-      .proctor-sidebar { position: static; flex-direction: row; flex-wrap: wrap; }
-      .proctor-camera-box { width: 120px; }
+      .exam-wrapper {
+        grid-template-columns: 1fr;
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .proctor-sidebar {
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .proctor-camera-box {
+        width: 140px;
+      }
+
+      .security-box,
+      .counter-box {
+        flex: 1;
+        min-width: 140px;
+      }
+
+      .readiness-card {
+        padding: 32px 24px;
+      }
+
+      .check-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+
+      .check-item>div {
+        width: 100%;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <div class="exam-wrapper">
+  <!-- 🛠️ Readiness View -->
+  <div id="readiness-view">
+    <div class="readiness-card animate-fade-in">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <div style="font-size: 64px; margin-bottom: 16px;">🛡️</div>
+        <h2 style="font-size: 28px; font-weight: 800; color: var(--gray-800); margin-bottom: 12px;">System Readiness
+          Check</h2>
+        <p class="p-dim" style="font-size: 16px;">Please complete the following checks to start your exam securely</p>
+      </div>
+
+      <div class="check-list">
+        <!-- Camera Check -->
+        <div class="check-item" id="check-camera">
+          <div class="check-icon">1</div>
+          <div style="flex: 1">
+            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">Camera Permission</h4>
+            <p class="p-dim" style="font-size: 14px;">Mandatory for proctoring and integrity assurance</p>
+            <div id="camera-preview-box" class="camera-preview-mini"></div>
+          </div>
+          <button class="btn btn-outline" id="btn-allow-camera" onclick="ReadinessCheck.allowCamera()">
+            <i class="fas fa-camera"></i> Allow
+          </button>
+        </div>
+
+        <!-- Fullscreen Check -->
+        <div class="check-item" id="check-fullscreen">
+          <div class="check-icon">2</div>
+          <div style="flex: 1">
+            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">Fullscreen Mode</h4>
+            <p class="p-dim" style="font-size: 14px;">Prevent accidental exits and maintain focus</p>
+          </div>
+          <button class="btn btn-outline" id="btn-enter-fullscreen" onclick="ReadinessCheck.enterFullscreen()">
+            <i class="fas fa-expand"></i> Enter
+          </button>
+        </div>
+
+        <!-- Consent Check -->
+        <div class="check-item" id="check-consent">
+          <div class="check-icon">3</div>
+          <div style="flex: 1">
+            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">Proctoring Consent</h4>
+            <p class="p-dim" style="font-size: 14px;">I agree to be monitored during this examination</p>
+          </div>
+          <input type="checkbox" id="consent-checkbox" onchange="ReadinessCheck.updateConsent()">
+        </div>
+      </div>
+
+      <button id="btn-start-exam" class="btn btn-primary" style="width: 100%; margin-top: 32px; padding: 18px;" disabled
+        onclick="ReadinessCheck.startExam()">
+        <i class="fas fa-play-circle"></i> Start Examination
+      </button>
+
+      <p style="font-size: 12px; color: var(--gray-400); text-align: center; margin-top: 20px;">
+        By starting, you acknowledge that your session is being recorded for integrity purposes. Any violation of exam
+        rules may result in disqualification.
+      </p>
+    </div>
+  </div>
+
+  <div class="exam-wrapper" id="main-exam-content" style="display: none;">
     <!-- LEFT: Main Exam -->
     <div class="exam-main">
       <div class="exam-top-bar">
         <div>
           <div class="exam-title" id="exam-title">Loading Exam...</div>
-          <div class="p-dim" style="font-size: 11px; margin-top: 2px;" id="exam-subtitle"></div>
+          <div class="p-dim" style="font-size: 12px; margin-top: 4px;" id="exam-subtitle"></div>
         </div>
         <div style="display:flex; align-items:center; gap:12px;">
-          <span id="question-counter" style="font-size:12px; color:#94a3b8;"></span>
-          <div id="exam-timer" class="timer-pill">--:--</div>
+          <span id="question-counter" style="font-size:13px; color:var(--gray-500);"></span>
+          <div id="exam-timer" class="timer-pill"><i class="fas fa-clock"></i> --:--</div>
         </div>
       </div>
 
       <div id="question-area">
         <div class="exam-loading">
           <div class="spinner"></div>
-          <p style="font-weight: 600; color: #1e293b;">Loading exam questions...</p>
-          <p class="p-dim" style="font-size: 13px;">Setting up proctoring.</p>
+          <p style="font-weight: 600; color: var(--gray-800); margin-bottom: 8px;">Loading exam questions...</p>
+          <p class="p-dim" style="font-size: 14px;">Setting up proctoring environment</p>
         </div>
       </div>
 
       <div class="exam-nav">
-        <button id="prev-btn" class="btn btn-outline" onclick="ExamEngine.prev()" disabled>← Previous</button>
-        <button id="next-btn" class="btn btn-primary" onclick="ExamEngine.next()">Next →</button>
+        <button id="prev-btn" class="btn btn-outline" onclick="ExamEngine.prev()" disabled>
+          <i class="fas fa-arrow-left"></i> Previous
+        </button>
+        <button id="next-btn" class="btn btn-primary" onclick="ExamEngine.next()">
+          Next <i class="fas fa-arrow-right"></i>
+        </button>
       </div>
 
       <div id="exam-progress"></div>
@@ -275,30 +940,32 @@
     <div class="proctor-sidebar">
       <div class="proctor-camera-box" id="proctor-camera">
         <div class="camera-header">
-          <div style="display:flex; align-items:center; gap:4px;">
+          <div style="display:flex; align-items:center; gap:6px;">
             <span class="status-dot inactive" id="camera-status-dot"></span>
             <span class="camera-label off" id="camera-status-label">OFF</span>
           </div>
-          <span style="font-size:9px; color:rgba(255,255,255,0.6);">PROCTOR</span>
+          <span style="font-size:10px; color:rgba(255,255,255,0.7);">PROCTOR CAM</span>
         </div>
         <div class="camera-denied">
-          <div class="spinner" style="width:20px;height:20px;border-width:2px;margin-bottom:8px;border-top-color:#fff;border-color:rgba(255,255,255,0.2);"></div>
-          <p style="font-size:10px; color:#fff;">Starting...</p>
+          <div class="spinner"
+            style="width:24px;height:24px;border-width:2px;margin-bottom:12px;border-top-color:#fff;border-color:rgba(255,255,255,0.2);">
+          </div>
+          <p style="font-size:12px; color:#fff;">Camera initializing...</p>
         </div>
       </div>
 
       <div class="security-box" id="security-status">
-        <h4>🔒 Security</h4>
+        <h4><i class="fas fa-shield-alt"></i> Security Status</h4>
         <div class="security-pills">
-          <div class="sec-pill good">📷 Initializing...</div>
-          <div class="sec-pill good">🖥️ Checking...</div>
-          <div class="sec-pill secure">⚠️ 3/3 warnings left</div>
+          <div class="sec-pill good"><i class="fas fa-camera"></i> Camera active</div>
+          <div class="sec-pill good"><i class="fas fa-desktop"></i> Screen secured</div>
+          <div class="sec-pill secure"><i class="fas fa-exclamation-triangle"></i> 3/3 warnings left</div>
         </div>
       </div>
 
       <div class="counter-box">
         <div class="big-number" id="answered-count">0</div>
-        <div class="p-dim" style="font-size:11px;">Answered</div>
+        <div class="p-dim" style="font-size:12px;">Questions Answered</div>
       </div>
     </div>
   </div>
@@ -324,4 +991,5 @@
     });
   </script>
 </body>
+
 </html>

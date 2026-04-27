@@ -1,147 +1,525 @@
 /**
  * js/student/student.js
- * Scholara Student Dashboard Controller
+ * MCQPro Student Dashboard Controller
  */
 
 const StudentDashboard = {
   async init() {
-    await this.renderAll();
+    if (!auth.checkAuth()) return;
+
+    // Attach listeners immediately so UI is responsive even if data fails
+    this.bindDashboardNav();
+    this.handleUrlView();
+    this.initAnnouncements();
+
+    try {
+      await this.renderAll();
+    } catch (err) {
+      console.error('Dashboard stabilization check failed:', err);
+      // Don't alert here; renderAll already notifies on actual API failure
+    }
+  },
+
+  initAnnouncements() {
+    // Basic WebSocket notification handler (if socket.io is present globally)
+    if (typeof io !== 'undefined') {
+      const socket = io();
+      socket.on('announcement', (data) => {
+        this.showAnnouncementToast(data);
+      });
+    }
+  },
+
+  showAnnouncementToast(data) {
+    const container = document.getElementById('announcement-toast');
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'glass-card animate-fade-in';
+    div.style.padding = '16px';
+    div.style.marginBottom = '12px';
+    div.innerHTML = `
+      <div style="font-weight:800; color:var(--primary); font-size:11px; text-transform:uppercase;">New Broadcast</div>
+      <div style="font-weight:700; margin:4px 0;">${data.title}</div>
+      <div style="font-size:13px; opacity:0.8;">${data.content}</div>
+    `;
+    container.appendChild(div);
+    setTimeout(() => div.remove(), 8000);
+  },
+
+  handleUrlView() {
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('view');
+    if (view) this.showView(view);
+  },
+
+  showView(viewId) {
+    // Systematic Isolation: Hide all views
+    document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+
+    // De-activate all sidebar items
+    document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
+
+    // Activate target sidebar item
+    const navItem = document.querySelector(`.sidebar .nav-item[data-action="${viewId === 'dashboard' ? 'overview' : viewId}"]`);
+    if (navItem) navItem.classList.add('active');
+
+    const target = document.getElementById(`view-${viewId}`);
+    if (target) {
+      target.style.display = 'block';
+
+      // Load specific data for this view
+      if (viewId === 'dashboard') this.renderAll();
+      if (viewId === 'courses') this.loadCourses();
+      if (viewId === 'schedule') this.loadSchedule();
+      if (viewId === 'messages') this.loadMessages();
+      if (viewId === 'live-exams') this.loadLiveExams();
+      if (viewId === 'exam-results') this.loadResults();
+      if (viewId === 'certificates') this.loadCertificates();
+    }
+  },
+
+  async loadSchedule() {
+    const container = document.getElementById('weekly-calendar');
+    if (!container) return;
+
+    // Medical Calendar Headers (Mon-Fri)
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+    // Sample Medical Rotations (Can be fetched from DB tasks in production)
+    const scheduleData = {
+      'Monday': [{ time: '08:00 AM', title: 'Surgical Rounds - Wing A' }, { time: '02:00 PM', title: 'Cardiology Lecture' }],
+      'Tuesday': [{ time: '09:30 AM', title: 'Case Study: Renal Failure' }, { time: '04:00 PM', title: 'Lab Practice' }],
+      'Wednesday': [{ time: '08:00 AM', title: 'Surgical Rounds - Wing B' }, { time: '11:00 AM', title: 'MCQ Pro Readiness Check' }],
+      'Thursday': [{ time: '10:00 AM', title: 'Endocrinology Dept' }, { time: '03:00 PM', title: 'Peer Review Session' }],
+      'Friday': [{ time: '08:00 AM', title: 'Grand Rounds' }, { time: '05:00 PM', title: 'Weekly Assessment' }]
+    };
+
+    container.innerHTML = days.map(day => `
+      <div class="schedule-day">
+        <div class="schedule-day-header">${day}</div>
+        <div class="schedule-day-content">
+          ${(scheduleData[day] || []).map(entry => `
+            <div class="schedule-item">
+              <div class="schedule-item-time">${entry.time}</div>
+              <div class="schedule-item-title">${entry.title}</div>
+            </div>
+          `).join('')}
+          ${(!scheduleData[day] || scheduleData[day].length === 0) ? '<p class="text-muted" style="text-align:center; font-size:11px; padding:12px;">Free Day</p>' : ''}
+        </div>
+      </div>
+    `).join('');
+  },
+
+  async loadMessages() {
+    const container = document.getElementById('broadcast-container');
+    if (!container) return;
+    container.innerHTML = '<p class="p-dim">Syncing secure transmissions...</p>';
+
+    try {
+      const res = await api.get('/portal/student/announcements');
+      const messages = (res.data || []).map(a => {
+        let senderName = 'Academic Faculty';
+        if (a.authorId && typeof a.authorId === 'object' && a.authorId.name) {
+          senderName = a.authorId.name;
+        } else if (typeof a.authorId === 'string') {
+          senderName = 'Instructor'; // ID exists but not populated/found
+        }
+
+        return {
+          sender: senderName,
+          faculty: 'Medical',
+          title: a.title || 'Broadcast',
+          content: a.content || '',
+          time: a.createdAt ? utils.formatDate(a.createdAt) : 'Recent'
+        };
+      });
+
+      if (messages.length === 0) {
+        messages.push({
+          sender: 'MCQ Pro Admin',
+          faculty: 'System',
+          title: 'System Ready',
+          content: 'Database maintenance completed. Academic hashes are now anchored to the local blockchain.',
+          time: 'Active'
+        });
+      }
+
+      container.innerHTML = messages.map(m => {
+        // Extract Initials for Avatar
+        const names = m.sender.split(' ');
+        const initials = names.length > 1
+          ? (names[0][0] + names[names.length - 1][0])
+          : names[0].substring(0, 2);
+
+        return `
+          <div class="announcement-card animate-slide-up">
+            <div class="announcement-avatar">${initials}</div>
+            <div class="announcement-content">
+              <div class="announcement-header">
+                <span class="announcement-author">${m.sender}</span>
+                <span class="badge badge-primary" style="font-size: 10px;">${m.faculty}</span>
+                <span class="announcement-time" style="margin-left: auto;">${m.time}</span>
+              </div>
+              <div style="font-weight: 700; margin: 4px 0; color: var(--text-main); font-size: 1.125rem;">${m.title}</div>
+              <div class="announcement-text">${m.content}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error('Announcements Error Details:', {
+        message: err.message,
+        stack: err.stack,
+        error: err
+      });
+      notifications.error('Failed to load broadcasts');
+    }
+  },
+
+  async loadCourses() {
+    const container = document.getElementById('courses-grid');
+    if (!container) return;
+
+    // Ensure visibility (fix for "came and gone" bug)
+    container.style.display = 'grid';
+    const matView = document.getElementById('course-materials-view');
+    if (matView) matView.style.display = 'none';
+
+    container.innerHTML = '<p class="p-dim">Syncing curriculum...</p>';
+
+    try {
+      const res = await api.get('/portal/student/courses');
+      const courses = res.data || [];
+
+      container.innerHTML = courses.map(c => `
+        <div class="course-card" onclick="StudentDashboard.loadMaterials('${c._id}', '${c.courseName}')">
+          <div class="course-header">
+            <div class="course-icon">📘</div>
+            <div class="course-info">
+              <h4 class="course-title">${c.courseName}</h4>
+              <p class="course-instructor">${c.department || 'Clinical Department'}</p>
+            </div>
+          </div>
+          <div class="course-progress">
+            <div class="course-progress-bar">
+              <div class="course-progress-fill" style="width: 75%"></div>
+            </div>
+            <div class="course-progress-text">
+              <span>Status</span>
+              <span>Enrolled</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary" style="margin-top:1.25rem; width:100%;">View Resources</button>
+        </div>
+      `).join('');
+    } catch (err) {
+      notifications.error('Failed to load courses');
+    }
+  },
+
+  async loadMaterials(courseId, title) {
+    const grid = document.getElementById('courses-grid');
+    if (grid) grid.style.display = 'none';
+    const view = document.getElementById('course-materials-view');
+    if (view) view.style.display = 'block';
+    const titleEl = document.getElementById('course-title-display');
+    if (titleEl) titleEl.innerText = title;
+
+    const list = document.getElementById('materials-list');
+    if (!list) return;
+    list.innerHTML = '<p class="p-dim">Unlocking secure materials...</p>';
+
+    try {
+      const res = await api.get(`/portal/edu/courses/${courseId}/materials`);
+      const materials = res.data || [];
+
+      if (materials.length === 0) {
+        list.innerHTML = '<div class="glass-card" style="text-align:center; padding:40px; grid-column: 1 / -1;"><p class="p-dim">No materials uploaded for this module yet.</p></div>';
+        return;
+      }
+
+      list.innerHTML = materials.map(m => `
+        <div class="glass-card" style="padding:20px; display:flex; flex-direction:column; gap:12px;">
+          <div style="font-size:24px;">${m.type === 'video' ? '📽️' : '📄'}</div>
+          <div style="font-weight:700; font-size:14px;">${m.title}</div>
+          <p class="p-dim" style="font-size:12px;">${m.description || 'Clinical Resource'}</p>
+          <a href="${m.url}" target="_blank" class="btn btn-primary" style="margin-top:auto; font-size:12px; justify-content:center;">Review Content</a>
+        </div>
+      `).join('');
+    } catch (err) { notifications.error('Failed to load materials'); }
+  },
+
+  async loadLiveExams() {
+    const container = document.getElementById('live-exams-grid');
+    if (!container) return;
+    container.innerHTML = '<p class="p-dim">Initializing proctored session list...</p>';
+
+    try {
+      const res = await api.get('/portal/student/exams');
+      const exams = res.data || [];
+
+      if (exams.length === 0) {
+        container.innerHTML = '<div class="glass-card" style="grid-column: 1 / -1; text-align:center; padding:60px;"><i class="fas fa-check-circle" style="font-size:48px; color:var(--secondary); margin-bottom:20px;"></i><h3 class="h2">No Active Exams</h3><p class="p-dim">You are all caught up. No proctored sessions are currently scheduled.</p></div>';
+        return;
+      }
+
+      container.innerHTML = exams.map(e => `
+        <div class="exam-card">
+          <div class="stat-icon green" style="margin-bottom: 0;">
+            <i class="fas fa-file-medical"></i>
+          </div>
+          <div class="exam-info">
+            <div class="exam-title">${e.title}</div>
+            <div class="exam-meta">${e.durationMinutes || 60} min • Academic Assessment</div>
+          </div>
+          <div class="exam-status live">LIVE</div>
+          <button onclick="StudentDashboard.joinExam('${e._id}')" class="btn btn-primary btn-sm">Join Hall</button>
+        </div>
+      `).join('');
+    } catch (err) { notifications.error('Failed to load exams'); }
+  },
+
+  async loadResults() {
+    const container = document.getElementById('results-detailed-list');
+    if (!container) return;
+    container.innerHTML = '<p class="p-dim">Calculating academic Standing...</p>';
+
+    try {
+      const res = await api.get('/portal/student/results');
+      const results = res.data || [];
+
+      if (results.length === 0) {
+        container.innerHTML = '<div class="glass-card" style="text-align:center; padding:60px;"><i class="fas fa-file-invoice" style="font-size:48px; color:var(--neutral-300); margin-bottom:20px;"></i><h3>No Transcripts Found</h3><p class="p-dim">Complete an exam to see your graded analysis here.</p></div>';
+        return;
+      }
+
+      container.innerHTML = results.map(r => `
+        <div class="exam-card">
+          <div class="stat-icon purple" style="margin-bottom: 0;">
+            <i class="fas fa-clipboard-check"></i>
+          </div>
+          <div class="exam-info">
+            <div class="exam-title">${r.sessionId ? r.sessionId.title : 'Examination Result'}</div>
+            <div class="exam-meta">${new Date(r.createdAt).toLocaleDateString()} • Secured</div>
+          </div>
+          <div class="exam-score">
+            <div class="exam-score-value" style="color: ${r.score >= 50 ? 'var(--success)' : 'var(--danger)'}">${r.score}%</div>
+            <div class="exam-score-label">Graded</div>
+          </div>
+          <a href="/result.html?resultId=${r._id}" class="btn btn-secondary btn-sm">Report</a>
+        </div>
+      `).join('');
+    } catch (err) { notifications.error('Failed to load results'); }
+  },
+
+  async loadCertificates() {
+    const list = document.getElementById('certificates-list');
+    if (!list) return;
+
+    // Ensure visibility (fix for "came and gone" bug)
+    list.style.display = 'grid';
+    const viewer = document.getElementById('certificate-viewer');
+    if (viewer) viewer.style.display = 'none';
+
+    list.innerHTML = '<p class="p-dim">Verifying blockchain credentials...</p>';
+
+    try {
+      const res = await api.get('/portal/student/courses');
+      const courses = res.data || [];
+
+      list.innerHTML = courses.map(c => `
+         <div class="glass-card" style="text-align:center; padding:32px;">
+          <div style="position:relative; display:inline-block;">
+            <div style="font-size:48px; margin-bottom:16px;">🏆</div>
+            <div style="position:absolute; top:0; right:-10px; color:var(--secondary); font-size:20px;"><i class="fas fa-certificate animate-pulse"></i></div>
+          </div>
+          <h4 class="h3" style="margin-bottom:8px;">${c.courseName}</h4>
+          <p class="p-dim" style="font-size:12px; margin-bottom:24px;">Digital Proficiency Badge • Blockchain Secured</p>
+          <button onclick="StudentDashboard.viewCertificate('${c._id}')" class="btn btn-primary" style="width:100%; justify-content:center;">Download Certificate</button>
+        </div>
+      `).join('');
+    } catch (err) { notifications.error('Failed to load certificates'); }
+  },
+
+  async viewCertificate(courseId) {
+    try {
+      const res = await api.get(`/portal/edu/certificates/${courseId}`);
+      if (!res.success) throw new Error(res.message);
+
+      const d = res.data;
+      const list = document.getElementById('certificates-list');
+      if (list) list.style.display = 'none';
+      const viewer = document.getElementById('certificate-viewer');
+      if (viewer) viewer.style.display = 'block';
+
+      const content = document.getElementById('cert-content');
+      if (content) content.innerHTML = `
+        <h1 style="font-size: 56px; color: var(--primary); margin-bottom: 8px; font-weight:900;">CERTIFICATE</h1>
+        <h2 style="font-size: 20px; color: var(--neutral-500); margin-bottom: 48px; letter-spacing:4px;">OF ACADEMIC COMPETENCE</h2>
+        <p style="font-size: 18px; font-style: italic; color: var(--neutral-600);">This academic achievement is proudly presented to</p>
+        <h3 style="font-size: 36px; margin: 24px 0; border-bottom: 3px solid var(--primary); display: inline-block; padding: 0 60px; font-weight:800;">${d.studentName}</h3>
+        <p style="font-size: 18px; font-style: italic; color: var(--neutral-600); margin-top:20px;">for mastering the comprehensive curriculum of</p>
+        <h4 style="font-size: 28px; margin-top: 12px; color: var(--neutral-800); font-weight:700;">${d.courseName}</h4>
+        <div style="margin-top: 80px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 40px;">
+          <div style="text-align: left;">
+            <div style="font-weight: 700; font-size:12px; color:var(--neutral-400);">ISSUE DATE</div>
+            <div style="font-weight: 600;">${new Date(d.issueDate).toLocaleDateString()}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 700; font-size:12px; color:var(--neutral-400);">VERIFICATION ID</div>
+            <div style="font-family: monospace; font-size:12px; color:var(--primary);">${d.certificateId}</div>
+          </div>
+        </div>
+      `;
+    } catch (err) { notifications.error('Certificate verification failed: ' + err.message); }
   },
 
   async renderAll() {
     try {
       const result = await api.get('/portal/student/dashboard');
-      
-      if (!result.success) {
-        throw new Error(result.message || 'Dashboard load failed');
-      }
+      if (!result.success) throw new Error(result.message);
 
-      const data = result.data;
-
-      this.renderProfile(data.profile);
-      this.renderStats(data.profile);
-      this.renderSubjectPerformance(data.subjectPerformance);
-      this.renderDeadlines(data.tasks);
-      this.renderRecentResults(data.recentResults);
-      this.renderAvailableExams(data.upcomingExams);
-    } catch (err) {
-      console.error('Dashboard error:', err);
-      
-      // If 403 or 401, user has wrong role or expired token
-      if (err.message && (err.message.includes('Access denied') || err.message.includes('Insufficient') || err.message.includes('INSUFFICIENT'))) {
-        notifications.error('Access denied. Please login as a student.');
-        setTimeout(() => auth.logout(), 2000);
-        return;
-      }
-
-      notifications.error('Failed to load dashboard data: ' + err.message);
-    }
+      const d = result.data;
+      this.renderProfile(d.profile);
+      this.renderStats(d.profile);
+      this.renderSubjectPerformance(d.subjectPerformance);
+      this.renderCharts(d.subjectPerformance, d.recentResults);
+    } catch (err) { notifications.error('Core sync failed: ' + err.message); }
   },
 
-  renderProfile(profile) {
-    if (!profile) return;
+  renderProfile(p) {
+    if (!p) return;
     const nameEl = document.getElementById('prof-name');
     const secEl = document.getElementById('prof-section');
-    if (nameEl) nameEl.innerText = (profile.name || 'Student').split(' ')[0];
-    if (secEl) secEl.innerText = profile.section || 'Sec 11-A';
+    if (nameEl) nameEl.innerText = p.name ? p.name.split(' ')[0] : 'Resident';
+    if (secEl) secEl.innerText = p.section || 'MCQ Pro Scholar';
   },
 
-  renderStats(profile) {
-    if (!profile) return;
+  renderStats(p) {
+    if (!p) return;
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
-    
-    set('stat-gpa', profile.gpa || '0.0');
-    set('stat-attendance', (profile.attendance || 0) + '%');
-    set('stat-sessions', `${profile.sessionsLogged || 0} / ${profile.totalSessions || 0} sessions`);
-    set('stat-rank', (profile.rank || 0) + 'th');
-    set('stat-peers', `vs ${profile.totalPeers || 0} Peer Dataset`);
-    set('stat-tasks', (profile.tasks || 4));
+    set('stat-gpa', p.gpa || '0.00');
+    set('stat-attendance', (p.attendance || 0) + '%');
+    set('stat-sessions', `${p.sessionsLogged || 0} / ${p.totalSessions || 0} Sessions`);
+    set('stat-tasks', p.tasks || 0);
+    set('stat-rank', this.formatRank(p.rank || 0));
+    set('stat-peers', `vs ${p.totalPeers || 0} Scholars`);
   },
 
   renderSubjectPerformance(subjects) {
     const container = document.getElementById('subject-performance-list');
     if (!container) return;
-    
     if (!subjects || subjects.length === 0) {
-      container.innerHTML = '<p class="p-dim">No subject data available.</p>';
+      container.innerHTML = '<p class="p-dim">No academic performance data available.</p>';
       return;
     }
-
     container.innerHTML = subjects.map(s => `
-      <div class="subject-item">
+      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--neutral-100);">
         <span style="font-weight: 500;">${s.subject}</span>
-        <span style="font-weight: 600; color: #2563eb;">${s.score}</span>
+        <span style="font-weight: 700; color: var(--primary);">${s.score}%</span>
       </div>
     `).join('');
   },
 
-  renderDeadlines(tasks) {
-    const container = document.getElementById('deadlines-list');
-    if (!container) return;
-
-    if (!tasks || tasks.length === 0) {
-      container.innerHTML = '<p class="p-dim">No upcoming deadlines.</p>';
-      return;
+  renderCharts(subjects, results) {
+    // Subject Mastery Bar
+    const ctxS = document.getElementById('subjectChart');
+    if (ctxS && subjects && typeof Chart !== 'undefined') {
+      if (this.chartS) this.chartS.destroy();
+      this.chartS = new Chart(ctxS, {
+        type: 'bar',
+        data: {
+          labels: subjects.map(s => s.subject),
+          datasets: [{
+            data: subjects.map(s => s.score),
+            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+            borderColor: '#4f46e5',
+            borderWidth: 2,
+            borderRadius: 8,
+            hoverBackgroundColor: '#4f46e5'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, max: 100, grid: { display: false }, ticks: { color: '#94a3b8' } },
+            y: { grid: { display: false }, ticks: { color: '#64748b', font: { weight: '600' } } }
+          }
+        }
+      });
     }
 
-    container.innerHTML = tasks.map(t => `
-      <div class="deadline-card">
-        <div style="font-size: 11px; color: #2563eb; font-weight: 600; margin-bottom: 4px;">${t.subjectCode || ''}</div>
-        <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">${t.title || 'Task'}</div>
-        <div class="flex-between">
-          <span class="badge badge-med">${t.priority || 'MED'}</span>
-          <span class="p-dim" style="font-size: 11px;">${t.deadline ? new Date(t.deadline).toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : ''}</span>
-        </div>
-      </div>
-    `).join('');
-  },
-
-  renderRecentResults(results) {
-    const container = document.getElementById('recent-results-simple');
-    if (!container) return;
-
-    if (!results || results.length === 0) {
-      container.innerHTML = '<p class="p-dim">No recent results.</p>';
-      return;
+    // Trend Line
+    const ctxT = document.getElementById('trendChart');
+    if (ctxT && results && typeof Chart !== 'undefined') {
+      if (this.chartT) this.chartT.destroy();
+      const rev = [...results].reverse();
+      this.chartT = new Chart(ctxT, {
+        type: 'line',
+        data: {
+          labels: rev.map(r => new Date(r.submittedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })),
+          datasets: [{
+            data: rev.map(r => r.percentage),
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.05)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#10b981'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' }, ticks: { display: false } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+          }
+        }
+      });
     }
-
-    container.innerHTML = results.slice(0, 3).map(r => `
-      <div style="padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
-        <div style="font-weight: 500; font-size: 14px;">${r.session ? r.session.title : 'Exam'}</div>
-        <div class="flex-between" style="margin-top: 4px;">
-          <span class="p-dim" style="font-size: 11px;">${r.submittedAt ? new Date(r.submittedAt).toLocaleDateString() : ''}</span>
-          <span style="font-weight: 600; color: ${r.percentage >= 50 ? '#10b981' : '#ef4444'};">${r.percentage || 0}%</span>
-        </div>
-      </div>
-    `).join('');
-  },
-
-  renderAvailableExams(exams) {
-    const container = document.getElementById('available-exams');
-    if (!container) return;
-
-    if (!exams || exams.length === 0) {
-      container.innerHTML = '<p class="p-dim">No live exams scheduled.</p>';
-      return;
-    }
-
-    container.innerHTML = exams.map(exam => `
-      <div class="glass-card" style="padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0;">
-        <div>
-          <div style="font-weight: 600;">${exam.title || 'Exam'}</div>
-          <div class="p-dim" style="font-size: 12px;">${exam.durationMinutes || 60} Mins${exam.scheduledStart ? ' • Starts: ' + new Date(exam.scheduledStart).toLocaleTimeString() : ''}</div>
-        </div>
-        <button onclick="StudentDashboard.joinExam('${exam._id}')" class="btn btn-primary" style="padding: 8px 16px;">Join</button>
-      </div>
-    `).join('');
   },
 
   async joinExam(sessionId) {
-    try {
+    if (confirm('Verify your environment: 1. Stable Camera 2. Silent Area 3. Fullscreen Ready. Enter Hall?')) {
       window.location.href = `/exam.html?sessionId=${sessionId}`;
-    } catch (err) {
-      notifications.error('Failed to join exam: ' + err.message);
     }
+  },
+
+  bindDashboardNav() {
+    document.querySelectorAll('.sidebar .nav-item[data-action]').forEach(item => {
+      item.addEventListener('click', () => {
+        const action = item.dataset.action;
+        const viewIdMap = {
+          'overview': 'dashboard',
+          'courses': 'courses',
+          'schedule': 'schedule',
+          'messages': 'messages',
+          'live-exams': 'live-exams',
+          'exam-results': 'exam-results',
+          'certificates': 'certificates'
+        };
+        const viewId = viewIdMap[action] || 'dashboard';
+
+        const url = new URL(window.location);
+        url.searchParams.set('view', viewId);
+        window.history.pushState({}, '', url);
+        this.showView(viewId);
+      });
+    });
+  },
+
+  formatRank(r) {
+    const n = Number(r); if (!n) return '--';
+    const j = n % 10, k = n % 100;
+    if (j === 1 && k !== 11) return `${n}st`;
+    if (j === 2 && k !== 12) return `${n}nd`;
+    if (j === 3 && k !== 13) return `${n}rd`;
+    return `${n}th`;
   }
 };
 

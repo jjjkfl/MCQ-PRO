@@ -1,0 +1,3139 @@
+{
+  "courses": [
+    {
+      "_id": "69eb55a77268fff105e88e18",
+      "courseName": "Course 1",
+      "teacherIds": [
+        "69eb55a77268fff105e88e16"
+      ],
+      "createdAt": "2026-04-24T11:36:07.242Z",
+      "updatedAt": "2026-04-24T11:36:07.242Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a77268fff105e88e1d",
+      "courseName": "Course 2",
+      "teacherIds": [
+        "69eb55a77268fff105e88e1b"
+      ],
+      "createdAt": "2026-04-24T11:36:07.408Z",
+      "updatedAt": "2026-04-24T11:36:07.408Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a77268fff105e88e22",
+      "courseName": "Course 3",
+      "teacherIds": [
+        "69eb55a77268fff105e88e20"
+      ],
+      "createdAt": "2026-04-24T11:36:07.587Z",
+      "updatedAt": "2026-04-24T11:36:07.587Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a77268fff105e88e27",
+      "courseName": "Course 4",
+      "teacherIds": [
+        "69eb55a77268fff105e88e25"
+      ],
+      "createdAt": "2026-04-24T11:36:07.753Z",
+      "updatedAt": "2026-04-24T11:36:07.753Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a77268fff105e88e2c",
+      "courseName": "Course 5",
+      "teacherIds": [
+        "69eb55a77268fff105e88e2a"
+      ],
+      "createdAt": "2026-04-24T11:36:07.899Z",
+      "updatedAt": "2026-04-24T11:36:07.899Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e31",
+      "courseName": "Course 6",
+      "teacherIds": [
+        "69eb55a77268fff105e88e2f"
+      ],
+      "createdAt": "2026-04-24T11:36:08.071Z",
+      "updatedAt": "2026-04-24T11:36:08.071Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e36",
+      "courseName": "Course 7",
+      "teacherIds": [
+        "69eb55a87268fff105e88e34"
+      ],
+      "createdAt": "2026-04-24T11:36:08.261Z",
+      "updatedAt": "2026-04-24T11:36:08.261Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e3b",
+      "courseName": "Course 8",
+      "teacherIds": [
+        "69eb55a87268fff105e88e39"
+      ],
+      "createdAt": "2026-04-24T11:36:08.439Z",
+      "updatedAt": "2026-04-24T11:36:08.439Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e40",
+      "courseName": "Course 9",
+      "teacherIds": [
+        "69eb55a87268fff105e88e3e"
+      ],
+      "createdAt": "2026-04-24T11:36:08.631Z",
+      "updatedAt": "2026-04-24T11:36:08.631Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e45",
+      "courseName": "Course 10",
+      "teacherIds": [
+        "69eb55a87268fff105e88e43"
+      ],
+      "createdAt": "2026-04-24T11:36:08.789Z",
+      "updatedAt": "2026-04-24T11:36:08.789Z",
+      "__v": 0
+    }
+  ],
+  "subjects": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c18",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "name": "Anatomy",
+      "code": "ANAT101",
+      "subject_type": "Both",
+      "applicable_classes": [
+        "69ea0c2e807d4e73dda82c0e",
+        "69ea0c2e807d4e73dda82c10"
+      ],
+      "createdAt": "2026-04-23T12:10:22.269Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c1a",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "name": "General Surgery",
+      "code": "SURG201",
+      "subject_type": "Both",
+      "applicable_classes": [
+        "69ea0c2e807d4e73dda82c10"
+      ],
+      "createdAt": "2026-04-23T12:10:22.272Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c1c",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "name": "Biology & Genetics",
+      "code": "BIO306",
+      "subject_type": "Theory",
+      "applicable_classes": [
+        "69ea0c2e807d4e73dda82c0e",
+        "69ea0c2e807d4e73dda82c10"
+      ],
+      "createdAt": "2026-04-23T12:10:22.275Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c1e",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "name": "Applied Mathematics",
+      "code": "MAT302",
+      "subject_type": "Theory",
+      "applicable_classes": [
+        "69ea0c2e807d4e73dda82c0e"
+      ],
+      "createdAt": "2026-04-23T12:10:22.279Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c21",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "name": "English Literature",
+      "code": "ENG304",
+      "subject_type": "Theory",
+      "applicable_classes": [
+        "69ea0c2e807d4e73dda82c0e",
+        "69ea0c2e807d4e73dda82c10"
+      ],
+      "createdAt": "2026-04-23T12:10:22.282Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c23",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "name": "Computer Science",
+      "code": "CS305",
+      "subject_type": "Practical",
+      "applicable_classes": [
+        "69ea0c2e807d4e73dda82c0e"
+      ],
+      "createdAt": "2026-04-23T12:10:22.285Z",
+      "__v": 0
+    }
+  ],
+  "mcqquestions": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c3f",
+      "chapter_id": "69ea0c2e807d4e73dda82c3b",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "subject_id": "69ea0c2e807d4e73dda82c18",
+      "question_text": "Which is the largest organ in the human body?",
+      "difficulty": "easy",
+      "marks": 1,
+      "options": [
+        {
+          "option_text": "Heart",
+          "option_order": "a",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c40"
+        },
+        {
+          "option_text": "Liver",
+          "option_order": "b",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c41"
+        },
+        {
+          "option_text": "Skin",
+          "option_order": "c",
+          "is_correct": true,
+          "_id": "69ea0c2e807d4e73dda82c42"
+        },
+        {
+          "option_text": "Lungs",
+          "option_order": "d",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c43"
+        }
+      ],
+      "createdAt": "2026-04-23T12:10:22.765Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c44",
+      "chapter_id": "69ea0c2e807d4e73dda82c3b",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "subject_id": "69ea0c2e807d4e73dda82c18",
+      "question_text": "How many bones are in the adult human body?",
+      "difficulty": "easy",
+      "marks": 1,
+      "options": [
+        {
+          "option_text": "206",
+          "option_order": "a",
+          "is_correct": true,
+          "_id": "69ea0c2e807d4e73dda82c45"
+        },
+        {
+          "option_text": "300",
+          "option_order": "b",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c46"
+        },
+        {
+          "option_text": "180",
+          "option_order": "c",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c47"
+        },
+        {
+          "option_text": "250",
+          "option_order": "d",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c48"
+        }
+      ],
+      "createdAt": "2026-04-23T12:10:22.766Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c49",
+      "chapter_id": "69ea0c2e807d4e73dda82c3b",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "subject_id": "69ea0c2e807d4e73dda82c18",
+      "question_text": "The femur is located in which part of the body?",
+      "difficulty": "medium",
+      "marks": 2,
+      "options": [
+        {
+          "option_text": "Arm",
+          "option_order": "a",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c4a"
+        },
+        {
+          "option_text": "Thigh",
+          "option_order": "b",
+          "is_correct": true,
+          "_id": "69ea0c2e807d4e73dda82c4b"
+        },
+        {
+          "option_text": "Rib cage",
+          "option_order": "c",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c4c"
+        },
+        {
+          "option_text": "Spine",
+          "option_order": "d",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c4d"
+        }
+      ],
+      "createdAt": "2026-04-23T12:10:22.766Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c4e",
+      "chapter_id": "69ea0c2e807d4e73dda82c3d",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "subject_id": "69ea0c2e807d4e73dda82c1a",
+      "question_text": "What is the primary sterilization method for surgical instruments?",
+      "difficulty": "easy",
+      "marks": 1,
+      "options": [
+        {
+          "option_text": "Dry Heat",
+          "option_order": "a",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c4f"
+        },
+        {
+          "option_text": "Autoclave",
+          "option_order": "b",
+          "is_correct": true,
+          "_id": "69ea0c2e807d4e73dda82c50"
+        },
+        {
+          "option_text": "UV Light",
+          "option_order": "c",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c51"
+        },
+        {
+          "option_text": "Gas sterilization",
+          "option_order": "d",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c52"
+        }
+      ],
+      "createdAt": "2026-04-23T12:10:22.767Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c53",
+      "chapter_id": "69ea0c2e807d4e73dda82c3d",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "subject_id": "69ea0c2e807d4e73dda82c1a",
+      "question_text": "Which instrument is used for cutting sutures?",
+      "difficulty": "medium",
+      "marks": 1,
+      "options": [
+        {
+          "option_text": "Forceps",
+          "option_order": "a",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c54"
+        },
+        {
+          "option_text": "Scalpel",
+          "option_order": "b",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c55"
+        },
+        {
+          "option_text": "Suture scissors",
+          "option_order": "c",
+          "is_correct": true,
+          "_id": "69ea0c2e807d4e73dda82c56"
+        },
+        {
+          "option_text": "Retractor",
+          "option_order": "d",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c57"
+        }
+      ],
+      "createdAt": "2026-04-23T12:10:22.768Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c58",
+      "chapter_id": "69ea0c2e807d4e73dda82c3d",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "subject_id": "69ea0c2e807d4e73dda82c1a",
+      "question_text": "Which of the following is a self-retaining retractor?",
+      "difficulty": "hard",
+      "marks": 3,
+      "options": [
+        {
+          "option_text": "Langenbeck",
+          "option_order": "a",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c59"
+        },
+        {
+          "option_text": "Balfour",
+          "option_order": "b",
+          "is_correct": true,
+          "_id": "69ea0c2e807d4e73dda82c5a"
+        },
+        {
+          "option_text": "Army-Navy",
+          "option_order": "c",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c5b"
+        },
+        {
+          "option_text": "Deaver",
+          "option_order": "d",
+          "is_correct": false,
+          "_id": "69ea0c2e807d4e73dda82c5c"
+        }
+      ],
+      "createdAt": "2026-04-23T12:10:22.768Z",
+      "__v": 0
+    }
+  ],
+  "results": [
+    {
+      "_id": "69ea5c44e2b68e0d6a54763b",
+      "studentId": "69ea0c2e807d4e73dda82c29",
+      "examId": "linws",
+      "score": 99,
+      "createdAt": "2026-04-23T17:52:04.964Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea5c51e2b68e0d6a547649",
+      "studentId": "69ea0c2e807d4e73dda82c29",
+      "examId": "linws",
+      "score": 84,
+      "createdAt": "2026-04-23T17:52:17.513Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea5c6ae2b68e0d6a547657",
+      "studentId": "69ea0c2e807d4e73dda82c29",
+      "examId": "linws",
+      "score": 60,
+      "createdAt": "2026-04-23T17:52:42.893Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea5c79e2b68e0d6a547677",
+      "studentId": "69ea0c2e807d4e73dda82c29",
+      "examId": "linws",
+      "score": 90,
+      "createdAt": "2026-04-23T17:52:57.295Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea5d87ee7aa1de6356013e",
+      "studentId": "69ea0c2e807d4e73dda82c29",
+      "examId": "linws",
+      "score": 63,
+      "createdAt": "2026-04-23T17:57:27.766Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea5d8fee7aa1de6356014c",
+      "studentId": "69ea0c2e807d4e73dda82c29",
+      "examId": "linws",
+      "score": 65,
+      "createdAt": "2026-04-23T17:57:35.245Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea5dbdee7aa1de6356015a",
+      "studentId": "69ea0c2e807d4e73dda82c29",
+      "examId": "linws",
+      "score": 76,
+      "createdAt": "2026-04-23T17:58:21.949Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea5f90d5127a8ab0911197",
+      "studentId": "69ea0c2e807d4e73dda82c29",
+      "examId": "linws",
+      "score": 85,
+      "createdAt": "2026-04-23T18:06:09.410Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea5f94d5127a8ab09111a5",
+      "studentId": "69ea0c2e807d4e73dda82c29",
+      "examId": "linws",
+      "score": 52,
+      "createdAt": "2026-04-23T18:06:12.045Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea66cc1f08df42adfaf556",
+      "studentId": "69ea0c2e807d4e73dda82c35",
+      "examId": "Anatomy 101",
+      "score": 0,
+      "totalMarks": 21,
+      "correctCount": 0,
+      "totalQuestions": 21,
+      "timeTaken": 77,
+      "violations": 8,
+      "answers": [
+        {
+          "questionId": "69ea580a5d365bf4cae0017b",
+          "questionText": "A line joining two endpoints is called:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "Line segment"
+            },
+            {
+              "label": "B",
+              "text": "A ray"
+            },
+            {
+              "label": "C",
+              "text": "Parallel lines"
+            },
+            {
+              "label": "D",
+              "text": "Intersecting lines"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "A",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae00180",
+          "questionText": "An acute angle is:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "More than 90 degrees"
+            },
+            {
+              "label": "B",
+              "text": "Less than 90 degrees"
+            },
+            {
+              "label": "C",
+              "text": "Equal to 90 degrees"
+            },
+            {
+              "label": "D",
+              "text": "Equal to 180 degrees"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "B",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae00185",
+          "questionText": "A reflex angle is:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "More than 90 degrees"
+            },
+            {
+              "label": "B",
+              "text": "Equal to 90 degrees"
+            },
+            {
+              "label": "C",
+              "text": "More than 180 degrees"
+            },
+            {
+              "label": "D",
+              "text": "Equal to 180 degrees"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "C",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae0018a",
+          "questionText": "A straight angle is equal to:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "0°"
+            },
+            {
+              "label": "B",
+              "text": "90°"
+            },
+            {
+              "label": "C",
+              "text": "180°"
+            },
+            {
+              "label": "D",
+              "text": "360°"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "C",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae0018f",
+          "questionText": "Two angles whose sum is equal to 180° are called:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "Vertically opposite angles"
+            },
+            {
+              "label": "B",
+              "text": "Complementary angles"
+            },
+            {
+              "label": "C",
+              "text": "Adjacent angles"
+            },
+            {
+              "label": "D",
+              "text": "Supplementary angles"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "D",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae00194",
+          "questionText": "Intersecting lines cut each other at:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "One point"
+            },
+            {
+              "label": "B",
+              "text": "Two points"
+            },
+            {
+              "label": "C",
+              "text": "Three points"
+            },
+            {
+              "label": "D",
+              "text": "Null"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "A",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae00199",
+          "questionText": "Two parallel lines intersect at:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "One point"
+            },
+            {
+              "label": "B",
+              "text": "Two points"
+            },
+            {
+              "label": "C",
+              "text": "Three points"
+            },
+            {
+              "label": "D",
+              "text": "Null"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "D",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae0019e",
+          "questionText": "If two lines intersect each other, then the vertically opposite angles are:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "Equal"
+            },
+            {
+              "label": "B",
+              "text": "Unequal"
+            },
+            {
+              "label": "C",
+              "text": "Cannot be determined"
+            },
+            {
+              "label": "D",
+              "text": "None of the above"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "A",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001a3",
+          "questionText": "In the figure below, which of the following are corresponding angle pairs?",
+          "image": "/uploads/docx-img-728227a04b1370ae.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "∠p and ∠q"
+            },
+            {
+              "label": "B",
+              "text": "∠p and ∠w"
+            },
+            {
+              "label": "C",
+              "text": "∠p and ∠x"
+            },
+            {
+              "label": "D",
+              "text": "∠p and ∠z"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "B",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001a8",
+          "questionText": "If AB || CD, EF ⊥ CD and ∠GED = 135° as per the figure given below. The value of ∠AGE is:",
+          "image": "/uploads/docx-img-359b677974fec154.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "120°"
+            },
+            {
+              "label": "B",
+              "text": "140°"
+            },
+            {
+              "label": "C",
+              "text": "90°"
+            },
+            {
+              "label": "D",
+              "text": "135°"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "D",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001ad",
+          "questionText": "An exterior angle of a triangle is 105° and its two interior opposite angles are equal. Each of these equal angles is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "37 ½°"
+            },
+            {
+              "label": "B",
+              "text": "72 ½°"
+            },
+            {
+              "label": "C",
+              "text": "75°"
+            },
+            {
+              "label": "D",
+              "text": "52 ½°"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "D",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001b2",
+          "questionText": "If one of the angles of a triangle is 130°, then the angle between the bisectors of the other two angles can be",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "50°"
+            },
+            {
+              "label": "B",
+              "text": "65°"
+            },
+            {
+              "label": "C",
+              "text": "145°"
+            },
+            {
+              "label": "D",
+              "text": "155°"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "D",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001b7",
+          "questionText": "If two interior angles on the same side of a transversal intersecting two parallel lines are in the ratio 2 : 3, then the greater of the two angles is:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "54°"
+            },
+            {
+              "label": "B",
+              "text": "108°"
+            },
+            {
+              "label": "C",
+              "text": "120°"
+            },
+            {
+              "label": "D",
+              "text": "136°"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "B",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001bc",
+          "questionText": "If one angle of a triangle is equal to the sum of the other two angles, then the triangle is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "a right triangle"
+            },
+            {
+              "label": "B",
+              "text": "an isosceles triangle"
+            },
+            {
+              "label": "C",
+              "text": "an equilateral triangle"
+            },
+            {
+              "label": "D",
+              "text": "an obtuse triangle"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "A",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001c1",
+          "questionText": "The angles of a triangle are in the ratio 5 : 3: 7. The triangle is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "a right triangle"
+            },
+            {
+              "label": "B",
+              "text": "an acute-angled triangle"
+            },
+            {
+              "label": "C",
+              "text": "an obtuse-angled triangle"
+            },
+            {
+              "label": "D",
+              "text": "an isosceles triangle"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "B",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001c6",
+          "questionText": "Angles of a triangle are in the ratio 2: 4 : 3. The smallest angle of the triangle is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "20°"
+            },
+            {
+              "label": "B",
+              "text": "40°"
+            },
+            {
+              "label": "C",
+              "text": "60°"
+            },
+            {
+              "label": "D",
+              "text": "80°"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "B",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001cb",
+          "questionText": "In the given figure, POQ is a line. The value of x is",
+          "image": "/uploads/docx-img-f0240f4f283a06b6.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "20"
+            },
+            {
+              "label": "B",
+              "text": "25"
+            },
+            {
+              "label": "C",
+              "text": "30"
+            },
+            {
+              "label": "D",
+              "text": "35"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "A",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001d0",
+          "questionText": "In the given figure, , if AB || CD || EF, PQ || RS, ∠RQD = 25° and ∠CQP = 60°, then ∠QRS is equal to",
+          "image": "/uploads/docx-img-1387b944cb1aafcf.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "85°"
+            },
+            {
+              "label": "B",
+              "text": "110°"
+            },
+            {
+              "label": "C",
+              "text": "135°"
+            },
+            {
+              "label": "D",
+              "text": "145°"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "D",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001d5",
+          "questionText": "An obtuse angle is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "Less than 90°"
+            },
+            {
+              "label": "B",
+              "text": "Greater than 90°"
+            },
+            {
+              "label": "C",
+              "text": "Equal to 90°"
+            },
+            {
+              "label": "D",
+              "text": "Equal to 180°"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "B",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea580a5d365bf4cae001da",
+          "questionText": "In the given figure, if OP||RS, ∠OPQ = 110° and ∠QRS = 130°, then ∠PQR is equal to",
+          "image": "/uploads/docx-img-691ecddaad9d0adc.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "40°"
+            },
+            {
+              "label": "B",
+              "text": "50°"
+            },
+            {
+              "label": "C",
+              "text": "60°"
+            },
+            {
+              "label": "D",
+              "text": "70°"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "C",
+          "isCorrect": false,
+          "marks": 1
+        },
+        {
+          "questionId": "69ea0c2e807d4e73dda82c66",
+          "questionText": "Primary sterilization method?",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "Heat"
+            },
+            {
+              "label": "B",
+              "text": "Autoclave"
+            },
+            {
+              "label": "C",
+              "text": "UV"
+            },
+            {
+              "label": "D",
+              "text": "Gas"
+            }
+          ],
+          "selectedAnswer": "",
+          "correctAnswer": "B",
+          "isCorrect": false,
+          "marks": 1
+        }
+      ],
+      "createdAt": "2026-04-23T18:37:00.593Z",
+      "__v": 0
+    }
+  ],
+  "sessions": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c6c",
+      "examId": "Anatomy 101",
+      "startTime": "2026-04-23T12:10:22.814Z",
+      "duration": 60,
+      "participants": [],
+      "status": "active",
+      "createdAt": "2026-04-23T12:10:22.814Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea58ae5d365bf4cae00327",
+      "examId": "linws",
+      "startTime": "2026-04-23T17:36:00.000Z",
+      "duration": 60,
+      "participants": [],
+      "status": "active",
+      "createdAt": "2026-04-23T17:36:46.664Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb0349d37d80d1069ed9f0",
+      "courseId": "69ea7832d73fffb0b7eb066f",
+      "division": "A",
+      "title": "isa",
+      "questions": [],
+      "startTime": "2026-04-24T05:40:00.000Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T05:44:42.049Z",
+      "updatedAt": "2026-04-24T05:44:42.049Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb035cd37d80d1069ed9f6",
+      "courseId": "69ea7832d73fffb0b7eb066f",
+      "division": "A",
+      "title": "fewf",
+      "questions": [],
+      "startTime": "2026-04-24T05:44:00.000Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T05:45:00.185Z",
+      "updatedAt": "2026-04-24T05:45:00.185Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb112325bacfebbbb6ca42",
+      "courseId": "69ea7832d73fffb0b7eb066f",
+      "division": "A",
+      "title": "isa",
+      "questions": [],
+      "startTime": "2026-04-24T06:37:00.000Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T06:43:47.990Z",
+      "updatedAt": "2026-04-24T06:43:47.990Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb113725bacfebbbb6ca4a",
+      "courseId": "69ea7832d73fffb0b7eb066f",
+      "division": "A",
+      "title": "midterm",
+      "questions": [],
+      "startTime": "2026-04-24T06:44:00.000Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T06:44:07.728Z",
+      "updatedAt": "2026-04-24T06:44:07.728Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d1168911",
+      "courseId": "69eb4991ba69be55d11688e1",
+      "division": "A",
+      "title": "Live Exam: Course 1",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d1168913"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d1168914"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d1168915"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d1168916"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d1168912"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.847Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.853Z",
+      "updatedAt": "2026-04-24T10:44:33.853Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d1168918",
+      "courseId": "69eb4991ba69be55d11688e6",
+      "division": "A",
+      "title": "Live Exam: Course 2",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d116891a"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d116891b"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d116891c"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d116891d"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d1168919"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.857Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.858Z",
+      "updatedAt": "2026-04-24T10:44:33.858Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d116891f",
+      "courseId": "69eb4991ba69be55d11688eb",
+      "division": "A",
+      "title": "Live Exam: Course 3",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d1168921"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d1168922"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d1168923"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d1168924"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d1168920"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.860Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.861Z",
+      "updatedAt": "2026-04-24T10:44:33.861Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d1168926",
+      "courseId": "69eb4991ba69be55d11688f0",
+      "division": "A",
+      "title": "Live Exam: Course 4",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d1168928"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d1168929"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d116892a"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d116892b"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d1168927"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.863Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.864Z",
+      "updatedAt": "2026-04-24T10:44:33.864Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d116892d",
+      "courseId": "69eb4991ba69be55d11688f5",
+      "division": "A",
+      "title": "Live Exam: Course 5",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d116892f"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d1168930"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d1168931"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d1168932"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d116892e"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.866Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.867Z",
+      "updatedAt": "2026-04-24T10:44:33.867Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d1168934",
+      "courseId": "69eb4991ba69be55d11688fa",
+      "division": "A",
+      "title": "Live Exam: Course 6",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d1168936"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d1168937"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d1168938"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d1168939"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d1168935"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.869Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.870Z",
+      "updatedAt": "2026-04-24T10:44:33.870Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d116893b",
+      "courseId": "69eb4991ba69be55d11688ff",
+      "division": "A",
+      "title": "Live Exam: Course 7",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d116893d"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d116893e"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d116893f"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d1168940"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d116893c"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.871Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.872Z",
+      "updatedAt": "2026-04-24T10:44:33.872Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d1168942",
+      "courseId": "69eb4991ba69be55d1168904",
+      "division": "A",
+      "title": "Live Exam: Course 8",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d1168944"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d1168945"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d1168946"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d1168947"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d1168943"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.874Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.875Z",
+      "updatedAt": "2026-04-24T10:44:33.875Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d1168949",
+      "courseId": "69eb4991ba69be55d1168909",
+      "division": "A",
+      "title": "Live Exam: Course 9",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d116894b"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d116894c"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d116894d"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d116894e"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d116894a"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.876Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.877Z",
+      "updatedAt": "2026-04-24T10:44:33.877Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb4991ba69be55d1168950",
+      "courseId": "69eb4991ba69be55d116890e",
+      "division": "A",
+      "title": "Live Exam: Course 10",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb4991ba69be55d1168952"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb4991ba69be55d1168953"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb4991ba69be55d1168954"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb4991ba69be55d1168955"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb4991ba69be55d1168951"
+        }
+      ],
+      "startTime": "2026-04-24T10:44:33.878Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T10:44:33.880Z",
+      "updatedAt": "2026-04-24T10:44:33.880Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e48",
+      "courseId": "69eb55a77268fff105e88e18",
+      "division": "A",
+      "title": "Live Exam: Course 1",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e4a"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e4b"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e4c"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e4d"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e49"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.795Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.807Z",
+      "updatedAt": "2026-04-24T11:36:08.807Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e4f",
+      "courseId": "69eb55a77268fff105e88e1d",
+      "division": "A",
+      "title": "Live Exam: Course 2",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e51"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e52"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e53"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e54"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e50"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.815Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.818Z",
+      "updatedAt": "2026-04-24T11:36:08.818Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e56",
+      "courseId": "69eb55a77268fff105e88e22",
+      "division": "A",
+      "title": "Live Exam: Course 3",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e58"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e59"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e5a"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e5b"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e57"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.822Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.823Z",
+      "updatedAt": "2026-04-24T11:36:08.823Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e5d",
+      "courseId": "69eb55a77268fff105e88e27",
+      "division": "A",
+      "title": "Live Exam: Course 4",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e5f"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e60"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e61"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e62"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e5e"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.828Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.830Z",
+      "updatedAt": "2026-04-24T11:36:08.830Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e64",
+      "courseId": "69eb55a77268fff105e88e2c",
+      "division": "A",
+      "title": "Live Exam: Course 5",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e66"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e67"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e68"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e69"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e65"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.835Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.837Z",
+      "updatedAt": "2026-04-24T11:36:08.837Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e6b",
+      "courseId": "69eb55a87268fff105e88e31",
+      "division": "A",
+      "title": "Live Exam: Course 6",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e6d"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e6e"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e6f"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e70"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e6c"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.840Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.841Z",
+      "updatedAt": "2026-04-24T11:36:08.841Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e72",
+      "courseId": "69eb55a87268fff105e88e36",
+      "division": "A",
+      "title": "Live Exam: Course 7",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e74"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e75"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e76"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e77"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e73"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.846Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.849Z",
+      "updatedAt": "2026-04-24T11:36:08.849Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e79",
+      "courseId": "69eb55a87268fff105e88e3b",
+      "division": "A",
+      "title": "Live Exam: Course 8",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e7b"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e7c"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e7d"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e7e"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e7a"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.852Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.855Z",
+      "updatedAt": "2026-04-24T11:36:08.855Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e80",
+      "courseId": "69eb55a87268fff105e88e40",
+      "division": "A",
+      "title": "Live Exam: Course 9",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e82"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e83"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e84"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e85"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e81"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.859Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.862Z",
+      "updatedAt": "2026-04-24T11:36:08.862Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a87268fff105e88e87",
+      "courseId": "69eb55a87268fff105e88e45",
+      "division": "A",
+      "title": "Live Exam: Course 10",
+      "status": "active",
+      "questions": [
+        {
+          "questionText": "What is the primary function of the cardiovascular system?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Transport nutrients and oxygen",
+              "_id": "69eb55a87268fff105e88e89"
+            },
+            {
+              "label": "B",
+              "text": "Regulate body temperature",
+              "_id": "69eb55a87268fff105e88e8a"
+            },
+            {
+              "label": "C",
+              "text": "Digestion of food",
+              "_id": "69eb55a87268fff105e88e8b"
+            },
+            {
+              "label": "D",
+              "text": "Filter blood",
+              "_id": "69eb55a87268fff105e88e8c"
+            }
+          ],
+          "correctAnswer": "A",
+          "marks": 1,
+          "_id": "69eb55a87268fff105e88e88"
+        }
+      ],
+      "startTime": "2026-04-24T11:36:08.866Z",
+      "duration": 60,
+      "createdAt": "2026-04-24T11:36:08.867Z",
+      "updatedAt": "2026-04-24T11:36:08.867Z",
+      "__v": 0
+    }
+  ],
+  "examsecuritylogs": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c62",
+      "exam_id": "69ea0c2e807d4e73dda82c5e",
+      "chapter_id": "69ea0c2e807d4e73dda82c3b",
+      "user_id": "69ea0c2e807d4e73dda82c29",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "violation_type": "tab-switch",
+      "session_id": "sess-001",
+      "ip_address": "192.168.1.10",
+      "user_agent": "Mozilla/5.0 Chrome/120",
+      "timestamp": "2026-04-23T12:10:22.801Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c63",
+      "exam_id": "69ea0c2e807d4e73dda82c5e",
+      "chapter_id": "69ea0c2e807d4e73dda82c3b",
+      "user_id": "69ea0c2e807d4e73dda82c35",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "violation_type": "fullscreen-exit",
+      "session_id": "sess-002",
+      "ip_address": "192.168.1.11",
+      "user_agent": "Mozilla/5.0 Firefox/119",
+      "timestamp": "2026-04-23T12:10:22.802Z",
+      "__v": 0
+    }
+  ],
+  "sections": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c12",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "class_id": "69ea0c2e807d4e73dda82c0e",
+      "name": "A",
+      "order": 1,
+      "is_active": true,
+      "createdAt": "2026-04-23T12:10:22.258Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c14",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "class_id": "69ea0c2e807d4e73dda82c0e",
+      "name": "B",
+      "order": 2,
+      "is_active": true,
+      "createdAt": "2026-04-23T12:10:22.261Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c16",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "class_id": "69ea0c2e807d4e73dda82c10",
+      "name": "A",
+      "order": 1,
+      "is_active": true,
+      "createdAt": "2026-04-23T12:10:22.264Z",
+      "__v": 0
+    }
+  ],
+  "mcqchapters": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c3b",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "assignment_id": "69ea0c2e807d4e73dda82c37",
+      "subject_id": "69ea0c2e807d4e73dda82c18",
+      "class_id": "69ea0c2e807d4e73dda82c0e",
+      "name": "Chapter 1: Introduction to Human Anatomy",
+      "description": "Basics of human body systems and organ structures.",
+      "time_limit": 30,
+      "createdAt": "2026-04-23T12:10:22.753Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c3d",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "assignment_id": "69ea0c2e807d4e73dda82c39",
+      "subject_id": "69ea0c2e807d4e73dda82c1a",
+      "class_id": "69ea0c2e807d4e73dda82c10",
+      "name": "Chapter 1: Surgical Instruments & Sterilization",
+      "description": "Identify and classify common surgical instruments.",
+      "time_limit": 45,
+      "createdAt": "2026-04-23T12:10:22.757Z",
+      "__v": 0
+    }
+  ],
+  "teacherassignments": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c37",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "teacher_id": "69ea0c2e807d4e73dda82c25",
+      "class_id": "69ea0c2e807d4e73dda82c0e",
+      "section_id": "69ea0c2e807d4e73dda82c12",
+      "subject_id": "69ea0c2e807d4e73dda82c18",
+      "academic_year": "2025-26",
+      "assignment_type": "Regular",
+      "is_primary_teacher": true,
+      "createdAt": "2026-04-23T12:10:22.744Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c39",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "teacher_id": "69ea0c2e807d4e73dda82c25",
+      "class_id": "69ea0c2e807d4e73dda82c10",
+      "section_id": "69ea0c2e807d4e73dda82c16",
+      "subject_id": "69ea0c2e807d4e73dda82c1a",
+      "academic_year": "2025-26",
+      "assignment_type": "Regular",
+      "is_primary_teacher": true,
+      "createdAt": "2026-04-23T12:10:22.748Z",
+      "__v": 0
+    }
+  ],
+  "schools": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c0b",
+      "name": "Surgical Academy of Medical Sciences",
+      "name_slug": "surgical-academy",
+      "board_type": "CBSE",
+      "subscription_plan": "Premium",
+      "max_students_teachers": 500,
+      "is_active": true,
+      "createdAt": "2026-04-23T12:10:22.214Z",
+      "__v": 0
+    }
+  ],
+  "mcqbanks": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c65",
+      "title": "Surgical Foundations",
+      "subject": "General Surgery",
+      "questions": [
+        {
+          "questionText": "Primary sterilization method?",
+          "options": [
+            {
+              "label": "A",
+              "text": "Heat",
+              "_id": "69ea0c2e807d4e73dda82c67"
+            },
+            {
+              "label": "B",
+              "text": "Autoclave",
+              "_id": "69ea0c2e807d4e73dda82c68"
+            },
+            {
+              "label": "C",
+              "text": "UV",
+              "_id": "69ea0c2e807d4e73dda82c69"
+            },
+            {
+              "label": "D",
+              "text": "Gas",
+              "_id": "69ea0c2e807d4e73dda82c6a"
+            }
+          ],
+          "correctAnswer": "B",
+          "marks": 1,
+          "_id": "69ea0c2e807d4e73dda82c66"
+        }
+      ],
+      "createdBy": "69ea0c2e807d4e73dda82c25",
+      "createdAt": "2026-04-23T12:10:22.808Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea580a5d365bf4cae0017a",
+      "title": "lines",
+      "subject": "maths",
+      "questions": [
+        {
+          "questionText": "A line joining two endpoints is called:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "Line segment",
+              "_id": "69ea580a5d365bf4cae0017c"
+            },
+            {
+              "label": "B",
+              "text": "A ray",
+              "_id": "69ea580a5d365bf4cae0017d"
+            },
+            {
+              "label": "C",
+              "text": "Parallel lines",
+              "_id": "69ea580a5d365bf4cae0017e"
+            },
+            {
+              "label": "D",
+              "text": "Intersecting lines",
+              "_id": "69ea580a5d365bf4cae0017f"
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae0017b"
+        },
+        {
+          "questionText": "An acute angle is:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "More than 90 degrees",
+              "_id": "69ea580a5d365bf4cae00181"
+            },
+            {
+              "label": "B",
+              "text": "Less than 90 degrees",
+              "_id": "69ea580a5d365bf4cae00182"
+            },
+            {
+              "label": "C",
+              "text": "Equal to 90 degrees",
+              "_id": "69ea580a5d365bf4cae00183"
+            },
+            {
+              "label": "D",
+              "text": "Equal to 180 degrees",
+              "_id": "69ea580a5d365bf4cae00184"
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae00180"
+        },
+        {
+          "questionText": "A reflex angle is:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "More than 90 degrees",
+              "_id": "69ea580a5d365bf4cae00186"
+            },
+            {
+              "label": "B",
+              "text": "Equal to 90 degrees",
+              "_id": "69ea580a5d365bf4cae00187"
+            },
+            {
+              "label": "C",
+              "text": "More than 180 degrees",
+              "_id": "69ea580a5d365bf4cae00188"
+            },
+            {
+              "label": "D",
+              "text": "Equal to 180 degrees",
+              "_id": "69ea580a5d365bf4cae00189"
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae00185"
+        },
+        {
+          "questionText": "A straight angle is equal to:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "0°",
+              "_id": "69ea580a5d365bf4cae0018b"
+            },
+            {
+              "label": "B",
+              "text": "90°",
+              "_id": "69ea580a5d365bf4cae0018c"
+            },
+            {
+              "label": "C",
+              "text": "180°",
+              "_id": "69ea580a5d365bf4cae0018d"
+            },
+            {
+              "label": "D",
+              "text": "360°",
+              "_id": "69ea580a5d365bf4cae0018e"
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae0018a"
+        },
+        {
+          "questionText": "Two angles whose sum is equal to 180° are called:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "Vertically opposite angles",
+              "_id": "69ea580a5d365bf4cae00190"
+            },
+            {
+              "label": "B",
+              "text": "Complementary angles",
+              "_id": "69ea580a5d365bf4cae00191"
+            },
+            {
+              "label": "C",
+              "text": "Adjacent angles",
+              "_id": "69ea580a5d365bf4cae00192"
+            },
+            {
+              "label": "D",
+              "text": "Supplementary angles",
+              "_id": "69ea580a5d365bf4cae00193"
+            }
+          ],
+          "correctAnswer": "D",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae0018f"
+        },
+        {
+          "questionText": "Intersecting lines cut each other at:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "One point",
+              "_id": "69ea580a5d365bf4cae00195"
+            },
+            {
+              "label": "B",
+              "text": "Two points",
+              "_id": "69ea580a5d365bf4cae00196"
+            },
+            {
+              "label": "C",
+              "text": "Three points",
+              "_id": "69ea580a5d365bf4cae00197"
+            },
+            {
+              "label": "D",
+              "text": "Null",
+              "_id": "69ea580a5d365bf4cae00198"
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae00194"
+        },
+        {
+          "questionText": "Two parallel lines intersect at:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "One point",
+              "_id": "69ea580a5d365bf4cae0019a"
+            },
+            {
+              "label": "B",
+              "text": "Two points",
+              "_id": "69ea580a5d365bf4cae0019b"
+            },
+            {
+              "label": "C",
+              "text": "Three points",
+              "_id": "69ea580a5d365bf4cae0019c"
+            },
+            {
+              "label": "D",
+              "text": "Null",
+              "_id": "69ea580a5d365bf4cae0019d"
+            }
+          ],
+          "correctAnswer": "D",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae00199"
+        },
+        {
+          "questionText": "If two lines intersect each other, then the vertically opposite angles are:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "Equal",
+              "_id": "69ea580a5d365bf4cae0019f"
+            },
+            {
+              "label": "B",
+              "text": "Unequal",
+              "_id": "69ea580a5d365bf4cae001a0"
+            },
+            {
+              "label": "C",
+              "text": "Cannot be determined",
+              "_id": "69ea580a5d365bf4cae001a1"
+            },
+            {
+              "label": "D",
+              "text": "None of the above",
+              "_id": "69ea580a5d365bf4cae001a2"
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae0019e"
+        },
+        {
+          "questionText": "In the figure below, which of the following are corresponding angle pairs?",
+          "image": "/uploads/docx-img-728227a04b1370ae.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "∠p and ∠q",
+              "_id": "69ea580a5d365bf4cae001a4"
+            },
+            {
+              "label": "B",
+              "text": "∠p and ∠w",
+              "_id": "69ea580a5d365bf4cae001a5"
+            },
+            {
+              "label": "C",
+              "text": "∠p and ∠x",
+              "_id": "69ea580a5d365bf4cae001a6"
+            },
+            {
+              "label": "D",
+              "text": "∠p and ∠z",
+              "_id": "69ea580a5d365bf4cae001a7"
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001a3"
+        },
+        {
+          "questionText": "If AB || CD, EF ⊥ CD and ∠GED = 135° as per the figure given below. The value of ∠AGE is:",
+          "image": "/uploads/docx-img-359b677974fec154.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "120°",
+              "_id": "69ea580a5d365bf4cae001a9"
+            },
+            {
+              "label": "B",
+              "text": "140°",
+              "_id": "69ea580a5d365bf4cae001aa"
+            },
+            {
+              "label": "C",
+              "text": "90°",
+              "_id": "69ea580a5d365bf4cae001ab"
+            },
+            {
+              "label": "D",
+              "text": "135°",
+              "_id": "69ea580a5d365bf4cae001ac"
+            }
+          ],
+          "correctAnswer": "D",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001a8"
+        },
+        {
+          "questionText": "An exterior angle of a triangle is 105° and its two interior opposite angles are equal. Each of these equal angles is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "37 ½°",
+              "_id": "69ea580a5d365bf4cae001ae"
+            },
+            {
+              "label": "B",
+              "text": "72 ½°",
+              "_id": "69ea580a5d365bf4cae001af"
+            },
+            {
+              "label": "C",
+              "text": "75°",
+              "_id": "69ea580a5d365bf4cae001b0"
+            },
+            {
+              "label": "D",
+              "text": "52 ½°",
+              "_id": "69ea580a5d365bf4cae001b1"
+            }
+          ],
+          "correctAnswer": "D",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001ad"
+        },
+        {
+          "questionText": "If one of the angles of a triangle is 130°, then the angle between the bisectors of the other two angles can be",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "50°",
+              "_id": "69ea580a5d365bf4cae001b3"
+            },
+            {
+              "label": "B",
+              "text": "65°",
+              "_id": "69ea580a5d365bf4cae001b4"
+            },
+            {
+              "label": "C",
+              "text": "145°",
+              "_id": "69ea580a5d365bf4cae001b5"
+            },
+            {
+              "label": "D",
+              "text": "155°",
+              "_id": "69ea580a5d365bf4cae001b6"
+            }
+          ],
+          "correctAnswer": "D",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001b2"
+        },
+        {
+          "questionText": "If two interior angles on the same side of a transversal intersecting two parallel lines are in the ratio 2 : 3, then the greater of the two angles is:",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "54°",
+              "_id": "69ea580a5d365bf4cae001b8"
+            },
+            {
+              "label": "B",
+              "text": "108°",
+              "_id": "69ea580a5d365bf4cae001b9"
+            },
+            {
+              "label": "C",
+              "text": "120°",
+              "_id": "69ea580a5d365bf4cae001ba"
+            },
+            {
+              "label": "D",
+              "text": "136°",
+              "_id": "69ea580a5d365bf4cae001bb"
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001b7"
+        },
+        {
+          "questionText": "If one angle of a triangle is equal to the sum of the other two angles, then the triangle is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "a right triangle",
+              "_id": "69ea580a5d365bf4cae001bd"
+            },
+            {
+              "label": "B",
+              "text": "an isosceles triangle",
+              "_id": "69ea580a5d365bf4cae001be"
+            },
+            {
+              "label": "C",
+              "text": "an equilateral triangle",
+              "_id": "69ea580a5d365bf4cae001bf"
+            },
+            {
+              "label": "D",
+              "text": "an obtuse triangle",
+              "_id": "69ea580a5d365bf4cae001c0"
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001bc"
+        },
+        {
+          "questionText": "The angles of a triangle are in the ratio 5 : 3: 7. The triangle is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "a right triangle",
+              "_id": "69ea580a5d365bf4cae001c2"
+            },
+            {
+              "label": "B",
+              "text": "an acute-angled triangle",
+              "_id": "69ea580a5d365bf4cae001c3"
+            },
+            {
+              "label": "C",
+              "text": "an obtuse-angled triangle",
+              "_id": "69ea580a5d365bf4cae001c4"
+            },
+            {
+              "label": "D",
+              "text": "an isosceles triangle",
+              "_id": "69ea580a5d365bf4cae001c5"
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001c1"
+        },
+        {
+          "questionText": "Angles of a triangle are in the ratio 2: 4 : 3. The smallest angle of the triangle is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "20°",
+              "_id": "69ea580a5d365bf4cae001c7"
+            },
+            {
+              "label": "B",
+              "text": "40°",
+              "_id": "69ea580a5d365bf4cae001c8"
+            },
+            {
+              "label": "C",
+              "text": "60°",
+              "_id": "69ea580a5d365bf4cae001c9"
+            },
+            {
+              "label": "D",
+              "text": "80°",
+              "_id": "69ea580a5d365bf4cae001ca"
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001c6"
+        },
+        {
+          "questionText": "In the given figure, POQ is a line. The value of x is",
+          "image": "/uploads/docx-img-f0240f4f283a06b6.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "20",
+              "_id": "69ea580a5d365bf4cae001cc"
+            },
+            {
+              "label": "B",
+              "text": "25",
+              "_id": "69ea580a5d365bf4cae001cd"
+            },
+            {
+              "label": "C",
+              "text": "30",
+              "_id": "69ea580a5d365bf4cae001ce"
+            },
+            {
+              "label": "D",
+              "text": "35",
+              "_id": "69ea580a5d365bf4cae001cf"
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001cb"
+        },
+        {
+          "questionText": "In the given figure, , if AB || CD || EF, PQ || RS, ∠RQD = 25° and ∠CQP = 60°, then ∠QRS is equal to",
+          "image": "/uploads/docx-img-1387b944cb1aafcf.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "85°",
+              "_id": "69ea580a5d365bf4cae001d1"
+            },
+            {
+              "label": "B",
+              "text": "110°",
+              "_id": "69ea580a5d365bf4cae001d2"
+            },
+            {
+              "label": "C",
+              "text": "135°",
+              "_id": "69ea580a5d365bf4cae001d3"
+            },
+            {
+              "label": "D",
+              "text": "145°",
+              "_id": "69ea580a5d365bf4cae001d4"
+            }
+          ],
+          "correctAnswer": "D",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001d0"
+        },
+        {
+          "questionText": "An obtuse angle is",
+          "image": "",
+          "options": [
+            {
+              "label": "A",
+              "text": "Less than 90°",
+              "_id": "69ea580a5d365bf4cae001d6"
+            },
+            {
+              "label": "B",
+              "text": "Greater than 90°",
+              "_id": "69ea580a5d365bf4cae001d7"
+            },
+            {
+              "label": "C",
+              "text": "Equal to 90°",
+              "_id": "69ea580a5d365bf4cae001d8"
+            },
+            {
+              "label": "D",
+              "text": "Equal to 180°",
+              "_id": "69ea580a5d365bf4cae001d9"
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001d5"
+        },
+        {
+          "questionText": "In the given figure, if OP||RS, ∠OPQ = 110° and ∠QRS = 130°, then ∠PQR is equal to",
+          "image": "/uploads/docx-img-691ecddaad9d0adc.png",
+          "options": [
+            {
+              "label": "A",
+              "text": "40°",
+              "_id": "69ea580a5d365bf4cae001db"
+            },
+            {
+              "label": "B",
+              "text": "50°",
+              "_id": "69ea580a5d365bf4cae001dc"
+            },
+            {
+              "label": "C",
+              "text": "60°",
+              "_id": "69ea580a5d365bf4cae001dd"
+            },
+            {
+              "label": "D",
+              "text": "70°",
+              "_id": "69ea580a5d365bf4cae001de"
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "",
+          "marks": 1,
+          "_id": "69ea580a5d365bf4cae001da"
+        }
+      ],
+      "createdBy": "69ea0c2e807d4e73dda82c25",
+      "createdAt": "2026-04-23T17:34:02.465Z",
+      "__v": 0
+    }
+  ],
+  "schoolclasses": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c0e",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "name": "Grade 11",
+      "display_name": "Class XI",
+      "order": 1,
+      "is_active": true,
+      "createdAt": "2026-04-23T12:10:22.251Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c10",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "name": "Grade 12",
+      "display_name": "Class XII",
+      "order": 2,
+      "is_active": true,
+      "createdAt": "2026-04-23T12:10:22.254Z",
+      "__v": 0
+    }
+  ],
+  "exams": [
+    {
+      "_id": "69ea0c2e807d4e73dda82c5e",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "created_by": "69ea0c2e807d4e73dda82c25",
+      "title": "Anatomy Mid-Term Assessment",
+      "description": "Mid-term exam covering Chapters 1-3 of Human Anatomy.",
+      "status": "published",
+      "question_ids": [
+        "69ea0c2e807d4e73dda82c3f",
+        "69ea0c2e807d4e73dda82c44",
+        "69ea0c2e807d4e73dda82c49"
+      ],
+      "duration": 30,
+      "is_shuffle": true,
+      "neg_mark": false,
+      "scheduled_at": "2026-05-10T03:30:00.000Z",
+      "expires_at": "2026-05-10T04:30:00.000Z",
+      "createdAt": "2026-04-23T12:10:22.792Z",
+      "__v": 0
+    },
+    {
+      "_id": "69ea0c2e807d4e73dda82c60",
+      "school_id": "69ea0c2e807d4e73dda82c0b",
+      "created_by": "69ea0c2e807d4e73dda82c25",
+      "title": "Surgical Instruments Quiz",
+      "description": "Quick quiz on surgical instruments and sterilization.",
+      "status": "draft",
+      "question_ids": [
+        "69ea0c2e807d4e73dda82c4e",
+        "69ea0c2e807d4e73dda82c53",
+        "69ea0c2e807d4e73dda82c58"
+      ],
+      "duration": 45,
+      "is_shuffle": false,
+      "neg_mark": true,
+      "scheduled_at": "2026-05-15T04:30:00.000Z",
+      "expires_at": "2026-05-15T05:30:00.000Z",
+      "createdAt": "2026-04-23T12:10:22.797Z",
+      "__v": 0
+    }
+  ],
+  "users": [
+    {
+      "_id": "69eb55a77268fff105e88e16",
+      "name": "Teacher 1",
+      "email": "teacher1@exam.com",
+      "password": "$2a$10$KctcKwvUb9QP7eMfm6aSKOsrvCJ8GqQOquq9E0K3P0wkXG0jCkRKi",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a77268fff105e88e18"
+      ],
+      "createdAt": "2026-04-24T11:36:07.067Z",
+      "updatedAt": "2026-04-24T11:36:07.251Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a77268fff105e88e1b",
+      "name": "Teacher 2",
+      "email": "teacher2@exam.com",
+      "password": "$2a$10$PwDR6uULHeQt06uUW1WMzeI0.NI15HDXAhtZNqmwpy4tTLKe841Ha",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a77268fff105e88e1d"
+      ],
+      "createdAt": "2026-04-24T11:36:07.269Z",
+      "updatedAt": "2026-04-24T11:36:07.413Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a77268fff105e88e20",
+      "name": "Teacher 3",
+      "email": "teacher3@exam.com",
+      "password": "$2a$10$TrZ6L.nLVNuPzSXz593ikuWsp/1p6xk4PTHCINTokBP0zRiJ9Xouy",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a77268fff105e88e22"
+      ],
+      "createdAt": "2026-04-24T11:36:07.417Z",
+      "updatedAt": "2026-04-24T11:36:07.591Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a77268fff105e88e25",
+      "name": "Teacher 4",
+      "email": "teacher4@exam.com",
+      "password": "$2a$10$zgB1N0rKcKmm36rz7QnttOG5RsMR48fMWfIj6OGD46DsLS/q.oRk2",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a77268fff105e88e27"
+      ],
+      "createdAt": "2026-04-24T11:36:07.597Z",
+      "updatedAt": "2026-04-24T11:36:07.757Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a77268fff105e88e2a",
+      "name": "Teacher 5",
+      "email": "teacher5@exam.com",
+      "password": "$2a$10$Sz0wkNsIypJJQp/aCuGx4O8lqs2GSy//L4P0/VzezJLiQsS0ymk7u",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a77268fff105e88e2c"
+      ],
+      "createdAt": "2026-04-24T11:36:07.760Z",
+      "updatedAt": "2026-04-24T11:36:07.905Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a77268fff105e88e2f",
+      "name": "Teacher 6",
+      "email": "teacher6@exam.com",
+      "password": "$2a$10$LibXTpl0DIbaNzIOnyeDeO0UW3oDZjn7NYLRx3I9sU9tFWHXNqdUa",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a87268fff105e88e31"
+      ],
+      "createdAt": "2026-04-24T11:36:07.911Z",
+      "updatedAt": "2026-04-24T11:36:08.074Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a87268fff105e88e34",
+      "name": "Teacher 7",
+      "email": "teacher7@exam.com",
+      "password": "$2a$10$8ZQUfVW4/lQv6IJ6BHBmhuIjBi5cvFQObHa4Jrk/9QEkww6dt6bAG",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a87268fff105e88e36"
+      ],
+      "createdAt": "2026-04-24T11:36:08.080Z",
+      "updatedAt": "2026-04-24T11:36:08.267Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a87268fff105e88e39",
+      "name": "Teacher 8",
+      "email": "teacher8@exam.com",
+      "password": "$2a$10$QO/To2tlYqdNbWrrjB5FlOVeXbbYvHyshRIt6IXEwyt2h47Ix/142",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a87268fff105e88e3b"
+      ],
+      "createdAt": "2026-04-24T11:36:08.273Z",
+      "updatedAt": "2026-04-24T11:36:08.443Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a87268fff105e88e3e",
+      "name": "Teacher 9",
+      "email": "teacher9@exam.com",
+      "password": "$2a$10$EP.R.Sf/EMBaciw1Am/miuaLBeQPyHYchVmjln0AQFUlf/oYLGgUm",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a87268fff105e88e40"
+      ],
+      "createdAt": "2026-04-24T11:36:08.448Z",
+      "updatedAt": "2026-04-24T11:36:08.633Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a87268fff105e88e43",
+      "name": "Teacher 10",
+      "email": "teacher10@exam.com",
+      "password": "$2a$10$2wJeW3ht2GeoT3iZSuBl4eCd2AQIVuEZ5gfplQLw2uRTVkJegnHHe",
+      "role": "teacher",
+      "courseIds": [
+        "69eb55a87268fff105e88e45"
+      ],
+      "createdAt": "2026-04-24T11:36:08.639Z",
+      "updatedAt": "2026-04-24T11:36:08.791Z",
+      "__v": 1
+    },
+    {
+      "_id": "69eb55a87268fff105e88e8e",
+      "name": "Student 1",
+      "email": "student1@exam.com",
+      "password": "$2a$10$wFwFzjPCgzcdNKmsECvLUedVluPyGJ5Mn5kE.pnfzX8Qk0U2/GrXu",
+      "role": "student",
+      "courseId": "69eb55a87268fff105e88e3b",
+      "courseIds": [],
+      "division": "D",
+      "createdAt": "2026-04-24T11:36:08.873Z",
+      "updatedAt": "2026-04-24T11:36:08.873Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88e90",
+      "name": "Student 2",
+      "email": "student2@exam.com",
+      "password": "$2a$10$/YU8XVlVh66Fs0z8xNYlWuScEeilYnNF20clA3AxZOFeNieD5Kc.q",
+      "role": "student",
+      "courseId": "69eb55a87268fff105e88e40",
+      "courseIds": [],
+      "division": "A",
+      "createdAt": "2026-04-24T11:36:09.015Z",
+      "updatedAt": "2026-04-24T11:36:09.015Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88e92",
+      "name": "Student 3",
+      "email": "student3@exam.com",
+      "password": "$2a$10$.ToiJ5Yc/nBuivRvq5bbtOT6RykALCFGgm0/sWqVQMbw2Oipv4f8S",
+      "role": "student",
+      "courseId": "69eb55a87268fff105e88e3b",
+      "courseIds": [],
+      "division": "B",
+      "createdAt": "2026-04-24T11:36:09.134Z",
+      "updatedAt": "2026-04-24T11:36:09.134Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88e94",
+      "name": "Student 4",
+      "email": "student4@exam.com",
+      "password": "$2a$10$hdGPTTAK1za6XAQwy6weJurVvYwy7STWV7LEbCrarNUW5m.B.wKZG",
+      "role": "student",
+      "courseId": "69eb55a77268fff105e88e1d",
+      "courseIds": [],
+      "division": "A",
+      "createdAt": "2026-04-24T11:36:09.230Z",
+      "updatedAt": "2026-04-24T11:36:09.230Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88e96",
+      "name": "Student 5",
+      "email": "student5@exam.com",
+      "password": "$2a$10$ym7j9eZp/.fd8eGgtMVFk.ZK/mnNBWvcMdOKwqnIaMjR0.Itz8zqG",
+      "role": "student",
+      "courseId": "69eb55a77268fff105e88e1d",
+      "courseIds": [],
+      "division": "C",
+      "createdAt": "2026-04-24T11:36:09.353Z",
+      "updatedAt": "2026-04-24T11:36:09.353Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88e98",
+      "name": "Student 6",
+      "email": "student6@exam.com",
+      "password": "$2a$10$RoZLwocdiJKgbOQuud8VpecSBHw7ijs1H26tqsV/8QHtA4Y6Sdf9i",
+      "role": "student",
+      "courseId": "69eb55a77268fff105e88e1d",
+      "courseIds": [],
+      "division": "C",
+      "createdAt": "2026-04-24T11:36:09.455Z",
+      "updatedAt": "2026-04-24T11:36:09.455Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88e9a",
+      "name": "Student 7",
+      "email": "student7@exam.com",
+      "password": "$2a$10$YtZnRH4elRphZY1ckbgqHOSp1/xfiokXZDFw4.tjdKDB6gZvoW3A.",
+      "role": "student",
+      "courseId": "69eb55a77268fff105e88e18",
+      "courseIds": [],
+      "division": "A",
+      "createdAt": "2026-04-24T11:36:09.539Z",
+      "updatedAt": "2026-04-24T11:36:09.539Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88e9c",
+      "name": "Student 8",
+      "email": "student8@exam.com",
+      "password": "$2a$10$KilKdrTKoJo6c.MNAtnGHOtmLhu3OEXPR5ZjK1cMfh42wM/hJjAv6",
+      "role": "student",
+      "courseId": "69eb55a87268fff105e88e40",
+      "courseIds": [],
+      "division": "A",
+      "createdAt": "2026-04-24T11:36:09.622Z",
+      "updatedAt": "2026-04-24T11:36:09.622Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88e9e",
+      "name": "Student 9",
+      "email": "student9@exam.com",
+      "password": "$2a$10$uIfmOorJUgwBP3LR1UhzJ.q8TQcO4Ky3zdObm4U1FtYXJNVvamZrm",
+      "role": "student",
+      "courseId": "69eb55a87268fff105e88e3b",
+      "courseIds": [],
+      "division": "B",
+      "createdAt": "2026-04-24T11:36:09.708Z",
+      "updatedAt": "2026-04-24T11:36:09.708Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88ea0",
+      "name": "Student 10",
+      "email": "student10@exam.com",
+      "password": "$2a$10$Z0ttWuePlZEnprHiYXJzEeHyiD43B.FTx7DCMKZWJr5wdKxJ5RWUa",
+      "role": "student",
+      "courseId": "69eb55a77268fff105e88e18",
+      "courseIds": [],
+      "division": "B",
+      "createdAt": "2026-04-24T11:36:09.792Z",
+      "updatedAt": "2026-04-24T11:36:09.792Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55a97268fff105e88ea2",
+      "name": "Student 11",
+      "email": "student11@exam.com",
+      "password": "$2a$10$rgEH4DqwMrvI/L8GuChcfOlPOpbh7xJcXd85AilzmqsV2y6XlqXzW",
+      "role": "student",
+      "courseId": "69eb55a77268fff105e88e27",
+      "courseIds": [],
+      "division": "C",
+      "createdAt": "2026-04-24T11:36:09.894Z",
+      "updatedAt": "2026-04-24T11:36:09.894Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55aa7268fff105e88ea4",
+      "name": "Student 12",
+      "email": "student12@exam.com",
+      "password": "$2a$10$0/UlD1moxgrhbtwcH9ozW.UbgdxcYDFf1tB.3soqGr1tDjvk.6SvW",
+      "role": "student",
+      "courseId": "69eb55a77268fff105e88e22",
+      "courseIds": [],
+      "division": "B",
+      "createdAt": "2026-04-24T11:36:10.053Z",
+      "updatedAt": "2026-04-24T11:36:10.053Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55aa7268fff105e88ea6",
+      "name": "Student 13",
+      "email": "student13@exam.com",
+      "password": "$2a$10$H4vMFVJD7DuqFmWXGWUDlOr5KJxCFYb5ad1Po7Qf/Qh2N7LvIiXvm",
+      "role": "student",
+      "courseId": "69eb55a77268fff105e88e1d",
+      "courseIds": [],
+      "division": "C",
+      "createdAt": "2026-04-24T11:36:10.149Z",
+      "updatedAt": "2026-04-24T11:36:10.149Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55aa7268fff105e88ea8",
+      "name": "Student 14",
+      "email": "student14@exam.com",
+      "password": "$2a$10$2ojE8sc9eokJsyLSDJEPJuMCXFo3iZzL.tI6w.I2SgK3wdVeaEmRC",
+      "role": "student",
+      "courseId": "69eb55a87268fff105e88e3b",
+      "courseIds": [],
+      "division": "A",
+      "createdAt": "2026-04-24T11:36:10.295Z",
+      "updatedAt": "2026-04-24T11:36:10.295Z",
+      "__v": 0
+    },
+    {
+      "_id": "69eb55aa7268fff105e88eaa",
+      "name": "Student 15",
+      "email": "student15@exam.com",
+      "password": "$2a$10$sB7LChygbkSDWGzuYSFmM.DyQS6qE3WaU4wQrVXYn2szT5malrxuu",
+      "role": "student",
+      "courseId": "69eb55a77268fff105e88e18",
+      "courseIds": [],
+      "division": "B",
+      "createdAt": "2026-04-24T11:36:10.442Z",
+      "updatedAt": "2026-04-24T11:36:10.442Z",
+      "__v": 0
+    }
+  ]
+}

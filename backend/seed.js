@@ -1,7 +1,8 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const mongoose = require('mongoose');
 const User = require('./src/models/User');
 const Course = require('./src/models/Course');
+const Session = require('./src/models/Session');
 
 const seed = async () => {
   try {
@@ -12,18 +13,9 @@ const seed = async () => {
     await User.deleteMany({});
     await Course.deleteMany({});
 
-    // Create Admin
-    await User.create({
-      name: 'System Admin',
-      email: 'admin@exam.com',
-      password: 'password123',
-      role: 'admin'
-    });
-    console.log('Created Admin User: admin@exam.com');
-
-    // Create 10 Teachers and Courses
+    // Create 2 Teachers and Courses
     const courses = [];
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 2; i++) {
       const teacher = await User.create({
         name: `Teacher ${i}`,
         email: `teacher${i}@exam.com`,
@@ -43,6 +35,31 @@ const seed = async () => {
       courses.push(course);
     }
 
+    // Create a Session for each Course
+    for (const course of courses) {
+      await Session.create({
+        courseId: course._id,
+        division: 'A',
+        title: `Live Exam: ${course.courseName}`,
+        status: 'active',
+        questions: [
+          {
+            questionText: 'What is the primary function of the cardiovascular system?',
+            options: [
+              { label: 'A', text: 'Transport nutrients and oxygen' },
+              { label: 'B', text: 'Regulate body temperature' },
+              { label: 'C', text: 'Digestion of food' },
+              { label: 'D', text: 'Filter blood' }
+            ],
+            correctAnswer: 'A',
+            marks: 1
+          }
+        ],
+        startTime: new Date(),
+        duration: 60
+      });
+    }
+
     // Create 15 Students
     const divisions = ['A', 'B', 'C', 'D'];
     for (let i = 1; i <= 15; i++) {
@@ -59,7 +76,7 @@ const seed = async () => {
       });
     }
 
-    console.log('✅ Seeded 10 Teachers, 10 Courses, and 15 Students.');
+    console.log('✅ Seeded 2 Teachers, 2 Courses, and 15 Students.');
     process.exit(0);
   } catch (err) {
     console.error(err);

@@ -1,10 +1,12 @@
 require('dotenv').config();
+const http = require('http');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./src/config/database');
 const authRoutes = require('./src/routes/authRoutes');
 const portalRoutes = require('./src/routes/portalRoutes');
+const initSocket = require('./src/config/socket');
 
 const app = express();
 connectDB();
@@ -18,15 +20,22 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api', portalRoutes); 
+app.use('/api', portalRoutes);
+
+// JSON 404 for API
+app.use('/api', (req, res) => {
+  res.status(404).json({ success: false, message: `API Route ${req.originalUrl} not found` });
+});
 
 // SPA Fallbacks
-app.get('/',        (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'login.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'login.html')));
 app.get('/student', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'index.html')));
 app.get('/teacher', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'teacher.html')));
-app.get('/exam',    (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'exam.html')));
+app.get('/exam', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'exam.html')));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const httpServer = http.createServer(app);
+initSocket(httpServer);
+httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });

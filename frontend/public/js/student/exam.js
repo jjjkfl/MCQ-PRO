@@ -3,6 +3,71 @@
  * Exam Engine — Color-coded progress, image support, strict proctoring integration
  */
 
+const ReadinessCheck = {
+  checks: { camera: false, fullscreen: false, consent: false },
+
+  async allowCamera() {
+    try {
+      await Proctor.startCamera();
+      this.checks.camera = true;
+      document.getElementById('check-camera').classList.add('done');
+      document.getElementById('btn-allow-camera').innerText = '✅ Active';
+      document.getElementById('btn-allow-camera').disabled = true;
+      this.validate();
+    } catch (err) {
+      console.error('[Readiness] Camera Error:', err);
+      let msg = `Camera error: ${err.message}.`;
+      if (err.name === 'NotAllowedError' || err.message.toLowerCase().includes('denied')) {
+        msg = "🚫 Camera Access Denied! Please click the 'Lock' or 'Camera' icon in your browser's address bar (at the top) and change 'Block' to 'Allow', then refresh the page.";
+      }
+      notifications.error(msg, { duration: 10000 });
+    }
+  },
+
+  async enterFullscreen() {
+    try {
+      await document.documentElement.requestFullscreen();
+      this.checks.fullscreen = true;
+      document.getElementById('check-fullscreen').classList.add('done');
+      document.getElementById('btn-enter-fullscreen').innerText = '✅ Fullscreen';
+      document.getElementById('btn-enter-fullscreen').disabled = true;
+      this.validate();
+    } catch (err) {
+      notifications.error('Fullscreen is required for security.');
+    }
+  },
+
+  updateConsent() {
+    this.checks.consent = document.getElementById('consent-checkbox').checked;
+    if (this.checks.consent) {
+      document.getElementById('check-consent').classList.add('done');
+    } else {
+      document.getElementById('check-consent').classList.remove('done');
+    }
+    this.validate();
+  },
+
+  validate() {
+    const canStart = this.checks.camera && this.checks.fullscreen && this.checks.consent;
+    document.getElementById('btn-start-exam').disabled = !canStart;
+  },
+
+  async startExam() {
+    document.getElementById('readiness-view').style.display = 'none';
+    document.getElementById('main-exam-content').style.display = 'grid';
+
+    // Resume original exam flow
+    await ExamEngine.loadExam();
+    ExamEngine.setupProctoring();
+    ExamSocket.init(ExamEngine.sessionId);
+
+    // Ensure proctoring uses the existing camera and stays in fullscreen
+    Proctor.updateSecurityBar();
+  }
+};
+
+window.ReadinessCheck = ReadinessCheck;
+
 const ExamEngine = {
   sessionId: null,
   questions: [],
@@ -21,9 +86,20 @@ const ExamEngine = {
       return;
     }
 
-    await this.loadExam();
-    this.setupProctoring();
-    ExamSocket.init(this.sessionId);
+    // Wait for student to pass Readiness Check
+    console.log('[ExamEngine] Waiting for Readiness Check...');
+
+    // Monitor for fullscreen exit during check
+    document.addEventListener('fullscreenchange', () => {
+      const view = document.getElementById('readiness-view');
+      if (!document.fullscreenElement && view && view.style.display !== 'none') {
+        document.getElementById('check-fullscreen').classList.remove('done');
+        document.getElementById('btn-enter-fullscreen').innerText = 'Enter';
+        document.getElementById('btn-enter-fullscreen').disabled = false;
+        ReadinessCheck.checks.fullscreen = false;
+        ReadinessCheck.validate();
+      }
+    });
   },
 
   async loadExam() {
@@ -108,7 +184,16 @@ const ExamEngine = {
             <div class="option-item ${selectedAnswer === opt.label ? 'selected' : ''}" 
                  onclick="ExamEngine.selectOption('${q._id}', '${opt.label}')">
               <div class="option-label">${opt.label}</div>
-              <div class="option-text">${this._escapeHtml(opt.text)}</div>
+              <div class="option-content-wrapper">
+                <div class="option-text">${this._escapeHtml(opt.text)}</div>
+                ${opt.image ? `
+                  <div class="option-image-container">
+                    <img src="${opt.image}" alt="Option Image" class="exam-option-image"
+                         onclick="event.stopPropagation(); ExamEngine._zoomImage(this.src)"
+                         onerror="this.parentElement.style.display='none'">
+                  </div>
+                ` : ''}
+              </div>
             </div>
           `).join('')}
         </div>
@@ -158,17 +243,17 @@ const ExamEngine = {
       </div>
       <div class="question-grid">
         ${this.questions.map((q, i) => {
-          let status = 'not-visited';
-          if (i === this.currentIdx) status = 'current';
-          else if (this.answers[q._id]) status = 'answered';
-          else if (this.visited.has(i)) status = 'skipped';
+      let status = 'not-visited';
+      if (i === this.currentIdx) status = 'current';
+      else if (this.answers[q._id]) status = 'answered';
+      else if (this.visited.has(i)) status = 'skipped';
 
-          return `
+      return `
             <div class="q-dot ${status}" onclick="ExamEngine.goTo(${i})" title="Q${i + 1}">
               ${i + 1}
             </div>
           `;
-        }).join('')}
+    }).join('')}
       </div>
     `;
   },

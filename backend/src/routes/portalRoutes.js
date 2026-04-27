@@ -1,54 +1,82 @@
 const router = require('express').Router();
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { rbac } = require('../middleware/rbacMiddleware');
-const studentCtrl = require('../controllers/studentController');
-const teacherCtrl = require('../controllers/teacherController');
-const adminCtrl = require('../controllers/adminController');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
+
+// Late-binding controller loader to avoid circular dependencies
+const studentCtrl = () => require('../controllers/studentController');
+const teacherCtrl = () => require('../controllers/teacherController');
+const adminCtrl = () => require('../controllers/adminController');
+const eduCtrl = () => require('../controllers/eduController');
+
 router.use(authMiddleware);
 
-// ══════════════════════════════════════════════════════════════════
-// ADMIN PORTAL ROUTES (/api/portal/admin/*)
-// ══════════════════════════════════════════════════════════════════
-router.get('/portal/admin/dashboard', rbac(['admin']), adminCtrl.getDashboard);
+// Materials
+router.get('/portal/edu/courses/:courseId/materials', (req, res) => eduCtrl().getMaterials(req, res));
+router.post('/portal/edu/materials', rbac(['teacher']), (req, res) => eduCtrl().uploadMaterial(req, res));
+router.delete('/portal/edu/materials/:id', rbac(['teacher']), (req, res) => eduCtrl().deleteMaterial(req, res));
 
-router.get('/portal/admin/users',       rbac(['admin']), adminCtrl.getUsers);
-router.post('/portal/admin/users',      rbac(['admin']), adminCtrl.createUser);
-router.put('/portal/admin/users/:id',   rbac(['admin']), adminCtrl.updateUser);
-router.delete('/portal/admin/users/:id',rbac(['admin']), adminCtrl.deleteUser);
+// Announcements
+router.get('/portal/edu/courses/:courseId/announcements', (req, res) => eduCtrl().getAnnouncements(req, res));
+router.get('/portal/edu/courses/:courseId/materials', (req, res) => eduCtrl().getMaterials(req, res));
+router.post('/portal/edu/announcements', rbac(['teacher']), (req, res) => eduCtrl().createAnnouncement(req, res));
 
-router.get('/portal/admin/courses',       rbac(['admin']), adminCtrl.getCourses);
-router.post('/portal/admin/courses',      rbac(['admin']), adminCtrl.createCourse);
-router.put('/portal/admin/courses/:id',   rbac(['admin']), adminCtrl.updateCourse);
-router.delete('/portal/admin/courses/:id',rbac(['admin']), adminCtrl.deleteCourse);
+// Attendance
+router.get('/portal/edu/attendance/:sessionId', rbac(['teacher']), (req, res) => eduCtrl().getAttendance(req, res));
+router.post('/portal/edu/attendance', rbac(['teacher']), (req, res) => eduCtrl().markAttendance(req, res));
+router.delete('/portal/edu/attendance/:id', rbac(['teacher']), (req, res) => eduCtrl().deleteAttendance(req, res));
 
-// ══════════════════════════════════════════════════════════════════
-// TEACHER PORTAL ROUTES (/api/portal/teacher/*)
-// ══════════════════════════════════════════════════════════════════
-router.get('/portal/teacher/dashboard', rbac(['teacher']), teacherCtrl.getDashboard);
-router.get('/portal/teacher/students',  rbac(['teacher']), teacherCtrl.getStudents);
-router.get('/portal/teacher/analytics', rbac(['teacher']), teacherCtrl.getGeneralAnalytics);
+// Forum
+router.get('/portal/edu/forum/threads', (req, res) => eduCtrl().getThreads(req, res));
+router.get('/portal/edu/forum/courses/:courseId/threads', (req, res) => eduCtrl().getThreads(req, res));
+router.post('/portal/edu/forum/threads', (req, res) => eduCtrl().createThread(req, res));
+router.get('/portal/edu/forum/threads/:threadId/comments', (req, res) => eduCtrl().getComments(req, res));
+router.post('/portal/edu/forum/comments', (req, res) => eduCtrl().createComment(req, res));
 
-// MCQ / Session Management
-router.get ('/portal/teacher/mcq',                        rbac(['teacher']), teacherCtrl.getMCQBanks);
-router.post('/portal/teacher/mcq/upload',                 rbac(['teacher']), upload.single('pdf'), teacherCtrl.uploadMCQ);
-router.delete('/portal/teacher/mcq/:id',                  rbac(['teacher']), teacherCtrl.deleteMCQBank);
+// Certificates
+router.get('/portal/edu/certificates/:courseId', (req, res) => eduCtrl().generateCertificate(req, res));
+router.get('/portal/edu/courses/:courseId/certificate', (req, res) => eduCtrl().generateCertificate(req, res));
 
-router.post('/portal/teacher/sessions',                   rbac(['teacher']), teacherCtrl.createSession);
-router.get ('/portal/teacher/sessions',                   rbac(['teacher']), teacherCtrl.getSessions);
-router.put ('/portal/teacher/sessions/:id',               rbac(['teacher']), teacherCtrl.updateSession);
-router.delete('/portal/teacher/sessions/:id',             rbac(['teacher']), teacherCtrl.deleteSession);
-router.patch('/portal/teacher/sessions/:sessionId/status', rbac(['teacher']), teacherCtrl.updateSessionStatus);
-router.get ('/portal/teacher/sessions/:sessionId/results', rbac(['teacher']), teacherCtrl.getSessionResults);
+// Teacher Dashboard Extras
+router.get('/portal/teacher/dashboard', rbac(['teacher']), (req, res) => teacherCtrl().getDashboard(req, res));
+router.get('/portal/teacher/sessions', rbac(['teacher']), (req, res) => teacherCtrl().getSessions(req, res));
+router.post('/portal/teacher/sessions', rbac(['teacher']), (req, res) => teacherCtrl().createSession(req, res));
+router.put('/portal/teacher/sessions/:id', rbac(['teacher']), (req, res) => teacherCtrl().updateSession(req, res));
+router.delete('/portal/teacher/sessions/:id', rbac(['teacher']), (req, res) => teacherCtrl().deleteSession(req, res));
+router.patch('/portal/teacher/sessions/:sessionId/status', rbac(['teacher']), (req, res) => teacherCtrl().updateSessionStatus(req, res));
+router.get('/portal/teacher/results/general-analytics', rbac(['teacher']), (req, res) => teacherCtrl().getGeneralAnalytics(req, res));
+router.get('/portal/teacher/sessions/:sessionId/results', rbac(['teacher']), (req, res) => teacherCtrl().getSessionResults(req, res));
+router.get('/portal/teacher/mcq-banks', rbac(['teacher']), (req, res) => teacherCtrl().getMCQBanks(req, res));
+router.post('/portal/teacher/mcq-banks/upload', rbac(['teacher']), upload.single('pdf'), (req, res) => teacherCtrl().uploadMCQ(req, res));
+router.put('/portal/teacher/mcq-banks/:id', rbac(['teacher']), (req, res) => teacherCtrl().updateMCQBank(req, res));
+router.delete('/portal/teacher/mcq-banks/:id', rbac(['teacher']), (req, res) => teacherCtrl().deleteMCQBank(req, res));
 
-// ══════════════════════════════════════════════════════════════════
-// STUDENT PORTAL ROUTES (/api/portal/student/*)
-// ══════════════════════════════════════════════════════════════════
-router.get ('/portal/student/dashboard',        rbac(['student']), studentCtrl.getDashboard);
-router.get ('/portal/student/exams',            rbac(['student']), studentCtrl.getAvailableExams);
-router.get ('/portal/student/exams/:sessionId', rbac(['student']), studentCtrl.getExamQuestions);
-router.post('/portal/student/exams/submit',     rbac(['student']), studentCtrl.submitExam);
-router.get ('/portal/student/results',          rbac(['student']), studentCtrl.getMyResults);
+// Student Management (Teacher)
+router.get('/portal/teacher/students', rbac(['teacher']), (req, res) => teacherCtrl().getStudents(req, res));
+router.post('/portal/teacher/students', rbac(['teacher']), (req, res) => teacherCtrl().createStudent(req, res));
+router.put('/portal/teacher/students/:id', rbac(['teacher']), (req, res) => teacherCtrl().updateStudent(req, res));
+router.delete('/portal/teacher/students/:id', rbac(['teacher']), (req, res) => teacherCtrl().deleteStudent(req, res));
+
+// Admin Dashboard Extras
+router.get('/portal/admin/dashboard', rbac(['admin']), (req, res) => adminCtrl().getDashboard(req, res));
+router.get('/portal/admin/users', rbac(['admin']), (req, res) => adminCtrl().getUsers(req, res));
+router.post('/portal/admin/users', rbac(['admin']), (req, res) => adminCtrl().createUser(req, res));
+router.put('/portal/admin/users/:id', rbac(['admin']), (req, res) => adminCtrl().updateUser(req, res));
+router.delete('/portal/admin/users/:id', rbac(['admin']), (req, res) => adminCtrl().deleteUser(req, res));
+router.get('/portal/admin/courses', rbac(['admin']), (req, res) => adminCtrl().getCourses(req, res));
+router.post('/portal/admin/courses', rbac(['admin']), (req, res) => adminCtrl().createCourse(req, res));
+router.put('/portal/admin/courses/:id', rbac(['admin']), (req, res) => adminCtrl().updateCourse(req, res));
+router.delete('/portal/admin/courses/:id', rbac(['admin']), (req, res) => adminCtrl().deleteCourse(req, res));
+
+// Student Dashboard Extras
+router.get('/portal/student/dashboard', rbac(['student']), (req, res) => studentCtrl().getDashboard(req, res));
+router.get('/portal/student/courses', rbac(['student']), (req, res) => studentCtrl().getCourses(req, res));
+router.get('/portal/student/exams', rbac(['student']), (req, res) => studentCtrl().getAvailableExams(req, res));
+router.get('/portal/student/exams/:sessionId', rbac(['student']), (req, res) => studentCtrl().getExamQuestions(req, res));
+router.post('/portal/student/exams/submit', rbac(['student']), (req, res) => studentCtrl().submitExam(req, res));
+router.get('/portal/student/results', rbac(['student']), (req, res) => studentCtrl().getMyResults(req, res));
+router.get('/portal/student/announcements', rbac(['student']), (req, res) => studentCtrl().getAnnouncements(req, res));
+router.get('/portal/student/results/:resultId', rbac(['student']), (req, res) => studentCtrl().getResultDetail(req, res));
 
 module.exports = router;

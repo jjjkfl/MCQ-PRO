@@ -34,7 +34,7 @@ const Certificate = {
           <p>with a score of <strong>${certData.score}</strong></p>
           <div style="margin-top: 40px; font-size: 10px; color: #888;">
             VERIFICATION HASH: ${certData.hash}<br>
-            VALIDATED BY SURGICAL EXAM BLOCKCHAIN
+            VALIDATED BY MCQPRO BLOCKCHAIN
           </div>
         </div>
       `, { title: 'Exam Certificate', width: '700px', footer: '<button onclick="window.print()" class="btn btn-primary">Print / Save as PDF</button>' });

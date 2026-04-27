@@ -6,40 +6,46 @@
 const Proctor = {
   sessionId: null,
   tabSwitchCount: 0,
-  maxSwitches: 3,
+  maxSwitches: 5, // Allow 5 warnings before termination
   cameraStream: null,
   cameraActive: false,
   violations: [],
+  isDestroyed: false,
 
   init(sessionId) {
     this.sessionId = sessionId;
     this.tabSwitchCount = 0;
     this.violations = [];
+    this.isDestroyed = false;
 
     // ─── 1. Camera Enforcement ───
     this.startCamera();
 
-    // ─── 2. Tab Switch Detection ───
+    // ─── 2. Tab Switch Detection (Immediate Violation) ───
     document.addEventListener('visibilitychange', () => {
+      if (this.isDestroyed) return;
       if (document.hidden) this.handleTabSwitch();
     });
 
-    // ─── 3. Window Blur (alt-tab, clicking other windows) ───
+    // ─── 3. Window Blur (Immediate Violation) ───
     window.addEventListener('blur', () => {
+      if (this.isDestroyed) return;
       this.handleTabSwitch();
     });
 
     // ─── 4. Copy/Paste/Cut Prevention ───
     ['copy', 'paste', 'cut'].forEach(evt => {
       document.addEventListener(evt, (e) => {
+        if (this.isDestroyed) return;
         e.preventDefault();
         this.logViolation('copy-paste', `Attempted ${evt}`);
-        notifications.warn('⚠️ Copy/Paste is disabled during exams.');
+        notifications.error('🚫 Security Violation: Copy/Paste is strictly disabled.');
       });
     });
 
     // ─── 5. Right-Click Prevention ───
     document.addEventListener('contextmenu', (e) => {
+      if (this.isDestroyed) return;
       e.preventDefault();
       this.logViolation('right-click', 'Context menu blocked');
     });
@@ -49,6 +55,7 @@ const Proctor = {
 
     // ─── 7. Print Screen / Screenshot Block ───
     document.addEventListener('keydown', (e) => {
+      if (this.isDestroyed) return;
       // Block PrintScreen
       if (e.key === 'PrintScreen') {
         e.preventDefault();
@@ -73,6 +80,30 @@ const Proctor = {
         e.preventDefault();
         this.logViolation('devtools', 'F12 blocked');
       }
+      // Block Ctrl+P (Print)
+      if (e.ctrlKey && e.key === 'p') {
+        e.preventDefault();
+        this.logViolation('shortcut', 'Ctrl+P (Print) blocked');
+      }
+      // Block Ctrl+W (Close Tab)
+      if (e.ctrlKey && e.key === 'w') {
+        e.preventDefault();
+        this.logViolation('shortcut', 'Ctrl+W (Close Tab) blocked');
+      }
+      // Block Ctrl+T (New Tab)
+      if (e.ctrlKey && e.key === 't') {
+        e.preventDefault();
+        this.logViolation('shortcut', 'Ctrl+T (New Tab) blocked');
+      }
+      // Block Ctrl+Tab (Switch Tab)
+      if (e.ctrlKey && e.key === 'Tab') {
+        e.preventDefault();
+        this.logViolation('shortcut', 'Ctrl+Tab blocked');
+      }
+      // Block Alt+Tab hint
+      if (e.altKey && e.key === 'Tab') {
+        this.logViolation('shortcut', 'Alt+Tab attempted');
+      }
       // Block Ctrl+S (Save)
       if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
@@ -81,19 +112,24 @@ const Proctor = {
 
     // ─── 8. Text Selection Prevention ───
     document.addEventListener('selectstart', (e) => {
+      if (this.isDestroyed) return;
       if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
         e.preventDefault();
       }
     });
 
     // ─── 9. Drag Prevention ───
-    document.addEventListener('dragstart', (e) => e.preventDefault());
+    document.addEventListener('dragstart', (e) => {
+      if (this.isDestroyed) return;
+      e.preventDefault();
+    });
 
     // ─── 10. Fullscreen Enforcement ───
     this.enforceFullscreen();
 
     // Monitor fullscreen exit
     document.addEventListener('fullscreenchange', () => {
+      if (this.isDestroyed) return;
       if (!document.fullscreenElement) {
         this.logViolation('fullscreen-exit', 'Exited fullscreen');
         this.enforceFullscreen();
@@ -104,11 +140,23 @@ const Proctor = {
   /* ─── Camera System ────────────────────────────────────────────── */
   async startCamera() {
     const container = document.getElementById('proctor-camera');
-    if (!container) return;
+    const previewContainer = document.getElementById('camera-preview-box');
+
+    // Logic: If the readiness view is hidden, use the proctor sidebar.
+    // Otherwise, use the preview container if it exists.
+    const readinessView = document.getElementById('readiness-view');
+    const isExamStarted = readinessView && readinessView.style.display === 'none';
+    const target = (isExamStarted ? container : previewContainer) || container;
+
+    if (!target) return;
 
     try {
       this.cameraStream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 160, height: 120, facingMode: 'user' },
+        video: {
+          width: { ideal: 320 },
+          height: { ideal: 240 },
+          facingMode: 'user'
+        },
         audio: false
       });
 
@@ -119,45 +167,54 @@ const Proctor = {
       video.playsInline = true;
       video.id = 'proctor-video';
 
-      container.innerHTML = '';
-      container.appendChild(video);
+      target.innerHTML = '';
+      target.appendChild(video);
+      if (previewContainer) previewContainer.style.display = 'block';
+
       container.classList.add('camera-active');
       this.cameraActive = true;
 
       // Camera status indicator
       this.updateCameraStatus(true);
 
-      // Monitor camera stream — auto-detect if student covers/stops camera
+      // Monitor camera stream
       this.monitorCamera(video);
+
+      return this.cameraStream;
 
     } catch (err) {
       console.error('Camera access denied:', err);
       this.cameraActive = false;
       this.updateCameraStatus(false);
-      container.innerHTML = `
+
+      const errorHTML = `
         <div class="camera-denied">
           <span style="font-size: 24px;">🚫</span>
           <p style="font-size: 11px; margin-top: 6px;">Camera Required</p>
         </div>
       `;
-
-      // Show mandatory camera warning
-      this.showCameraWarning();
+      target.innerHTML = errorHTML;
+      throw err;
     }
   },
 
   monitorCamera(video) {
-    // Check every 5 seconds if camera is still active
+    // Check every 3 seconds if camera is still active
     setInterval(() => {
+      if (this.isDestroyed) return;
       if (!this.cameraStream) return;
       const tracks = this.cameraStream.getVideoTracks();
-      if (tracks.length === 0 || tracks[0].readyState === 'ended') {
+      if (tracks.length === 0 || tracks[0].readyState === 'ended' || !tracks[0].enabled) {
         this.cameraActive = false;
         this.updateCameraStatus(false);
-        this.logViolation('camera-off', 'Camera was turned off');
-        notifications.error('⚠️ Camera disconnected! Please reconnect.');
+        this.logViolation('camera-off', 'Camera was disconnected or turned off');
+        notifications.error('🚫 Security Violation: Camera tracking lost! Exam terminated.');
+
+        setTimeout(() => {
+          if (typeof ExamEngine !== 'undefined') ExamEngine.submit();
+        }, 1500);
       }
-    }, 5000);
+    }, 3000);
   },
 
   updateCameraStatus(active) {
@@ -178,38 +235,38 @@ const Proctor = {
       Modal.show('camera-required', `
         <div style="text-align: center; padding: 16px;">
           <div style="font-size: 48px; margin-bottom: 16px;">📷</div>
-          <h3 style="font-weight: 600; margin-bottom: 12px;">Camera Access Required</h3>
+          <h3 style="font-weight: 600; margin-bottom: 12px;">Mandatory Camera Required</h3>
           <p class="p-dim" style="font-size: 13px; margin-bottom: 20px;">
-            This exam requires your webcam to be active for proctoring. 
-            Please allow camera access in your browser settings and reload.
+            This exam is strictly proctored. You MUST have a working camera enabled to proceed.
+            Disabling the camera during the exam will result in immediate termination.
           </p>
-          <button onclick="Proctor.startCamera(); Modal.close();" 
+          <button onclick="location.reload()" 
                   class="btn btn-primary" style="width: 100%;">
-            🔄 Retry Camera Access
+            🔄 Enable Camera & Reload
           </button>
         </div>
-      `, { title: '🔒 Security Requirement' });
+      `, { title: '🔒 Security Requirement', closable: false });
     }
   },
 
   /* ─── Tab Switch Handler ───────────────────────────────────────── */
   handleTabSwitch() {
+    if (this.isDestroyed) return;
     this.tabSwitchCount++;
-    this.logViolation('tab-switch', `Switch #${this.tabSwitchCount}`);
+    const switchesLeft = Math.max(0, this.maxSwitches - this.tabSwitchCount);
+    this.logViolation('tab-switch', `Security Violation: Tab/Window Switch Detected. Checks remaining: ${switchesLeft}`);
 
     if (typeof ExamSocket !== 'undefined') ExamSocket.sendTabSwitch();
 
-    const remaining = this.maxSwitches - this.tabSwitchCount;
+    this.updateSecurityBar();
 
     if (this.tabSwitchCount >= this.maxSwitches) {
-      notifications.error('🚫 Maximum tab switches reached! Auto-submitting exam...');
-      this.updateSecurityBar();
+      notifications.error('🚫 Security Violation: Maximum tab switches exceeded! Exam terminated.');
       setTimeout(() => {
         if (typeof ExamEngine !== 'undefined') ExamEngine.submit();
-      }, 2000);
+      }, 1500);
     } else {
-      notifications.warn(`⚠️ Tab switch detected! (${remaining} warning${remaining > 1 ? 's' : ''} left before auto-submit)`);
-      this.updateSecurityBar();
+      notifications.warn(`⚠️ Warning: Tab switching is restricted! You have ${switchesLeft} warnings left before termination.`);
     }
   },
 
@@ -217,11 +274,16 @@ const Proctor = {
   detectDevTools() {
     // Method: check window outer vs inner size difference
     const check = () => {
+      if (this.isDestroyed) return;
       const threshold = 160;
       const widthDiff = window.outerWidth - window.innerWidth > threshold;
       const heightDiff = window.outerHeight - window.innerHeight > threshold;
       if (widthDiff || heightDiff) {
         this.logViolation('devtools-open', 'DevTools may be open');
+        notifications.error('🚫 Security Violation: DevTools detected! Termination imminent.');
+        setTimeout(() => {
+          if (typeof ExamEngine !== 'undefined') ExamEngine.submit();
+        }, 3000);
       }
     };
     setInterval(check, 3000);
@@ -229,6 +291,7 @@ const Proctor = {
 
   /* ─── Fullscreen Enforcement ───────────────────────────────────── */
   enforceFullscreen() {
+    if (this.isDestroyed) return;
     if (document.fullscreenElement) return;
 
     if (typeof Modal !== 'undefined') {
@@ -300,12 +363,13 @@ const Proctor = {
 
   /* ─── Cleanup ──────────────────────────────────────────────────── */
   destroy() {
+    this.isDestroyed = true;
     if (this.cameraStream) {
       this.cameraStream.getTracks().forEach(t => t.stop());
       this.cameraStream = null;
     }
     if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
+      document.exitFullscreen().catch(() => { });
     }
   }
 };

@@ -31,7 +31,7 @@ const ResultDetail = {
 
   render(result) {
     const container = document.getElementById('result-content');
-    
+
     container.innerHTML = `
       <div class="animate-fade-in" style="text-align: center; max-width: 700px; margin: 0 auto;">
         <h1 class="h1" style="margin-bottom: 8px;">Exam Completed</h1>
@@ -57,9 +57,29 @@ const ResultDetail = {
         </div>
 
         ${result.resultHash ? `
-          <div class="blockchain-seal" onclick="ResultDetail.verifyOnChain('${result.resultHash}')" style="cursor:pointer">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span>Blockchain Secured: ${result.resultHash.substring(0, 12)}... (Verify)</span>
+          <div class="glass-card" style="margin-bottom: 24px; padding: 24px; text-align: left; border-left: 4px solid var(--primary);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3 style="font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary);">🛡️ Security Audit</h3>
+              <span class="badge" style="background: rgba(52, 199, 89, 0.1); color: var(--success); font-size: 11px;">Validated</span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+              <div style="background: var(--bg); padding: 12px; border-radius: 8px;">
+                <div class="p-dim" style="font-size: 11px;">Proctoring Integrity</div>
+                <div style="font-weight: 600; color: ${result.violationCount > 3 ? 'var(--danger)' : result.violationCount > 0 ? 'var(--warning)' : 'var(--success)'}">
+                  ${result.violationCount === 0 ? 'Perfect (0 Violations)' : `${result.violationCount} Violations Recorded`}
+                </div>
+              </div>
+              <div style="background: var(--bg); padding: 12px; border-radius: 8px;">
+                <div class="p-dim" style="font-size: 11px;">EVM Anchor</div>
+                <div style="font-family: monospace; font-size: 12px;">${result.blockchainTx ? result.blockchainTx.substring(0, 14) + '...' : 'Sealing...'}</div>
+              </div>
+            </div>
+
+            <div class="blockchain-seal" onclick="ResultDetail.verifyOnChain('${result.resultHash}')" style="cursor:pointer; margin:0; width:100%; justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Verify Integrity Chain on Blockchain</span>
+            </div>
           </div>
         ` : ''}
 
@@ -81,7 +101,7 @@ const ResultDetail = {
 
     try {
       const { data } = await api.post('/portal/blockchain/verify', { resultHash: hash });
-      
+
       Modal.show('verify', `
         <div style="text-align: left">
           <div style="background: rgba(52, 199, 89, 0.1); color: var(--success); padding: 16px; border-radius: 12px; margin-bottom: 24px; display:flex; align-items:center; gap:12px;">

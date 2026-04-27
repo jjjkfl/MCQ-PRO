@@ -9,7 +9,7 @@ const AdminDashboard = {
 
   async init() {
     if (!auth.checkAuth()) return;
-    
+
     Navbar.render('nav-container', 'dashboard');
 
     // Initial loads
@@ -25,7 +25,7 @@ const AdminDashboard = {
     document.getElementById('tab-overview').style.display = 'none';
     document.getElementById('tab-users').style.display = 'none';
     document.getElementById('tab-courses').style.display = 'none';
-    
+
     document.getElementById(`tab-${tabId}`).style.display = 'block';
   },
 
@@ -54,14 +54,14 @@ const AdminDashboard = {
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;" class="p-dim">No sessions found</td></tr>';
       return;
     }
-    
+
     tbody.innerHTML = sessions.map(s => `
       <tr>
         <td>${s.title}</td>
         <td>${s.courseId ? s.courseId.courseName : 'N/A'}</td>
         <td>${s.division}</td>
         <td>${utils.formatDate(s.startTime)}</td>
-        <td><span class="status-pill ${s.status === 'active' ? 'status-online' : 'status-offline'}">${s.status.toUpperCase()}</span></td>
+        <td><span class="status-pill ${s.status === 'active' ? 'active' : 'inactive'}">${s.status.toUpperCase()}</span></td>
       </tr>
     `).join('');
   },
@@ -90,11 +90,11 @@ const AdminDashboard = {
       <tr>
         <td>${u.name}</td>
         <td>${u.email}</td>
-        <td><span style="padding:4px 8px; background:#f1f5f9; border-radius:4px; font-size:12px; font-weight:600; text-transform:uppercase;">${u.role}</span></td>
+        <td><span class="badge" style="background:#f1f5f9; color:#64748b; font-size:11px;">${u.role.toUpperCase()}</span></td>
         <td>${u.role === 'student' ? (u.courseId ? u.courseId.courseName : 'N/A') + ' (Div ' + u.division + ')' : 'N/A'}</td>
         <td>
-          <button onclick="AdminDashboard.showEditUserModal('${u._id}')" class="btn btn-outline" style="padding: 4px 8px;"><i class="fas fa-edit"></i></button>
-          <button onclick="AdminDashboard.deleteUser('${u._id}')" class="btn btn-outline" style="padding: 4px 8px; color:#ef4444; border-color:#ef4444;"><i class="fas fa-trash"></i></button>
+          <button onclick="AdminDashboard.showEditUserModal('${u._id}')" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i></button>
+          <button onclick="AdminDashboard.deleteUser('${u._id}')" class="btn btn-secondary btn-sm" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
         </td>
       </tr>
     `).join('');
@@ -117,21 +117,21 @@ const AdminDashboard = {
   showCreateUserModal() {
     Modal.show('create-user', `
       <form onsubmit="AdminDashboard.handleCreateUser(event)">
-        <div class="input-group">
+        <div class="form-group">
           <label>Name</label>
-          <input type="text" name="name" class="input-control" required>
+          <input type="text" name="name" class="form-control" required>
         </div>
-        <div class="input-group">
+        <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" class="input-control" required>
+          <input type="email" name="email" class="form-control" required>
         </div>
-        <div class="input-group">
+        <div class="form-group">
           <label>Password</label>
-          <input type="password" name="password" class="input-control" required>
+          <input type="password" name="password" class="form-control" required>
         </div>
-        <div class="input-group">
+        <div class="form-group">
           <label>Role</label>
-          <select name="role" class="input-control" required>
+          <select name="role" class="form-control" required>
             <option value="student">Student</option>
             <option value="teacher">Teacher</option>
           </select>
@@ -162,17 +162,17 @@ const AdminDashboard = {
 
     Modal.show('edit-user', `
       <form onsubmit="AdminDashboard.handleEditUser(event, '${id}')">
-        <div class="input-group">
+        <div class="form-group">
           <label>Name</label>
-          <input type="text" name="name" class="input-control" value="${user.name}" required>
+          <input type="text" name="name" class="form-control" value="${user.name}" required>
         </div>
-        <div class="input-group">
+        <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" class="input-control" value="${user.email}" required>
+          <input type="email" name="email" class="form-control" value="${user.email}" required>
         </div>
-        <div class="input-group">
+        <div class="form-group">
           <label>Role</label>
-          <select name="role" class="input-control" required>
+          <select name="role" class="form-control" required>
             <option value="student" ${user.role === 'student' ? 'selected' : ''}>Student</option>
             <option value="teacher" ${user.role === 'teacher' ? 'selected' : ''}>Teacher</option>
           </select>
@@ -186,7 +186,7 @@ const AdminDashboard = {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
     try {
-      const res = await api.put(\`/portal/admin/users/\${id}\`, data);
+      const res = await api.put(`/portal/admin/users/${id}`, data);
       if (res.success) {
         Modal.hide();
         notifications.success('User updated successfully');
@@ -220,11 +220,11 @@ const AdminDashboard = {
     tbody.innerHTML = this.courses.map(c => `
       <tr>
         <td>${c.courseName}</td>
-        <td>${c.teacherId ? c.teacherId.name + ' (' + c.teacherId.email + ')' : 'Unassigned'}</td>
+        <td>${c.teacherId ? c.teacherId.name : 'Unassigned'}</td>
         <td>${utils.formatDate(c.createdAt)}</td>
         <td>
-          <button onclick="AdminDashboard.showEditCourseModal('${c._id}')" class="btn btn-outline" style="padding: 4px 8px;"><i class="fas fa-edit"></i></button>
-          <button onclick="AdminDashboard.deleteCourse('${c._id}')" class="btn btn-outline" style="padding: 4px 8px; color:#ef4444; border-color:#ef4444;"><i class="fas fa-trash"></i></button>
+          <button onclick="AdminDashboard.showEditCourseModal('${c._id}')" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i></button>
+          <button onclick="AdminDashboard.deleteCourse('${c._id}')" class="btn btn-secondary btn-sm" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
         </td>
       </tr>
     `).join('');
@@ -233,7 +233,7 @@ const AdminDashboard = {
   async deleteCourse(id) {
     if (!confirm('Are you sure you want to delete this course?')) return;
     try {
-      const res = await api.delete(`/portal/admin/courses/${id}`);
+      const res = await api.delete(`/ portal / admin / courses / ${id} `);
       if (res.success) {
         notifications.success('Course deleted');
         this.loadCourses();
@@ -246,23 +246,23 @@ const AdminDashboard = {
   showCreateCourseModal() {
     // Populate teacher dropdown
     const teachers = this.users.filter(u => u.role === 'teacher');
-    const teacherOptions = teachers.map(t => `<option value="${t._id}">${t.name} (${t.email})</option>`).join('');
+    const teacherOptions = teachers.map(t => `< option value = "${t._id}" > ${t.name} (${t.email})</option > `).join('');
 
     Modal.show('create-course', `
-      <form onsubmit="AdminDashboard.handleCreateCourse(event)">
-        <div class="input-group">
+  < form onsubmit = "AdminDashboard.handleCreateCourse(event)" >
+        <div class="form-group">
           <label>Course Name</label>
-          <input type="text" name="courseName" class="input-control" required>
+          <input type="text" name="courseName" class="form-control" required>
         </div>
-        <div class="input-group">
+        <div class="form-group">
           <label>Assign Teacher</label>
-          <select name="teacherId" class="input-control" required>
+          <select name="teacherId" class="form-control" required>
             ${teacherOptions}
           </select>
         </div>
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:16px;">Create Course</button>
-      </form>
-    `, { title: 'Create New Course' });
+      </form >
+  `, { title: 'Create New Course' });
   },
 
   async handleCreateCourse(e) {
@@ -286,32 +286,32 @@ const AdminDashboard = {
     if (!course) return;
 
     const teachers = this.users.filter(u => u.role === 'teacher');
-    const teacherOptions = teachers.map(t => 
-      \`<option value="\${t._id}" \${course.teacherId && course.teacherId._id === t._id ? 'selected' : ''}>\${t.name} (\${t.email})</option>\`
+    const teacherOptions = teachers.map(t =>
+      `< option value = "${t._id}" ${course.teacherId && course.teacherId._id === t._id ? 'selected' : ''}> ${t.name} (${t.email})</option > `
     ).join('');
 
     Modal.show('edit-course', `
-      <form onsubmit="AdminDashboard.handleEditCourse(event, '${id}')">
-        <div class="input-group">
+  < form onsubmit = "AdminDashboard.handleEditCourse(event, '${id}')" >
+        <div class="form-group">
           <label>Course Name</label>
-          <input type="text" name="courseName" class="input-control" value="${course.courseName}" required>
+          <input type="text" name="courseName" class="form-control" value="${course.courseName}" required>
         </div>
-        <div class="input-group">
+        <div class="form-group">
           <label>Assign Teacher</label>
-          <select name="teacherId" class="input-control" required>
+          <select name="teacherId" class="form-control" required>
             ${teacherOptions}
           </select>
         </div>
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:16px;">Update Course</button>
-      </form>
-    `, { title: 'Edit Course' });
+      </form >
+  `, { title: 'Edit Course' });
   },
 
   async handleEditCourse(e, id) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
     try {
-      const res = await api.put(\`/portal/admin/courses/\${id}\`, data);
+      const res = await api.put(`/portal/admin/courses/${id}`, data);
       if (res.success) {
         Modal.hide();
         notifications.success('Course updated successfully');

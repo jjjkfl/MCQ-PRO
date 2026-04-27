@@ -3,37 +3,48 @@
  * Socket.io initialization and real-time exam event handling
  */
 
-const { Server }      = require('socket.io');
-const jwt             = require('jsonwebtoken');
-const logger          = require('../utils/logger');
+const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const logger = require('../utils/logger');
+const Session = require('../models/Session');
+
+async function persistSessionStatus(sessionId, status) {
+  if (!sessionId || !mongoose.Types.ObjectId.isValid(String(sessionId))) return;
+  try {
+    await Session.findByIdAndUpdate(sessionId, { status });
+  } catch (e) {
+    logger.warn(`Session status persist failed: ${sessionId} → ${status}: ${e.message}`);
+  }
+}
 
 /* In-memory room state (use Redis for multi-instance production) */
-const examRooms  = new Map();   // sessionId → { students, timer, started }
+const examRooms = new Map();   // sessionId → { students, timer, started }
 const userSocket = new Map();   // userId    → socketId
 
 const initSocket = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin      : process.env.ALLOWED_ORIGINS
-                      ? process.env.ALLOWED_ORIGINS.split(',')
-                      : '*',
-      methods     : ['GET', 'POST'],
-      credentials : true,
+      origin: process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS.split(',')
+        : '*',
+      methods: ['GET', 'POST'],
+      credentials: true,
     },
-    pingTimeout  : 60000,
-    pingInterval : 25000,
+    pingTimeout: 60000,
+    pingInterval: 25000,
   });
 
   /* ─── Auth Middleware ─────────────────────────────────────────── */
   io.use((socket, next) => {
     const token = socket.handshake.auth?.token
-               || socket.handshake.headers?.authorization?.split(' ')[1];
+      || socket.handshake.headers?.authorization?.split(' ')[1];
 
     if (!token) return next(new Error('Authentication error: No token'));
 
     try {
-      const decoded  = jwt.verify(token, process.env.JWT_SECRET);
-      socket.user    = decoded;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      socket.user = decoded;
       next();
     } catch {
       next(new Error('Authentication error: Invalid token'));
@@ -53,20 +64,20 @@ const initSocket = (httpServer) => {
 
       if (!examRooms.has(sessionId)) {
         examRooms.set(sessionId, {
-          students  : new Map(),
-          started   : false,
-          endTime   : null,
-          paused    : false,
+          students: new Map(),
+          started: false,
+          endTime: null,
+          paused: false,
         });
       }
 
       if (role === 'student') {
         examRooms.get(sessionId).students.set(userId, {
-          socketId   : socket.id,
-          joinedAt   : Date.now(),
-          answersGiven : 0,
-          tabSwitches  : 0,
-          online       : true,
+          socketId: socket.id,
+          joinedAt: Date.now(),
+          answersGiven: 0,
+          tabSwitches: 0,
+          online: true,
         });
         io.to(sessionId).emit('exam:studentJoined', {
           userId,
@@ -77,9 +88,9 @@ const initSocket = (httpServer) => {
       /* Send current room state to the joiner */
       const room = examRooms.get(sessionId);
       socket.emit('exam:state', {
-        started  : room.started,
-        endTime  : room.endTime,
-        paused   : room.paused,
+        started: room.started,
+        endTime: room.endTime,
+        paused: room.paused,
       });
 
       logger.info(`User ${userId} joined exam room ${sessionId}`);
@@ -89,13 +100,15 @@ const initSocket = (httpServer) => {
     socket.on('exam:start', ({ sessionId, durationMinutes }) => {
       if (role !== 'teacher') return socket.emit('error', { message: 'Unauthorized' });
 
-      const room    = examRooms.get(sessionId);
+      const room = examRooms.get(sessionId);
       if (!room) return socket.emit('error', { message: 'Room not found' });
 
       const endTime = Date.now() + durationMinutes * 60 * 1000;
-      room.started  = true;
-      room.endTime  = endTime;
-      room.paused   = false;
+      room.started = true;
+      room.endTime = endTime;
+      room.paused = false;
+
+      void persistSessionStatus(sessionId, 'active');
 
       io.to(sessionId).emit('exam:started', { endTime, durationMinutes });
       logger.info(`Exam started in room ${sessionId} — ${durationMinutes}min`);
@@ -104,6 +117,7 @@ const initSocket = (httpServer) => {
       setTimeout(() => {
         io.to(sessionId).emit('exam:ended', { reason: 'time_up' });
         examRooms.delete(sessionId);
+        void persistSessionStatus(sessionId, 'completed');
       }, durationMinutes * 60 * 1000 + 5000);
     });
 
@@ -152,11 +166,41 @@ const initSocket = (httpServer) => {
         student.tabSwitches++;
         io.to(sessionId).emit('exam:suspiciousActivity', {
           userId,
-          tabSwitches : student.tabSwitches,
-          timestamp   : new Date().toISOString(),
+          tabSwitches: student.tabSwitches,
+          timestamp: new Date().toISOString(),
         });
         logger.warn(`Tab switch detected: user=${userId} session=${sessionId} count=${student.tabSwitches}`);
+
+        // Blockchain Anchor: Immutable Violation Proof
+        const blockchain = require('../services/blockchain/blockchainService');
+        blockchain.sealGenericData({
+          type: 'tab-switch',
+          userId,
+          sessionId,
+          count: student.tabSwitches
+        }, 'violation', `${userId}:${Date.now()}`).catch(e => logger.warn(`Violation anchoring failed: ${e.message}`));
       }
+    });
+
+    /* ── STUDENT: GENERAL VIOLATIONS ────────────────────────────── */
+    socket.on('exam:violation', ({ sessionId, violation }) => {
+      if (role !== 'student') return;
+
+      io.to(sessionId).emit('exam:suspiciousActivity', {
+        userId,
+        violation,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Blockchain Anchor: Immutable Violation Proof
+      const blockchain = require('../services/blockchain/blockchainService');
+      blockchain.sealGenericData({
+        ...violation,
+        userId,
+        sessionId
+      }, 'violation', `${userId}:${Date.now()}`).catch(e => logger.warn(`Violation anchoring failed: ${e.message}`));
+
+      logger.warn(`Security violation: user=${userId} type=${violation.type}`);
     });
 
     /* ── TEACHER: FORCE END EXAM ─────────────────────────────────── */
@@ -164,6 +208,7 @@ const initSocket = (httpServer) => {
       if (role !== 'teacher') return;
       io.to(sessionId).emit('exam:ended', { reason: 'teacher_ended' });
       examRooms.delete(sessionId);
+      void persistSessionStatus(sessionId, 'completed');
       logger.info(`Teacher force-ended exam: ${sessionId}`);
     });
 
@@ -173,7 +218,7 @@ const initSocket = (httpServer) => {
       const room = examRooms.get(sessionId);
       if (!room) return socket.emit('exam:studentList', { students: [] });
       const list = Array.from(room.students.entries()).map(([uid, info]) => ({
-        userId : uid, ...info,
+        userId: uid, ...info,
       }));
       socket.emit('exam:studentList', { students: list });
     });
@@ -183,13 +228,14 @@ const initSocket = (httpServer) => {
       userSocket.delete(userId);
       logger.info(`Socket disconnected: ${socket.id} | reason=${reason}`);
 
-      /* Mark student offline in all rooms they were in */
-      for (const [sessionId, room] of examRooms.entries()) {
-        if (room.students.has(userId)) {
-          room.students.get(userId).online = false;
-          io.to(sessionId).emit('exam:studentOffline', { userId });
-        }
-      }
+      /* ── GLOBAL ANNOUNCEMENTS ───────────────────────────────────── */
+      socket.on('broadcast-announcement', (data) => {
+        if (role !== 'teacher') return;
+        io.emit('announcement', data);
+        logger.info(`Teacher ${userId} broadcasted announcement: ${data.title}`);
+      });
+
+      /* MARK student offline in all rooms they were in... */
     });
   });
 
@@ -197,5 +243,5 @@ const initSocket = (httpServer) => {
 };
 
 module.exports = initSocket;
-module.exports.examRooms  = examRooms;
+module.exports.examRooms = examRooms;
 module.exports.userSocket = userSocket;

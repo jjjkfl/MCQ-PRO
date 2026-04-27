@@ -586,3 +586,319 @@
 [2026-04-24 12:10:11] INFO: ✅ MongoDB Connected: localhost
 [2026-04-24 12:29:34] INFO: ✅ MongoDB Connected: localhost
 [2026-04-24 12:57:16] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 15:26:18] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 16:14:06] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 16:14:37] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 17:06:12] INFO: ✅ MongoDB Connected: localhost
+[2026-04-24 17:19:28] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 08:43:41] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 08:46:45] INFO: Socket connected: I4Nj3mm0XlnP3vK7AAAB | user=69eb55a77268fff105e88e16 | role=teacher
+[2026-04-25 08:46:45] INFO: User 69eb55a77268fff105e88e16 joined exam room 69eb55a87268fff105e88e48
+[2026-04-25 08:47:13] INFO: Socket disconnected: I4Nj3mm0XlnP3vK7AAAB | reason=transport close
+[2026-04-25 08:47:53] INFO: Socket connected: ui-D4rwXhZWdbO1tAAAD | user=69eb55a77268fff105e88e16 | role=teacher
+[2026-04-25 08:47:53] INFO: User 69eb55a77268fff105e88e16 joined exam room 69eb55a87268fff105e88e48
+[2026-04-25 08:49:01] INFO: Socket disconnected: ui-D4rwXhZWdbO1tAAAD | reason=transport close
+[2026-04-25 09:27:01] INFO: Socket connected: cq5z7ZS0Pf32uOPGAAAF | user=69eb55a77268fff105e88e16 | role=teacher
+[2026-04-25 09:27:02] INFO: User 69eb55a77268fff105e88e16 joined exam room 69eb55a87268fff105e88e48
+[2026-04-25 12:27:34] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 12:48:07] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 12:48:43] ERROR: Unified Extraction Failed: Unsupported file format
+[2026-04-25 12:52:01] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 12:52:35] ERROR: Unified Extraction Failed: Unsupported file format
+[2026-04-25 12:54:45] ERROR: Unified Extraction Failed: Unsupported file format
+[2026-04-25 13:02:52] ERROR: Unified Extraction Failed: Unsupported file format
+[2026-04-25 13:05:35] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 13:08:45] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 13:09:17] INFO: Extracted image: docx-img-4fa6c2aea1edca8e.png (image/png)
+[2026-04-25 13:09:17] INFO: Extracted image: docx-img-a6759d878fb51c3e.png (image/png)
+[2026-04-25 13:09:17] INFO: Extracted image: docx-img-86ecc79b7e4302e0.png (image/png)
+[2026-04-25 13:09:17] INFO: Extracted image: docx-img-11e8d6bacc323d08.png (image/png)
+[2026-04-25 13:09:17] INFO: Extracted image: docx-img-f2a956ac2236c95b.png (image/png)
+[2026-04-25 13:14:21] INFO: Socket connected: JIEtoSq-PbuhuSLKAAAB | user=69eb55a77268fff105e88e16 | role=teacher
+[2026-04-25 13:14:21] INFO: User 69eb55a77268fff105e88e16 joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:14:30] INFO: Socket disconnected: JIEtoSq-PbuhuSLKAAAB | reason=transport close
+[2026-04-25 13:15:06] INFO: Socket connected: 3MIxifqXR9qRiVK1AAAD | user=69eb55a97268fff105e88e9a | role=student
+[2026-04-25 13:15:06] INFO: User 69eb55a97268fff105e88e9a joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:15:16] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=1
+[2026-04-25 13:15:16] INFO: Socket disconnected: 3MIxifqXR9qRiVK1AAAD | reason=transport error
+[2026-04-25 13:15:17] INFO: Socket connected: io1E7feqSz8XK0HUAAAF | user=69eb55a97268fff105e88e9a | role=student
+[2026-04-25 13:15:17] INFO: User 69eb55a97268fff105e88e9a joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:15:23] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=1
+[2026-04-25 13:15:35] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=2
+[2026-04-25 13:15:35] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=3
+[2026-04-25 13:17:09] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=4
+[2026-04-25 13:17:09] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=5
+[2026-04-25 13:17:31] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=6
+[2026-04-25 13:17:31] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=7
+[2026-04-25 13:18:13] INFO: Socket connected: 2C11gpjoXABn5bcMAAAH | user=69eb55a77268fff105e88e16 | role=teacher
+[2026-04-25 13:18:13] INFO: User 69eb55a77268fff105e88e16 joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:18:29] INFO: Teacher force-ended exam: 69ec70cbf142d06c1f69b414
+[2026-04-25 13:18:37] INFO: Socket disconnected: 2C11gpjoXABn5bcMAAAH | reason=transport close
+[2026-04-25 13:20:51] INFO: Socket disconnected: io1E7feqSz8XK0HUAAAF | reason=transport close
+[2026-04-25 13:20:54] INFO: Socket connected: HUPc0ks1v6pUCAe5AAAJ | user=69eb55a77268fff105e88e16 | role=teacher
+[2026-04-25 13:20:54] INFO: User 69eb55a77268fff105e88e16 joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:21:37] INFO: Socket disconnected: HUPc0ks1v6pUCAe5AAAJ | reason=transport close
+[2026-04-25 13:30:13] INFO: Socket connected: pp1uZLRhzUU5Y93MAAAL | user=69eb55a77268fff105e88e16 | role=teacher
+[2026-04-25 13:30:13] INFO: User 69eb55a77268fff105e88e16 joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:30:39] INFO: Socket disconnected: pp1uZLRhzUU5Y93MAAAL | reason=transport close
+[2026-04-25 13:31:08] INFO: Socket connected: T_rdpwmwxBW9EqocAAAN | user=69eb55a97268fff105e88e9a | role=student
+[2026-04-25 13:31:08] INFO: User 69eb55a97268fff105e88e9a joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:31:22] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=1
+[2026-04-25 13:31:38] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=2
+[2026-04-25 13:31:38] INFO: Socket disconnected: T_rdpwmwxBW9EqocAAAN | reason=transport close
+[2026-04-25 13:32:26] INFO: Socket connected: QIzmGzXZniZpI8qwAAAP | user=69eb55a97268fff105e88e9a | role=student
+[2026-04-25 13:32:26] INFO: User 69eb55a97268fff105e88e9a joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:33:42] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=1
+[2026-04-25 13:33:59] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=2
+[2026-04-25 13:34:04] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=3
+[2026-04-25 13:34:05] INFO: Socket disconnected: QIzmGzXZniZpI8qwAAAP | reason=transport close
+[2026-04-25 13:41:11] INFO: Socket connected: YqntyTeRAiXi_tYnAAAR | user=69eb55a97268fff105e88e9a | role=student
+[2026-04-25 13:41:12] INFO: User 69eb55a97268fff105e88e9a joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:42:33] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=1
+[2026-04-25 13:42:46] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=2
+[2026-04-25 13:42:46] INFO: Socket disconnected: YqntyTeRAiXi_tYnAAAR | reason=transport close
+[2026-04-25 13:45:55] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 13:53:58] INFO: Socket connected: A2APZeJCLB3DevMEAAAB | user=69eb55a97268fff105e88e9a | role=student
+[2026-04-25 13:53:58] INFO: User 69eb55a97268fff105e88e9a joined exam room 69ec70cbf142d06c1f69b414
+[2026-04-25 13:54:57] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=1
+[2026-04-25 13:55:07] WARN: Tab switch detected: user=69eb55a97268fff105e88e9a session=69ec70cbf142d06c1f69b414 count=2
+[2026-04-25 13:55:07] INFO: Socket disconnected: A2APZeJCLB3DevMEAAAB | reason=transport error
+[2026-04-25 14:57:35] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 18:38:48] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-25 18:38:49] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 18:49:28] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-25 18:49:29] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 19:28:25] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-25 19:28:26] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 22:59:59] WARN: Blockchain: DEPLOYER_PRIVATE_KEY or CONTRACT_ADDRESS not set — blockchain disabled
+[2026-04-25 23:14:58] WARN: Blockchain: DEPLOYER_PRIVATE_KEY or CONTRACT_ADDRESS not set — blockchain disabled
+[2026-04-25 23:17:31] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-25 23:17:32] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 23:29:45] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-25 23:29:46] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 23:30:07] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-25 23:30:07] INFO: ✅ MongoDB Connected: localhost
+[2026-04-25 23:56:00] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-25 23:56:01] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 00:17:43] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 00:18:09] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 00:21:07] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 00:23:21] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 00:23:39] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 00:29:26] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 10:15:49] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 10:21:21] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 10:24:18] INFO: Extracted image: docx-img-89537c4ebcd7dc29.png (image/png)
+[2026-04-26 10:24:18] INFO: Extracted image: docx-img-86f6400e1da597d5.png (image/png)
+[2026-04-26 10:24:18] INFO: Extracted image: docx-img-9cbb3698c9258631.png (image/png)
+[2026-04-26 10:24:18] INFO: Extracted image: docx-img-ed1691675b278b2d.png (image/png)
+[2026-04-26 10:24:18] INFO: Extracted image: docx-img-69ec0933e07d64cf.png (image/png)
+[2026-04-26 10:25:08] INFO: Extracted image: docx-img-24c477b8af2ead2e.png (image/png)
+[2026-04-26 10:25:08] INFO: Extracted image: docx-img-c2383872e7c0c5d9.png (image/png)
+[2026-04-26 10:25:08] INFO: Extracted image: docx-img-ce42109300376892.png (image/png)
+[2026-04-26 10:25:08] INFO: Extracted image: docx-img-d3454fde230c11f2.png (image/png)
+[2026-04-26 10:25:08] INFO: Extracted image: docx-img-405978a2ca496b87.png (image/png)
+[2026-04-26 10:38:01] INFO: Socket connected: 5A-lhqiU11qRFQIFAAAB | user=69ecc3087a292f179887fc5e | role=teacher
+[2026-04-26 10:38:01] INFO: User 69ecc3087a292f179887fc5e joined exam room 69ed9d516378ebd98f2f00d6
+[2026-04-26 10:40:59] INFO: Socket disconnected: 5A-lhqiU11qRFQIFAAAB | reason=transport close
+[2026-04-26 10:48:29] INFO: Extracted image: docx-img-13d275f01f23e671.png (image/png)
+[2026-04-26 10:48:29] INFO: Extracted image: docx-img-d8b00bfc138fd4b1.png (image/png)
+[2026-04-26 10:48:29] INFO: Extracted image: docx-img-8b76bf6cea5bb176.png (image/png)
+[2026-04-26 10:48:29] INFO: Extracted image: docx-img-a36203754073312e.png (image/png)
+[2026-04-26 10:48:29] INFO: Extracted image: docx-img-b9bbe31bf50cfcff.png (image/png)
+[2026-04-26 10:52:49] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 10:54:42] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 11:23:04] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 11:36:43] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 11:37:00] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 11:37:12] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 11:37:27] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 11:37:54] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 12:20:55] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 12:21:51] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 12:22:06] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 12:22:23] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 12:23:24] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 12:24:37] INFO: Socket connected: 3k5ksAXrrENjKZzFAAAB | user=69ed9e49e48bfa42d7d83cf8 | role=student
+[2026-04-26 12:24:37] INFO: User 69ed9e49e48bfa42d7d83cf8 joined exam room 69ed9e49e48bfa42d7d83ce6
+[2026-04-26 12:24:45] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ed9e49e48bfa42d7d83ce6 count=1
+[2026-04-26 12:24:46] INFO: Blockchain: sealing result 69edb6b6cad903a1719b305a hash=75e11122418784916bd65684588908fac639f545bb056d5a68389c5fc3dcabfd
+[2026-04-26 12:24:46] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 12:24:55] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ed9e49e48bfa42d7d83ce6 count=2
+[2026-04-26 12:24:55] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ed9e49e48bfa42d7d83ce6 count=3
+[2026-04-26 12:24:59] INFO: Socket disconnected: 3k5ksAXrrENjKZzFAAAB | reason=transport close
+[2026-04-26 15:03:29] INFO: Socket connected: Vfa_bSgxwRZ7hMaeAAAD | user=69ed9e49e48bfa42d7d83cf8 | role=student
+[2026-04-26 15:03:29] INFO: User 69ed9e49e48bfa42d7d83cf8 joined exam room 69ed9e49e48bfa42d7d83ce6
+[2026-04-26 15:03:38] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ed9e49e48bfa42d7d83ce6 count=1
+[2026-04-26 15:03:38] INFO: Socket disconnected: Vfa_bSgxwRZ7hMaeAAAD | reason=transport error
+[2026-04-26 15:05:44] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 15:06:00] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 15:06:39] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 15:07:05] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 15:07:16] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 16:46:28] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 22:29:15] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 22:29:49] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 22:29:49] INFO: Socket connected: bVtyAfR0e_QGqCmUAAAB | user=69ed9e49e48bfa42d7d83cf8 | role=student
+[2026-04-26 22:29:49] INFO: User 69ed9e49e48bfa42d7d83cf8 joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-26 22:30:07] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777222807040]
+[2026-04-26 22:30:07] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777222807040 hash=1e7c41afb8b9c8acdef6e4fae862dff4485962f4c4ea612ed8ee8f1c809f7d8e
+[2026-04-26 22:30:07] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-26 22:30:07] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69eda0d66378ebd98f2f0581 count=1
+[2026-04-26 22:30:07] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777222807094]
+[2026-04-26 22:30:07] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777222807094 hash=9a7287baccee5033438ecd7d960df6dcb015fe2432f92202f8bcc4c01a87d9b7
+[2026-04-26 22:30:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777222807238]
+[2026-04-26 22:30:07] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777222807238 hash=128f7e693502236ad065f9f6345004af8689d90d5221aa7f27b936b81422a298
+[2026-04-26 22:30:07] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=fullscreen-exit
+[2026-04-26 22:30:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] INFO: Blockchain: sealing result 69ee4497759f7a484dcfbd20 hash=f986025e237d59922edd15333b579a3107f543a6b785a53c32878687ea1275d6
+[2026-04-26 22:30:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777222823809]
+[2026-04-26 22:30:23] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777222823809 hash=1363f1bc158856af49b6161d38c8581812ce08292e5e26bc5fc11ef5b7c73f68
+[2026-04-26 22:30:23] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-26 22:30:23] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69eda0d66378ebd98f2f0581 count=2
+[2026-04-26 22:30:23] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777222823829]
+[2026-04-26 22:30:23] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777222823829 hash=8b4abc4121715dc21c3ba1027701742252a7a0422d671da8e082ad86c5eda485
+[2026-04-26 22:30:23] INFO: Socket disconnected: bVtyAfR0e_QGqCmUAAAB | reason=transport close
+[2026-04-26 22:30:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 23:04:05] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 23:04:12] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-26 23:04:21] INFO: ✅ MongoDB Connected: localhost
+[2026-04-26 23:05:07] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:11:41] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:12:04] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:12:05] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:13:05] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:14:03] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:14:04] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:14:12] INFO: Fetched 0 announcements for course 69ed9e49e48bfa42d7d83ce3
+[2026-04-27 07:15:48] INFO: Socket connected: _CPig8KwPVC_r6sZAAAB | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 07:15:48] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-27 07:19:47] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:19:48] INFO: Socket connected: MNp7prq7ZRvI6JkiAAAB | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 07:19:48] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-27 07:20:04] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:20:44] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:20:44] INFO: Socket connected: Txn_qLKDiYeeEboSAAAB | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 07:20:44] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-27 07:21:04] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:28:52] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:28:53] INFO: Socket connected: Q6NaYwT0o0xo4BrQAAAB | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 07:28:53] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-27 07:29:04] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:35:36] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:35:36] INFO: Socket connected: XEBdP0ORSffWnn4FAAAB | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 07:35:37] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-27 07:36:04] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:42:37] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:42:38] INFO: Socket connected: XuJngu2-gz65Cz3hAAAB | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 07:42:38] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-27 07:42:58] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:42:58] INFO: Socket connected: bIDWoe_AkosPRUjsAAAB | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 07:42:58] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-27 07:43:04] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:43:20] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:43:21] INFO: Socket connected: w-pDf-JX9G9cHUw-AAAB | user=69ed9e48e48bfa42d7d83cdc | role=teacher
+[2026-04-27 07:43:21] INFO: User 69ed9e48e48bfa42d7d83cdc joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-27 07:44:04] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 07:44:43] INFO: Socket disconnected: w-pDf-JX9G9cHUw-AAAB | reason=transport close
+[2026-04-27 07:48:14] INFO: Fetched 0 announcements for course 69ed9e49e48bfa42d7d83ce3
+[2026-04-27 07:57:30] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 07:57:47] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 08:04:05] INFO: Extracted image: docx-img-34ecb481b9849ca5.png (image/png)
+[2026-04-27 08:04:05] INFO: Extracted image: docx-img-ad0b5679856fd683.png (image/png)
+[2026-04-27 08:04:05] INFO: Extracted image: docx-img-4a8ad9a0ea19e65c.png (image/png)
+[2026-04-27 08:04:05] INFO: Extracted image: docx-img-306d5664e1d7be72.png (image/png)
+[2026-04-27 08:04:05] INFO: Extracted image: docx-img-7d2b622c0338daf3.png (image/png)
+[2026-04-27 08:04:06] INFO: Blockchain: sealing mcqbank [69eecb1d325d74ca71bfdc7c]
+[2026-04-27 08:04:06] INFO: Blockchain: sealing result mcqbank:69eecb1d325d74ca71bfdc7c hash=e110826e06fa9954bc3ca30c6b60c4793241497fa29d7b859d94a21aaf6f6d1e
+[2026-04-27 08:04:06] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:04:06] ERROR: sealGenericData error [mcqbank]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:07:54] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:08:12] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:14:34] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:15:57] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:16:03] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:16:53] INFO: ✅ MongoDB Connected: localhost
+[2026-04-27 08:17:17] INFO: Blockchain initialized: network=http://127.0.0.1:8545 contract=0x5FbDB2315678afecb367f032d93F642f64180aa3
+[2026-04-27 08:17:17] INFO: Fetched 0 announcements for course 69ed9e49e48bfa42d7d83ce3
+[2026-04-27 08:20:23] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:24:31] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:26:05] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:26:09] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:26:19] INFO: Fetched 4 announcements for course 69ed9e49e48bfa42d7d83cde
+[2026-04-27 08:40:53] INFO: Socket connected: IRdnBJEkIvEncHFiAAAB | user=69ed9e49e48bfa42d7d83cf8 | role=student
+[2026-04-27 08:40:53] INFO: User 69ed9e49e48bfa42d7d83cf8 joined exam room 69ea0c2e807d4e73dda82c6c
+[2026-04-27 08:41:13] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777259473808]
+[2026-04-27 08:41:13] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777259473808 hash=a88f8c74f392e4a571e0e27f551ed9d3252adde8d8462bff76103c40364da05e
+[2026-04-27 08:41:13] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=fullscreen-exit
+[2026-04-27 08:41:13] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:13] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:13] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:21] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777259481550]
+[2026-04-27 08:41:21] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777259481550 hash=ff15d64637f93d75bcbd7f2ec22cf58719b0fcbde585257d1191743047c39510
+[2026-04-27 08:41:21] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=fullscreen-exit
+[2026-04-27 08:41:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:21] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777259483525]
+[2026-04-27 08:41:23] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777259483525 hash=9c81b5b78e3b6614ee10b00c5b7082e0d3bb16cf72f3054b2aa3e649e5da82f8
+[2026-04-27 08:41:23] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-27 08:41:23] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ea0c2e807d4e73dda82c6c count=1
+[2026-04-27 08:41:23] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777259483545]
+[2026-04-27 08:41:23] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777259483545 hash=b330f3caa92cd113d0d6e0fb1dff1d1cc05bfc76b1514edbb5e7d028178e7e68
+[2026-04-27 08:41:23] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777259483552]
+[2026-04-27 08:41:23] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777259483552 hash=70e7bdaa756e2a451f862176bc91b8bc02948361777e94b024168b7c7c04b96a
+[2026-04-27 08:41:23] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-27 08:41:23] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69ea0c2e807d4e73dda82c6c count=2
+[2026-04-27 08:41:23] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777259483559]
+[2026-04-27 08:41:23] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777259483559 hash=67c7ef838094452bbb4ece34a3ec3c8985b5819c7a52a3f316e148d359d61224
+[2026-04-27 08:41:23] INFO: Socket disconnected: IRdnBJEkIvEncHFiAAAB | reason=transport close
+[2026-04-27 08:41:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:45] INFO: Socket connected: o3PYmICBlYwlDhkPAAAD | user=69ed9e49e48bfa42d7d83cf8 | role=student
+[2026-04-27 08:41:45] INFO: User 69ed9e49e48bfa42d7d83cf8 joined exam room 69eda0d66378ebd98f2f0581
+[2026-04-27 08:42:54] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777259574709]
+[2026-04-27 08:42:54] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777259574709 hash=c0b6ac1f1f9f47b50d1229c033d1da11ba904eae6fbc13be668e361946db3a54
+[2026-04-27 08:42:54] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=tab-switch
+[2026-04-27 08:42:54] WARN: Tab switch detected: user=69ed9e49e48bfa42d7d83cf8 session=69eda0d66378ebd98f2f0581 count=1
+[2026-04-27 08:42:54] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777259574721]
+[2026-04-27 08:42:54] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777259574721 hash=9a7287baccee5033438ecd7d960df6dcb015fe2432f92202f8bcc4c01a87d9b7
+[2026-04-27 08:42:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] INFO: Blockchain: sealing violation [69ed9e49e48bfa42d7d83cf8:1777259574801]
+[2026-04-27 08:42:54] INFO: Blockchain: sealing result violation:69ed9e49e48bfa42d7d83cf8:1777259574801 hash=b02bb253d1cede49e66788ccd9f4fc7753e54ccb73c0e726f96df530beee80b7
+[2026-04-27 08:42:54] WARN: Security violation: user=69ed9e49e48bfa42d7d83cf8 type=fullscreen-exit
+[2026-04-27 08:42:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] WARN: Violation anchoring failed: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] INFO: Blockchain: sealing result 69eed436d100ff23d69bf1a6 hash=78dee3bad43d8cc56f89d128d2f5ad61288b7d436d3e6dee52487563d5336cbe
+[2026-04-27 08:42:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 09:25:16] INFO: Socket disconnected: o3PYmICBlYwlDhkPAAAD | reason=transport close

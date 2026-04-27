@@ -19,3 +19,40 @@
 [2026-04-24 11:28:13] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
 [2026-04-24 11:38:44] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
 [2026-04-24 11:41:25] ERROR: ❌ MongoDB Connection Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[2026-04-25 12:48:43] ERROR: Unified Extraction Failed: Unsupported file format
+[2026-04-25 12:52:35] ERROR: Unified Extraction Failed: Unsupported file format
+[2026-04-25 12:54:45] ERROR: Unified Extraction Failed: Unsupported file format
+[2026-04-25 13:02:52] ERROR: Unified Extraction Failed: Unsupported file format
+[2026-04-26 12:24:46] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:07] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-26 22:30:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:04:06] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:04:06] ERROR: sealGenericData error [mcqbank]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:13] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:13] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:41:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-04-27 08:42:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545

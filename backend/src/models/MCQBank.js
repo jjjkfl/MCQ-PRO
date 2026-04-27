@@ -10,7 +10,8 @@ const questionSchema = new mongoose.Schema({
   image: { type: String, default: '' }, // path to extracted image
   options: [{
     label: { type: String, required: true },
-    text: { type: String, required: true }
+    text: { type: String, required: true },
+    image: { type: String, default: '' } // path to extracted image for this option
   }],
   correctAnswer: { type: String, required: true },
   explanation: { type: String },
@@ -29,6 +30,9 @@ const mcqBankSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  meta: {
+    model: { type: String }
   }
 });
 

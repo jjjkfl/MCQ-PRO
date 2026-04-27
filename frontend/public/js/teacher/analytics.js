@@ -7,13 +7,62 @@ const Analytics = {
   async init(sessionId) {
     try {
       const { data } = await api.get(`/portal/teacher/sessions/${sessionId}/results`);
-      this.renderOverview(data.stats, data.sessionTitle);
-      this.renderResultsTable(data.results);
-      this.renderCharts(data.stats);
+      const normalized = this.normalizePayload(data);
+      this.renderOverview(normalized.stats, normalized.sessionTitle);
+      this.renderResultsTable(normalized.results);
+      this.renderCharts(normalized.stats);
     } catch (err) {
       console.error('Analytics error:', err);
       notifications.error('Failed to load analytics: ' + (err.message || ''));
     }
+  },
+
+  normalizePayload(data) {
+    const rawResults = (data && data.results) || [];
+    const results = rawResults.map((r) => {
+      const score = Number(r.score || 0);
+      const totalQuestions = Number(r.totalQuestions || 0);
+      const correctCount = Number(r.correctCount || Math.round((score / 100) * (totalQuestions || 0)));
+      const isPassed = score >= 60;
+      let grade = 'F';
+      if (score >= 90) grade = 'A';
+      else if (score >= 80) grade = 'B';
+      else if (score >= 70) grade = 'C';
+      else if (score >= 60) grade = 'D';
+
+      return {
+        studentName: r.studentId?.name || 'Student',
+        studentEmail: r.studentId?.email || '',
+        score,
+        totalQuestions,
+        correctCount,
+        timeTaken: Number(r.timeTaken || 0),
+        violations: Number(r.violations || 0),
+        isPassed,
+        grade
+      };
+    });
+
+    const scores = results.map(r => r.score);
+    const total = results.length;
+    const passed = results.filter(r => r.isPassed).length;
+    const avgPercent = total ? (scores.reduce((a, b) => a + b, 0) / total).toFixed(1) : 0;
+    const highScore = total ? Math.max(...scores) : 0;
+    const lowScore = total ? Math.min(...scores) : 0;
+
+    const gradeBreakdown = {
+      A: results.filter(r => r.grade === 'A').length,
+      B: results.filter(r => r.grade === 'B').length,
+      C: results.filter(r => r.grade === 'C').length,
+      D: results.filter(r => r.grade === 'D').length,
+      F: results.filter(r => r.grade === 'F').length
+    };
+
+    return {
+      sessionTitle: data.sessionTitle || 'Session',
+      results,
+      stats: { total, passed, avgPercent, highScore, lowScore, gradeBreakdown }
+    };
   },
 
   renderOverview(stats, title) {

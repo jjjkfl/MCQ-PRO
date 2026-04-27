@@ -11,7 +11,7 @@ const api = {
    */
   async request(endpoint, options = {}) {
     const token = localStorage.getItem('token');
-    
+
     const headers = {
       'Content-Type': 'application/json',
       ...(token && { 'Authorization': `Bearer ${token}` }),
@@ -77,9 +77,14 @@ const api = {
         },
         body: formData
       });
-      return await response.json();
+      const result = await response.json();
+      if (!response.ok && response.status === 401) {
+        auth.logout();
+      }
+      return result;
     } catch (error) {
       console.error('Upload Error:', error);
+      if (error.message?.includes('401')) auth.logout();
       throw error;
     }
   }

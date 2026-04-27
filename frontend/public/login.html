@@ -1,100 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | MCQ Pro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/css/common.css">
-  <style>
-    body {
-      background: #000;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .login-container {
-      width: 400px;
-      padding: 48px;
-    }
-    .tab-header {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 32px;
-    }
-    .tab-btn {
-      background: none;
-      color: var(--text-dim);
-      font-size: 16px;
-      font-weight: 600;
-      padding-bottom: 8px;
-      border-bottom: 2px solid transparent;
-      transition: var(--transition);
-    }
-    .tab-btn.active {
-      color: var(--text-main);
-      border-bottom-color: var(--primary);
-    }
-  </style>
+  <link rel="stylesheet" href="/css/auth.css">
 </head>
+
 <body>
+  <div class="bg-pattern"></div>
+  <div class="floating-med-icons"></div>
 
-  <div class="glass-card login-container animate-fade-in">
-    <div style="text-align: center; margin-bottom: 40px;">
-      <h1 class="h2" style="letter-spacing: -1px;">MCQ<span style="color: var(--primary)">PRO</span></h1>
-      <p class="p-dim">Secure Examination Portal</p>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i class="fas fa-stethoscope"></i>
+        </div>
+        <h1 class="h1">MCQ<span style="color: var(--primary)">PRO</span></h1>
+        <p class="p-dim">Secure Academic Examination Portal</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button onclick="toggleTab('login')" id="login-tab" class="auth-tab-btn active">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+        <button onclick="toggleTab('register')" id="register-tab" class="auth-tab-btn">
+          <i class="fas fa-user-plus"></i> Register
+        </button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="auth-input-group">
+          <label><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" name="email" class="form-control auth-control" placeholder="dr.smith@hospital.com"
+            required>
+        </div>
+        <div class="auth-input-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <input type="password" name="password" class="form-control auth-control" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="login-btn" style="width: 100%;">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+        <div class="auth-footer">
+          <a href="#forgot">Forgot password?</a>
+        </div>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
+        <div class="auth-input-group">
+          <label><i class="fas fa-user"></i> Full Name</label>
+          <input type="text" name="name" class="form-control auth-control" placeholder="Dr. John Doe" required>
+        </div>
+        <div class="auth-input-group">
+          <label><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" name="email" class="form-control auth-control" placeholder="your.email@hospital.com"
+            required>
+        </div>
+        <div class="auth-input-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <input type="password" name="password" class="form-control auth-control" minlength="8"
+            placeholder="Minimum 8 characters" required>
+        </div>
+        <div class="auth-input-group">
+          <label><i class="fas fa-user-md"></i> Role</label>
+          <select name="role" class="form-control auth-control">
+            <option value="student">Medical Student</option>
+            <option value="teacher">Professor/Instructor</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="register-btn" style="width: 100%;">
+          <i class="fas fa-user-plus"></i> Create Account
+        </button>
+        <div class="auth-footer">
+          <p>By registering, you agree to our <a href="#terms">Terms of Service</a></p>
+        </div>
+      </form>
     </div>
-
-    <div class="tab-header">
-      <button onclick="toggleTab('login')" id="login-tab" class="tab-btn active">Login</button>
-      <button onclick="toggleTab('register')" id="register-tab" class="tab-btn">Register</button>
-    </div>
-
-    <!-- Login Form -->
-    <form id="login-form" onsubmit="handleLogin(event)">
-      <div class="input-group">
-        <label>Email Address</label>
-        <input type="email" name="email" class="input-control" placeholder="dr.smith@hospital.com" required>
-      </div>
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" name="password" class="input-control" placeholder="••••••••" required>
-      </div>
-      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px;">Sign In</button>
-    </form>
-
-    <!-- Register Form (Hidden) -->
-    <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
-      <div class="input-group">
-        <label>Full Name</label>
-        <input type="text" name="name" class="input-control" placeholder="Dr. John Doe" required>
-      </div>
-      <div class="input-group">
-
-        <label>Email Address</label>
-        <input type="email" name="email" class="input-control" required>
-      </div>
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" name="password" class="input-control" minlength="8" required>
-      </div>
-      <div class="input-group">
-        <label>Role</label>
-        <select name="role" class="input-control">
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px;">Create Account</button>
-    </form>
   </div>
 
   <!-- Shared JS -->
   <script src="/js/shared/api.js"></script>
   <script src="/js/shared/auth.js"></script>
   <script src="/js/shared/notifications.js"></script>
-  
+
   <script>
+    function createFloatingIcons() {
+      const icons = ['🎓', '📝', '📖', '📚', '💡', '🔬', '🎓', '🏫'];
+      const container = document.querySelector('.floating-med-icons');
+      if (!container) return;
+
+      for (let i = 0; i < 12; i++) {
+        const icon = document.createElement('div');
+        icon.className = 'floating-icon';
+        icon.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+        icon.style.top = `${Math.random() * 90}%`;
+        icon.style.left = `${Math.random() * 90}%`;
+        icon.style.fontSize = `${Math.random() * 20 + 16}px`;
+        icon.style.animation = `float ${Math.random() * 10 + 10}s infinite ease-in-out`;
+        container.appendChild(icon);
+      }
+
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes float {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
     function toggleTab(type) {
       const loginForm = document.getElementById('login-form');
       const regForm = document.getElementById('register-form');
@@ -116,34 +138,48 @@
 
     async function handleLogin(e) {
       e.preventDefault();
+      const loginBtn = document.getElementById('login-btn');
+      loginBtn.classList.add('btn-loading');
+
       const formData = new FormData(e.target);
       const { email, password } = Object.fromEntries(formData);
-      
+
       try {
         await auth.login(email, password);
         notifications.success('Welcome back!');
       } catch (err) {
-        notifications.error(err.message);
+        notifications.error(err.message || 'Login failed');
+      } finally {
+        loginBtn.classList.remove('btn-loading');
       }
     }
 
     async function handleRegister(e) {
       e.preventDefault();
+      const registerBtn = document.getElementById('register-btn');
+      registerBtn.classList.add('btn-loading');
+
       const formData = new FormData(e.target);
       const userData = Object.fromEntries(formData);
-      
+
       try {
         await auth.register(userData);
         notifications.success('Account created successfully!');
+        toggleTab('login');
       } catch (err) {
-        notifications.error(err.message);
+        notifications.error(err.message || 'Registration failed');
+      } finally {
+        registerBtn.classList.remove('btn-loading');
       }
     }
 
-    // Redirect if already logged in
-    if (auth.isAuthenticated()) {
-      auth.redirectByRole(auth.getUser().role);
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      createFloatingIcons();
+      if (auth.isAuthenticated()) {
+        auth.redirectByRole(auth.getUser().role);
+      }
+    });
   </script>
 </body>
+
 </html>

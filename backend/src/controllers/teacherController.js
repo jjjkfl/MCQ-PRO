@@ -1,63 +1,102 @@
+const fs = require('fs').promises;
+const path = require('path');
+const crypto = require('crypto');
+const pdfParse = require('pdf-parse');
+const mammoth = require('mammoth');
+const OpenAI = require('openai');
 const Session = require('../models/Session');
 const Result = require('../models/Result');
 const User = require('../models/User');
+const Course = require('../models/Course');
+const MCQBank = require('../models/MCQBank');
+const aiParserSvc = require('../services/aiParserService');
+const blockchain = require('../services/blockchain/blockchainService');
 
-// Global mock state for real-time simulation
-let mockActiveSubmissions = 12;
-let mockTotalSubmissions = 342;
-const sampleQuestions = [
-  { questionText: "Sample mock question text?", options: [{label: 'A', text: 'Option A'}, {label: 'B', text: 'Option B'}], correctAnswer: 'A' }
-];
+const mapBankQuestionsToSession = (questions) =>
+  (questions || []).map((q) => ({
+    questionText: q.questionText || q.text,
+    options: (q.options || []).map((opt) => ({
+      label: opt.label,
+      text: opt.text,
+      image: opt.image || ''
+    })),
+    correctAnswer: q.correctAnswer,
+    marks: q.marks != null ? q.marks : 1,
+    image: q.image || ''
+  }));
 
-let mockBanks = [
-  { _id: 'bank_001', title: 'Anatomy Basics', subject: 'General Surgery', questions: sampleQuestions },
-  { _id: 'bank_002', title: 'Advanced Pathology', subject: 'Pathology', questions: sampleQuestions },
-  { _id: 'bank_003', title: 'Surgical Instruments', subject: 'Practical', questions: sampleQuestions },
-  { _id: 'bank_004', title: 'Patient Care Ethics', subject: 'Ethics', questions: sampleQuestions },
-  { _id: 'bank_005', title: 'Pharmacology 101', subject: 'Pharmacy', questions: sampleQuestions }
-];
 
-let mockSessions = [
-  { _id: 'sess_001', title: 'Midterm Evaluation: Anatomy', division: 'A', startTime: new Date(Date.now() - 3600000), duration: 60, status: 'active', submissions: mockActiveSubmissions },
-  { _id: 'sess_002', title: 'Quiz: General Surgery', division: 'B', startTime: new Date(Date.now() - 86400000), duration: 30, status: 'completed', submissions: 24 },
-  { _id: 'sess_003', title: 'Finals: Pathophysiology', division: 'C', startTime: new Date(Date.now() + 172800000), duration: 120, status: 'upcoming', submissions: 0 },
-  { _id: 'sess_004', title: 'Pop Quiz: Anesthesia', division: 'A', startTime: new Date(Date.now() - 172800000), duration: 15, status: 'completed', submissions: 22 },
-  { _id: 'sess_005', title: 'Mock Exam: Board Prep', division: 'D', startTime: new Date(Date.now() - 259200000), duration: 180, status: 'completed', submissions: 25 }
-];
-
-setInterval(() => {
-  mockActiveSubmissions += Math.floor(Math.random() * 3);
-  mockTotalSubmissions += Math.floor(Math.random() * 2);
-}, 5000);
+// Document processing migrated to aiParserService.js
 
 exports.getDashboard = async (req, res) => {
   try {
     const teacher = req.user;
-    
-    // Fetch courses the teacher is assigned to
-    const courses = await Course.find({ _id: { $in: teacher.courseIds } }).select('courseName');
+    const courseIds = (teacher.courseIds || []).map((id) => id);
 
-    // Create rich mock results
-    const recentResults = [
-      { _id: 'res_001', studentName: 'Alice Johnson', examTitle: 'Quiz: General Surgery', score: 92, submittedAt: new Date(Date.now() - 50000) },
-      { _id: 'res_002', studentName: 'Michael Chang', examTitle: 'Midterm Evaluation: Anatomy', score: 85, submittedAt: new Date(Date.now() - 120000) },
-      { _id: 'res_003', studentName: 'Sarah Davis', examTitle: 'Midterm Evaluation: Anatomy', score: 78, submittedAt: new Date(Date.now() - 360000) },
-      { _id: 'res_004', studentName: 'David Kim', examTitle: 'Pop Quiz: Anesthesia', score: 45, submittedAt: new Date(Date.now() - 400000) },
-      { _id: 'res_005', studentName: 'Emma Wilson', examTitle: 'Quiz: General Surgery', score: 88, submittedAt: new Date(Date.now() - 800000) }
-    ];
+    const courses =
+      courseIds.length > 0
+        ? await Course.find({ _id: { $in: courseIds } }).select('courseName')
+        : [];
+
+    const [activeSessions, totalSessions, totalStudents, totalMCQBanks, sessions, recentResultDocs] =
+      await Promise.all([
+        Session.countDocuments({ courseId: { $in: courseIds }, status: 'active' }),
+        Session.countDocuments({ courseId: { $in: courseIds } }),
+        User.countDocuments({ role: 'student', courseId: { $in: courseIds } }),
+        MCQBank.countDocuments({ createdBy: teacher._id }),
+        Session.find({ courseId: { $in: courseIds } })
+          .sort({ startTime: -1 })
+          .limit(8)
+          .lean(),
+        Result.find({ courseId: { $in: courseIds } })
+          .sort({ createdAt: -1 })
+          .limit(5)
+          .populate('studentId', 'name')
+          .populate('sessionId', 'title')
+          .lean()
+      ]);
+
+    const sessionIds = sessions.map((s) => s._id);
+    const submissionCounts = sessionIds.length
+      ? await Result.aggregate([
+        { $match: { sessionId: { $in: sessionIds } } },
+        { $group: { _id: '$sessionId', count: { $sum: 1 } } }
+      ])
+      : [];
+    const countMap = Object.fromEntries(submissionCounts.map((c) => [String(c._id), c.count]));
+
+    const recentSessions = sessions.map((s) => ({
+      _id: s._id,
+      title: s.title,
+      courseId: s.courseId,
+      division: s.division,
+      startTime: s.startTime,
+      scheduledStart: s.startTime,
+      duration: s.duration,
+      status: s.status,
+      submissions: countMap[String(s._id)] || 0
+    }));
+
+    const recentResults = recentResultDocs.map((r) => ({
+      _id: r._id,
+      studentName: (r.studentId && r.studentId.name) || 'Student',
+      examTitle: (r.sessionId && r.sessionId.title) || 'Exam',
+      score: r.score,
+      submittedAt: r.createdAt
+    }));
 
     res.json({
       success: true,
       data: {
         stats: {
-          activeSessions: 1,
-          totalSessions: 14,
-          totalStudents: 32,
-          totalMCQBanks: mockBanks.length
+          activeSessions,
+          totalSessions,
+          totalStudents,
+          totalMCQBanks
         },
-        recentSessions: mockSessions,
+        recentSessions,
         recentResults,
-        courses // pass the courses back to the frontend
+        courses
       }
     });
   } catch (err) {
@@ -67,44 +106,32 @@ exports.getDashboard = async (req, res) => {
 
 exports.createSession = async (req, res) => {
   try {
-    const { title, scheduledStart, durationMinutes, mcqBankId, division, courseId } = req.body;
-    
-    // Fallback to empty array if bank not found
-    let questions = [];
-    if (mcqBankId) {
-      const bank = mockBanks.find(b => b._id === mcqBankId);
-      if (bank && bank.questions) {
-        // Map UI mock format to Mongoose Session schema
-        questions = bank.questions.map(q => ({
-          text: q.questionText || q.text,
-          options: (q.options || []).map(opt => typeof opt === 'string' ? opt : opt.text),
-          correctAnswer: q.correctAnswer
-        }));
-      }
+    const { title, scheduledStart, durationMinutes, mcqBankId, division, courseId, subject: subjectFromBody } =
+      req.body;
+
+    if (!courseId || !req.user.courseIds.map((id) => id.toString()).includes(courseId.toString())) {
+      return res.status(403).json({ success: false, message: 'Invalid or unauthorized courseId' });
     }
 
-    if (!courseId || !req.user.courseIds.includes(courseId)) {
-      return res.status(403).json({ success: false, message: 'Invalid or unauthorized courseId' });
+    let questions = [];
+    let subject = typeof subjectFromBody === 'string' ? subjectFromBody.trim() : '';
+
+    if (mcqBankId) {
+      const bank = await MCQBank.findById(mcqBankId);
+      if (bank) {
+        questions = mapBankQuestionsToSession(bank.questions);
+        if (!subject) subject = bank.subject || '';
+      }
     }
 
     const session = await Session.create({
       title,
-      division: division || 'A', // Fallback to 'A' if not provided
-      questions: questions,
+      division: division || 'A',
+      subject,
+      questions,
       startTime: new Date(scheduledStart),
       duration: durationMinutes,
-      courseId: courseId
-    });
-
-    // Also push to mock sessions for real-time frontend updates
-    mockSessions.unshift({
-      _id: session._id,
-      title: session.title,
-      division: session.division,
-      startTime: session.startTime,
-      duration: session.duration,
-      status: 'upcoming',
-      submissions: 0
+      courseId
     });
 
     res.status(201).json({ success: true, data: session });
@@ -129,17 +156,11 @@ exports.updateSession = async (req, res) => {
     if (scheduledStart) updateData.startTime = new Date(scheduledStart);
 
     const session = await Session.findOneAndUpdate(
-      { _id: req.params.id, courseId: req.user.courseId },
+      { _id: req.params.id, courseId: { $in: req.user.courseIds } },
       updateData,
       { new: true }
     );
     if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
-
-    // Update in mock memory as well
-    const mIdx = mockSessions.findIndex(s => s._id.toString() === req.params.id);
-    if (mIdx !== -1) {
-      mockSessions[mIdx] = { ...mockSessions[mIdx], ...updateData };
-    }
 
     res.json({ success: true, data: session });
   } catch (err) {
@@ -149,11 +170,11 @@ exports.updateSession = async (req, res) => {
 
 exports.deleteSession = async (req, res) => {
   try {
-    const session = await Session.findOneAndDelete({ _id: req.params.id, courseId: { $in: req.user.courseIds } });
+    const session = await Session.findOneAndDelete({
+      _id: req.params.id,
+      courseId: { $in: req.user.courseIds }
+    });
     if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
-    
-    // Remove from mock memory
-    mockSessions = mockSessions.filter(s => s._id.toString() !== req.params.id);
 
     res.json({ success: true, message: 'Session deleted' });
   } catch (err) {
@@ -169,6 +190,7 @@ exports.updateSessionStatus = async (req, res) => {
       { status },
       { new: true }
     );
+    if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
     res.json({ success: true, data: session });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -177,23 +199,168 @@ exports.updateSessionStatus = async (req, res) => {
 
 exports.getStudents = async (req, res) => {
   try {
-    const students = await User.find({ courseId: { $in: req.user.courseIds }, role: 'student' }).select('-password');
-    res.json({ success: true, data: students });
+    const courseIds = req.user.courseIds || [];
+    const students = await User.find({
+      courseId: { $in: courseIds },
+      role: 'student'
+    }).select('-password').lean();
+
+    // Attach total attendance count
+    const Attendance = require('../models/Attendance');
+    const studentData = await Promise.all(students.map(async (s) => {
+      const attCount = await Attendance.countDocuments({ studentId: s._id, status: 'present' });
+      return { ...s, totalAttendance: attCount };
+    }));
+
+    res.json({ success: true, data: studentData });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
+exports.createStudent = async (req, res) => {
+  try {
+    const { name, email, password, courseId, division } = req.body;
+
+    // Authorization check
+    if (!req.user.courseIds.map(id => id.toString()).includes(courseId)) {
+      return res.status(403).json({ success: false, message: 'You can only add students to your own courses.' });
+    }
+
+    const student = await User.create({
+      name,
+      email,
+      password,
+      role: 'student',
+      courseId,
+      division
+    });
+
+    res.status(201).json({ success: true, data: student });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.updateStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, courseId, division } = req.body;
+
+    const student = await User.findById(id);
+    if (!student || student.role !== 'student') {
+      return res.status(404).json({ success: false, message: 'Student not found.' });
+    }
+
+    const myCourses = req.user.courseIds.map(cid => cid.toString());
+    const isOwner = myCourses.includes(student.courseId?.toString());
+    const isNewOwner = myCourses.includes(courseId);
+
+    if (!isOwner && !isNewOwner) {
+      return res.status(403).json({ success: false, message: 'You do not have permission to manage this student.' });
+    }
+
+    student.name = name || student.name;
+    student.email = email || student.email;
+    student.courseId = courseId || student.courseId;
+    student.division = division || student.division;
+
+    await student.save();
+    res.json({ success: true, data: student });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const student = await User.findById(id);
+    if (!student || student.role !== 'student') {
+      return res.status(404).json({ success: false, message: 'Student not found.' });
+    }
+
+    if (!req.user.courseIds.map(cid => cid.toString()).includes(student.courseId?.toString())) {
+      return res.status(403).json({ success: false, message: 'You can only delete students assigned to your own courses.' });
+    }
+
+    await User.findByIdAndDelete(id);
+    res.json({ success: true, message: 'Student deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const PASS_SCORE = 60;
+
 exports.getGeneralAnalytics = async (req, res) => {
   try {
-    res.json({ 
-      success: true, 
-      data: { 
-        totalSubmissions: mockTotalSubmissions, 
-        avgScore: 76, 
-        passRate: 82, 
-        gradeBreakdown: { A: 45, B: 120, C: 110, D: 42, F: 25 } 
-      } 
+    const courseIds = req.user.courseIds || [];
+    if (courseIds.length === 0) {
+      return res.json({
+        success: true,
+        data: {
+          totalSubmissions: 0,
+          avgScore: 0,
+          passRate: 0,
+          gradeBreakdown: { A: 0, B: 0, C: 0, D: 0, F: 0 }
+        }
+      });
+    }
+
+    const [summary] = await Result.aggregate([
+      { $match: { courseId: { $in: courseIds } } },
+      {
+        $group: {
+          _id: null,
+          totalSubmissions: { $sum: 1 },
+          avgScore: { $avg: '$score' },
+          passed: { $sum: { $cond: [{ $gte: ['$score', PASS_SCORE] }, 1, 0] } }
+        }
+      }
+    ]);
+
+    const [grades] = await Result.aggregate([
+      { $match: { courseId: { $in: courseIds } } },
+      {
+        $group: {
+          _id: null,
+          A: { $sum: { $cond: [{ $gte: ['$score', 90] }, 1, 0] } },
+          B: {
+            $sum: {
+              $cond: [{ $and: [{ $gte: ['$score', 80] }, { $lt: ['$score', 90] }] }, 1, 0]
+            }
+          },
+          C: {
+            $sum: {
+              $cond: [{ $and: [{ $gte: ['$score', 70] }, { $lt: ['$score', 80] }] }, 1, 0]
+            }
+          },
+          D: {
+            $sum: {
+              $cond: [{ $and: [{ $gte: ['$score', 60] }, { $lt: ['$score', 70] }] }, 1, 0]
+            }
+          },
+          F: { $sum: { $cond: [{ $lt: ['$score', 60] }, 1, 0] } }
+        }
+      }
+    ]);
+
+    const total = summary ? summary.totalSubmissions : 0;
+    const avgScore = summary && total ? Math.round(summary.avgScore * 10) / 10 : 0;
+    const passRate = summary && total ? Math.round((summary.passed / total) * 1000) / 10 : 0;
+    const gradeBreakdown = grades
+      ? { A: grades.A, B: grades.B, C: grades.C, D: grades.D, F: grades.F }
+      : { A: 0, B: 0, C: 0, D: 0, F: 0 };
+
+    res.json({
+      success: true,
+      data: {
+        totalSubmissions: total,
+        avgScore,
+        passRate,
+        gradeBreakdown
+      }
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -202,7 +369,14 @@ exports.getGeneralAnalytics = async (req, res) => {
 
 exports.getSessionResults = async (req, res) => {
   try {
-    const results = await Result.find({ sessionId: req.params.sessionId }).populate('studentId', 'name email');
+    const session = await Session.findOne({
+      _id: req.params.sessionId,
+      courseId: { $in: req.user.courseIds }
+    });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Session not found' });
+    }
+    const results = await Result.find({ sessionId: session._id }).populate('studentId', 'name email');
     res.json({ success: true, data: { results, stats: { total: results.length } } });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -211,63 +385,99 @@ exports.getSessionResults = async (req, res) => {
 
 exports.getMCQBanks = async (req, res) => {
   try {
-    res.json({ success: true, data: mockBanks });
+    const banks = await MCQBank.find({ createdBy: req.user._id })
+      .sort({ createdAt: -1 })
+      .lean();
+    res.json({ success: true, data: banks });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-exports.uploadMCQ = async (req, res) => {
+exports.updateMCQBank = async (req, res) => {
   try {
-    const { title, subject, numQuestions } = req.body;
-    
-    // Create mock questions to satisfy the frontend UI
-    const questions = [];
-    const count = numQuestions || 5;
-    
-    for (let i = 0; i < count; i++) {
-      questions.push({
-        questionText: `Mock Question ${i + 1} extracted from the document for ${subject}?`,
-        options: [
-          { label: 'A', text: 'Option A for this question' },
-          { label: 'B', text: 'Option B for this question' },
-          { label: 'C', text: 'Option C for this question' },
-          { label: 'D', text: 'Option D for this question' }
-        ],
-        correctAnswer: ['A', 'B', 'C', 'D'][Math.floor(Math.random() * 4)],
-        marks: 1
-      });
+    const { title, subject, questions } = req.body;
+    const updateData = {};
+    if (typeof title === 'string') updateData.title = title.trim();
+    if (typeof subject === 'string') updateData.subject = subject.trim();
+    if (Array.isArray(questions)) updateData.questions = questions;
+
+    const bank = await MCQBank.findOneAndUpdate(
+      { _id: req.params.id, createdBy: req.user._id },
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!bank) {
+      return res.status(404).json({ success: false, message: 'MCQ bank not found' });
     }
 
-    const newBank = {
-      _id: 'bank_' + Math.random().toString(36).substring(7),
-      title: title || 'Extracted Document',
-      subject: subject || 'General',
-      questions: questions,
-      meta: { model: 'Mock Extractor' }
-    };
+    // Anchor updated content to blockchain
+    blockchain.sealGenericData(bank.questions, 'mcqbank', bank._id.toString())
+      .catch(e => console.warn('MCQ Bank update anchoring failed:', e.message));
 
-    // Add to global mock state so it appears in the grid!
-    mockBanks.unshift(newBank);
-    
+    res.json({ success: true, data: bank });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.uploadMCQ = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: 'No file uploaded (use field "pdf")' });
+  }
+  const filePath = req.file.path;
+  try {
+    const { title, subject, numQuestions } = req.body;
+    const n = Math.min(100, Math.max(5, parseInt(String(numQuestions || 10), 10) || 10));
+
+    // Using the unified aiParserService which handles DOCX, PDF, Images, and Regex fallbacks
+    const { questions, meta } = await aiParserSvc.extractMCQsFromDocument(
+      filePath,
+      subject || 'General',
+      n,
+      req.file.originalname
+    );
+
+    const doc = await MCQBank.create({
+      title: title || 'MCQ Bank',
+      subject: subject || 'General',
+      questions,
+      createdBy: req.user._id,
+      meta: { ...meta, originalTitle: title }
+    });
+
+    // Anchor new content to blockchain
+    blockchain.sealGenericData(doc.questions, 'mcqbank', doc._id.toString())
+      .catch(e => console.warn('MCQ Bank upload anchoring failed:', e.message));
+
     res.json({
       success: true,
       data: {
-        title: newBank.title,
-        questionCount: count,
-        questions,
-        meta: newBank.meta
+        _id: doc._id,
+        title: doc.title,
+        questionCount: questions.length,
+        questions: doc.questions,
+        meta: doc.meta
       }
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: 'Extraction failed: ' + err.message });
+  } finally {
+    try {
+      await fs.unlink(filePath);
+    } catch {
+      // ignore
+    }
   }
 };
 
 exports.deleteMCQBank = async (req, res) => {
   try {
-    const idx = mockBanks.findIndex(b => b._id === req.params.id);
-    if (idx !== -1) mockBanks.splice(idx, 1);
+    const bank = await MCQBank.findOneAndDelete({ _id: req.params.id, createdBy: req.user._id });
+    if (!bank) {
+      return res.status(404).json({ success: false, message: 'MCQ bank not found' });
+    }
     res.json({ success: true, message: 'MCQ Bank deleted' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

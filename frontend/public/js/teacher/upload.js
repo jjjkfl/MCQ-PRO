@@ -33,18 +33,18 @@ const PDFUpload = {
           </div>
         </div>
         <form id="upload-form" onsubmit="PDFUpload.process(event)" style="margin-top: 20px;">
-          <div class="input-group">
+          <div class="form-group">
             <label>Bank Title</label>
-            <input type="text" name="title" class="input-control" placeholder="e.g. Chapter 1: Anatomy Basics" required>
+            <input type="text" name="title" class="form-control" placeholder="e.g. Chapter 1: Anatomy Basics" required>
           </div>
-          <div class="input-group">
+          <div class="form-group">
             <label>Subject</label>
-            <input type="text" name="subject" class="input-control" placeholder="e.g. General Surgery" required>
+            <input type="text" name="subject" class="form-control" placeholder="e.g. General Surgery" required>
           </div>
           ${!isDocx ? `
-          <div class="input-group">
+          <div class="form-group">
             <label>Number of Questions to Extract</label>
-            <input type="number" name="numQuestions" class="input-control" value="20" min="5" max="100">
+            <input type="number" name="numQuestions" class="form-control" value="20" min="5" max="100">
           </div>` : `
           <p class="p-dim" style="font-size: 12px; margin-top: 8px;">
             ✨ DOCX files are parsed structurally — questions, images, and answers are extracted directly.
@@ -90,7 +90,7 @@ const PDFUpload = {
     this._animateProgress();
 
     try {
-      const result = await api.upload('/portal/teacher/mcq/upload', finalData);
+      const result = await api.upload('/portal/teacher/mcq-banks/upload', finalData);
 
       if (result.success) {
         notifications.success(`✅ Extracted ${result.data.questionCount} questions!`);

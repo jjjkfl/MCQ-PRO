@@ -42,15 +42,31 @@ const TeacherSocket = {
   },
 
   pauseExam() {
-    this.socket.emit('exam:pause', { sessionId: this.sessionId });
+    if (this.socket) {
+      this.socket.emit('exam:pause', { sessionId: this.sessionId });
+    }
+    if (window.Monitor) {
+      Monitor.pauseExam();
+    }
   },
 
   resumeExam() {
-    this.socket.emit('exam:resume', { sessionId: this.sessionId });
+    if (this.socket) {
+      this.socket.emit('exam:resume', { sessionId: this.sessionId });
+    }
+    if (window.Monitor) {
+      Monitor.resumeExam();
+    }
   },
 
   forceEnd() {
-    this.socket.emit('exam:forceEnd', { sessionId: this.sessionId });
+    if (!confirm('End this exam for all connected students?')) return;
+    if (this.socket) {
+      this.socket.emit('exam:forceEnd', { sessionId: this.sessionId });
+    }
+    if (window.Monitor) {
+      Monitor.endExam();
+    }
   }
 };
 

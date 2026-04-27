@@ -1,111 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Exam Results | MCQ Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; color: #1a1a2e; }
+    :root {
+      --primary: #4f46e5;
+      --secondary: #10b981;
+      --secondary-ultralight: #ecfdf5;
+      --danger: #ef4444;
+      --neutral-50: #f9fafb;
+      --neutral-100: #f3f4f6;
+      --neutral-200: #e5e7eb;
+      --neutral-300: #d1d5db;
+      --neutral-400: #9ca3af;
+      --neutral-600: #4b5563;
+      --neutral-800: #1f2937;
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+      --border-radius-lg: 16px;
+    }
 
-    .result-layout { max-width: 880px; margin: 0 auto; padding: 32px 24px; min-height: 100vh; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--neutral-50);
+      color: var(--neutral-800);
+      line-height: 1.6;
+    }
+
+    .result-layout {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      min-height: 100vh;
+    }
 
     /* ─── Score Card ─── */
     .score-card {
       background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--border-radius-lg);
       padding: 44px 40px;
       text-align: center;
       margin-bottom: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: var(--shadow-md);
     }
-    .score-big { font-size: 72px; font-weight: 800; line-height: 1; margin-bottom: 8px; }
-    .score-big.passed { color: #16a34a; }
-    .score-big.failed { color: #dc2626; }
+
+    .score-big {
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .score-big.passed {
+      color: var(--secondary);
+    }
+
+    .score-big.failed {
+      color: var(--danger);
+    }
 
     .score-stats {
-      display: flex; justify-content: center; gap: 36px;
-      margin-top: 28px; padding-top: 24px; border-top: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: center;
+      gap: 36px;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--neutral-100);
     }
-    .score-stat-val { font-size: 24px; font-weight: 700; color: #1e293b; }
-    .score-stat-label { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+    .score-stat-val {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--neutral-800);
+    }
+
+    .score-stat-label {
+      font-size: 11px;
+      color: var(--neutral-400);
+      margin-top: 4px;
+    }
 
     /* ─── Actions ─── */
-    .result-actions { display: flex; gap: 12px; justify-content: center; margin-bottom: 36px; flex-wrap: wrap; }
-    .btn { padding: 10px 24px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; text-decoration: none; display: inline-block; }
-    .btn-primary { background: #2563eb; color: #fff; }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-outline { background: transparent; color: #475569; border: 1px solid #cbd5e1; }
-    .btn-outline:hover { background: #f1f5f9; }
-    .btn-danger { background: transparent; color: #dc2626; border: 1px solid #fecaca; }
-    .btn-danger:hover { background: #fef2f2; }
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--neutral-600);
+      border: 1px solid var(--neutral-300);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      opacity: 0.7;
+    }
 
     /* ─── Answer Cards ─── */
-    .answers-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .answers-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
     .answer-card {
       background: #fff;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--neutral-200);
       border-radius: 14px;
       padding: 24px;
       margin-bottom: 14px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
       transition: all 0.2s;
     }
-    .answer-card.correct { border-left: 5px solid #16a34a; }
-    .answer-card.wrong { border-left: 5px solid #dc2626; }
-    .answer-card.unanswered { border-left: 5px solid #f59e0b; }
 
-    .answer-q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .answer-q-num { font-size: 13px; font-weight: 700; color: #94a3b8; }
+    .answer-card.correct {
+      border-left: 5px solid var(--secondary);
+    }
 
-    .answer-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
-    .badge-correct { background: #f0fdf4; color: #16a34a; }
-    .badge-wrong { background: #fef2f2; color: #dc2626; }
-    .badge-unanswered { background: #fffbeb; color: #d97706; }
+    .answer-card.wrong {
+      border-left: 5px solid var(--danger);
+    }
 
-    .answer-q-text { font-size: 15px; font-weight: 500; color: #1e293b; line-height: 1.6; margin-bottom: 16px; }
+    .answer-card.unanswered {
+      border-left: 5px solid #f59e0b;
+    }
+
+    .answer-q-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .answer-q-num {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .answer-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .badge-correct {
+      background: var(--secondary-ultralight);
+      color: var(--secondary);
+    }
+
+    .badge-wrong {
+      background: #fef2f2;
+      color: var(--danger);
+    }
+
+    .badge-unanswered {
+      background: #fffbeb;
+      color: #d97706;
+    }
+
+    .answer-q-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: #1e293b;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
 
     .answer-q-image {
-      max-width: 100%; max-height: 220px; border-radius: 10px;
-      border: 1px solid #e2e8f0; margin-bottom: 16px; object-fit: contain;
+      max-width: 100%;
+      max-height: 220px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+      object-fit: contain;
     }
 
-    .answer-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .answer-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
 
     .answer-opt {
-      display: flex; align-items: center; gap: 10px;
-      padding: 11px 14px; border-radius: 10px; font-size: 13px;
-      border: 1px solid #e2e8f0; background: #fafbfc; color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      border: 1px solid #e2e8f0;
+      background: #fafbfc;
+      color: #334155;
     }
-    .answer-opt .opt-circle {
-      width: 26px; height: 26px; border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; flex-shrink: 0;
-      background: #e2e8f0; color: #475569;
-    }
-    .answer-opt.is-correct { background: #f0fdf4; border-color: #86efac; }
-    .answer-opt.is-correct .opt-circle { background: #16a34a; color: #fff; }
-    .answer-opt.is-selected-wrong { background: #fef2f2; border-color: #fecaca; }
-    .answer-opt.is-selected-wrong .opt-circle { background: #dc2626; color: #fff; }
 
-    .your-answer-note { margin-top: 10px; font-size: 12px; color: #94a3b8; }
+    .answer-opt .opt-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .answer-opt.is-correct {
+      background: #f0fdf4;
+      border-color: var(--secondary);
+    }
+
+    .answer-opt.is-correct .opt-circle {
+      background: var(--secondary);
+      color: #fff;
+    }
+
+    .answer-opt.is-selected-wrong {
+      background: #fef2f2;
+      border-color: var(--danger);
+    }
+
+    .answer-opt.is-selected-wrong .opt-circle {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .your-answer-note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
 
     /* ─── Misc ─── */
-    .p-dim { color: #64748b; }
-    .animate-fade-in { animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    .spinner { width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .p-dim {
+      color: #64748b;
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     @media (max-width: 600px) {
-      .answer-options { grid-template-columns: 1fr; }
-      .score-stats { gap: 16px; flex-wrap: wrap; }
+      .answer-options {
+        grid-template-columns: 1fr;
+      }
+
+      .score-stats {
+        gap: 16px;
+        flex-wrap: wrap;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <div class="result-layout">
@@ -156,7 +369,7 @@
       const wrongCount = answers.filter(a => a.selectedAnswer && !a.isCorrect).length;
       const unanswered = answers.filter(a => !a.selectedAnswer).length;
 
-      const fmt = (s) => { const m = Math.floor(s/60); const sec = s%60; return `${m}m ${sec}s`; };
+      const fmt = (s) => { const m = Math.floor(s / 60); const sec = s % 60; return `${m}m ${sec}s`; };
 
       document.getElementById('result-content').innerHTML = `
         <div class="animate-fade-in">
@@ -205,11 +418,11 @@
           </div>
 
           ${answers.map((a, i) => {
-            const status = !a.selectedAnswer ? 'unanswered' : a.isCorrect ? 'correct' : 'wrong';
-            const badgeClass = status === 'correct' ? 'badge-correct' : status === 'wrong' ? 'badge-wrong' : 'badge-unanswered';
-            const badgeText = status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '— Skipped';
+        const status = !a.selectedAnswer ? 'unanswered' : a.isCorrect ? 'correct' : 'wrong';
+        const badgeClass = status === 'correct' ? 'badge-correct' : status === 'wrong' ? 'badge-wrong' : 'badge-unanswered';
+        const badgeText = status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '— Skipped';
 
-            return `
+        return `
               <div class="answer-card ${status}">
                 <div class="answer-q-header">
                   <span class="answer-q-num">Q${i + 1}</span>
@@ -219,17 +432,17 @@
                 ${a.image ? `<img src="${a.image}" class="answer-q-image" onerror="this.style.display='none'">` : ''}
                 <div class="answer-options">
                   ${(a.options || []).map(opt => {
-                    const isCorrectOpt = opt.label === a.correctAnswer;
-                    const isSelectedWrong = opt.label === a.selectedAnswer && !a.isCorrect;
-                    let cls = '';
-                    if (isCorrectOpt) cls = 'is-correct';
-                    else if (isSelectedWrong) cls = 'is-selected-wrong';
-                    return `
+          const isCorrectOpt = opt.label === a.correctAnswer;
+          const isSelectedWrong = opt.label === a.selectedAnswer && !a.isCorrect;
+          let cls = '';
+          if (isCorrectOpt) cls = 'is-correct';
+          else if (isSelectedWrong) cls = 'is-selected-wrong';
+          return `
                       <div class="answer-opt ${cls}">
                         <div class="opt-circle">${opt.label}</div>
                         <div>${esc(opt.text)}</div>
                       </div>`;
-                  }).join('')}
+        }).join('')}
                 </div>
                 ${status === 'wrong' ? `
                   <div class="your-answer-note">
@@ -237,7 +450,7 @@
                     Correct: <strong style="color:#16a34a;">${a.correctAnswer}</strong>
                   </div>` : ''}
               </div>`;
-          }).join('')}
+      }).join('')}
 
           <div style="text-align:center; padding:32px 0;">
             <a href="/index.html" class="btn btn-primary">🏠 Return to Dashboard</a>
@@ -248,4 +461,5 @@
     function esc(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
   </script>
 </body>
+
 </html>

@@ -5,7 +5,9 @@ const resultSchema = new mongoose.Schema({
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
   sessionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Session', required: true },
   score: { type: Number, required: true },
-  blockchainHash: { type: String }
+  violationCount: { type: Number, default: 0 },
+  blockchainHash: { type: String },
+  blockchainTx: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Result', resultSchema);

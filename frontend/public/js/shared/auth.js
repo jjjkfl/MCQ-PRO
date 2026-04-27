@@ -55,10 +55,10 @@ const auth = {
   },
 
   redirectByRole(role) {
-    if (role === 'admin') {
-      window.location.href = '/admin.html';
-    } else if (role === 'teacher') {
+    if (role === 'teacher') {
       window.location.href = '/teacher.html';
+    } else if (role === 'admin') {
+      window.location.href = '/admin.html';
     } else {
       window.location.href = '/index.html';
     }
@@ -81,21 +81,15 @@ const auth = {
 
     const path = window.location.pathname;
 
-    // Prevent non-admins from accessing admin dashboard
-    if (path.includes('admin') && user.role !== 'admin') {
-      this.redirectByRole(user.role);
-      return false;
-    }
-
-    // Prevent student/admin from accessing teacher dashboard
+    // Prevent student from accessing teacher dashboard
     if (path.includes('teacher') && user.role !== 'teacher') {
       this.redirectByRole(user.role);
       return false;
     }
 
-    // Prevent teacher/admin from accessing student dashboard
-    if ((path.includes('index.html') || path === '/student' || path === '/student/') 
-        && (user.role === 'teacher' || user.role === 'admin')) {
+    // Prevent teacher from accessing student dashboard
+    if ((path.includes('index.html') || path === '/student' || path === '/student/')
+      && user.role === 'teacher') {
       this.redirectByRole(user.role);
       return false;
     }

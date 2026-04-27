@@ -6,6 +6,7 @@
 const Monitor = {
   sessionId: null,
   students: new Map(),
+  sessionData: null,
 
   async init() {
     const params = new URLSearchParams(window.location.search);
@@ -23,9 +24,51 @@ const Monitor = {
 
   async loadInitialData() {
     try {
-      const { data } = await api.get(`/portal/teacher/sessions/${this.sessionId}/monitor`);
-      this.renderHeader(data);
-      this.renderMonitorView(data);
+      const [sessionRes, resultRes, studentsRes] = await Promise.all([
+        api.get('/portal/teacher/sessions'),
+        api.get(`/portal/teacher/sessions/${this.sessionId}/results`),
+        api.get('/portal/teacher/students')
+      ]);
+
+      const sessions = (sessionRes && sessionRes.data) || [];
+      const session = sessions.find(s => String(s._id) === String(this.sessionId));
+      if (!session) throw new Error('Session not found');
+
+      const allStudents = (studentsRes && studentsRes.data) || [];
+      const enrolled = allStudents.filter(s => {
+        const sameCourse = String(s.courseId) === String(session.courseId);
+        const sameDivision = String(s.division || '') === String(session.division || '');
+        return sameCourse && sameDivision;
+      });
+
+      const results = (resultRes && resultRes.data && resultRes.data.results) || [];
+      const submitted = results.map((r) => ({
+        studentId: r.studentId?._id || r.studentId,
+        score: r.score,
+        submittedAt: r.createdAt,
+        correctCount: 0,
+        totalQuestions: 0,
+        violations: 0
+      }));
+
+      const normalized = {
+        sessionId: session._id,
+        title: session.title,
+        status: session.status,
+        enrolledCount: enrolled.length,
+        submittedCount: submitted.length,
+        enrolled: enrolled.map((s) => ({
+          _id: s._id,
+          firstName: (s.name || '').split(' ')[0] || 'Student',
+          lastName: (s.name || '').split(' ').slice(1).join(' '),
+          studentId: s.email || s._id
+        })),
+        submitted
+      };
+
+      this.sessionData = normalized;
+      this.renderHeader(normalized);
+      this.renderMonitorView(normalized);
     } catch (err) {
       console.error('Monitor error:', err);
       notifications.error('Failed to load monitoring data');
@@ -136,6 +179,36 @@ const Monitor = {
         this.updateStudentStatus(data.userId, 'offline');
         break;
     }
+  },
+
+  async setSessionStatus(status) {
+    if (!this.sessionId) return;
+    try {
+      await api.patch(`/portal/teacher/sessions/${this.sessionId}/status`, { status });
+      if (this.sessionData) {
+        this.sessionData.status = status;
+        this.renderHeader(this.sessionData);
+      }
+      await this.loadInitialData();
+    } catch (err) {
+      notifications.error(`Failed to update session status: ${err.message}`);
+      throw err;
+    }
+  },
+
+  async pauseExam() {
+    await this.setSessionStatus('pending');
+    notifications.success('Exam paused');
+  },
+
+  async resumeExam() {
+    await this.setSessionStatus('active');
+    notifications.success('Exam resumed');
+  },
+
+  async endExam() {
+    await this.setSessionStatus('completed');
+    notifications.success('Exam ended');
   },
 
   updateStudentStatus(userId, status) {

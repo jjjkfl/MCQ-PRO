@@ -4,7 +4,7 @@
  */
 
 const { ethers } = require('ethers');
-const logger     = require('../../utils/logger');
+const logger = require('../../utils/logger');
 const { hexToBytes32 } = require('./hashService');
 
 /* ─── ABI (matches CredentialSeal.sol) ───────────────────────────── */
@@ -17,10 +17,10 @@ const CONTRACT_ABI = [
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true,  "internalType": "bytes32", "name": "resultHash", "type": "bytes32" },
-      { "indexed": true,  "internalType": "string",  "name": "resultId",   "type": "string"  },
-      { "indexed": false, "internalType": "uint256",  "name": "timestamp",  "type": "uint256" },
-      { "indexed": false, "internalType": "address",  "name": "sealer",     "type": "address" }
+      { "indexed": true, "internalType": "bytes32", "name": "resultHash", "type": "bytes32" },
+      { "indexed": true, "internalType": "string", "name": "resultId", "type": "string" },
+      { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+      { "indexed": false, "internalType": "address", "name": "sealer", "type": "address" }
     ],
     "name": "ResultSealed",
     "type": "event"
@@ -28,8 +28,8 @@ const CONTRACT_ABI = [
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true,  "internalType": "bytes32", "name": "resultHash", "type": "bytes32" },
-      { "indexed": false, "internalType": "bool",    "name": "revoked",    "type": "bool"    }
+      { "indexed": true, "internalType": "bytes32", "name": "resultHash", "type": "bytes32" },
+      { "indexed": false, "internalType": "bool", "name": "revoked", "type": "bool" }
     ],
     "name": "ResultRevoked",
     "type": "event"
@@ -37,7 +37,7 @@ const CONTRACT_ABI = [
   {
     "inputs": [
       { "internalType": "bytes32", "name": "resultHash", "type": "bytes32" },
-      { "internalType": "string",  "name": "resultId",   "type": "string"  }
+      { "internalType": "string", "name": "resultId", "type": "string" }
     ],
     "name": "sealResult",
     "outputs": [],
@@ -48,11 +48,11 @@ const CONTRACT_ABI = [
     "inputs": [{ "internalType": "bytes32", "name": "resultHash", "type": "bytes32" }],
     "name": "verifyResult",
     "outputs": [
-      { "internalType": "bool",    "name": "exists",    "type": "bool"    },
-      { "internalType": "string",  "name": "resultId",  "type": "string"  },
+      { "internalType": "bool", "name": "exists", "type": "bool" },
+      { "internalType": "string", "name": "resultId", "type": "string" },
       { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-      { "internalType": "address", "name": "sealer",    "type": "address" },
-      { "internalType": "bool",    "name": "revoked",   "type": "bool"    }
+      { "internalType": "address", "name": "sealer", "type": "address" },
+      { "internalType": "bool", "name": "revoked", "type": "bool" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -97,7 +97,7 @@ const initBlockchain = () => {
     }
 
     provider = new ethers.JsonRpcProvider(networkUrl);
-    signer   = new ethers.Wallet(privateKey, provider);
+    signer = new ethers.Wallet(privateKey, provider);
     contract = new ethers.Contract(contractAddress, CONTRACT_ABI, signer);
 
     logger.info(`Blockchain initialized: network=${networkUrl} contract=${contractAddress}`);
@@ -125,12 +125,12 @@ const getContract = () => {
  */
 exports.storeResultHash = async (resultHash, resultId) => {
   try {
-    const c    = getContract();
+    const c = getContract();
     const hash32 = hexToBytes32(resultHash);
 
     logger.info(`Blockchain: sealing result ${resultId} hash=${resultHash}`);
 
-    const tx     = await c.sealResult(hash32, resultId, {
+    const tx = await c.sealResult(hash32, resultId, {
       gasLimit: 200000,
     });
     const receipt = await tx.wait();
@@ -138,13 +138,36 @@ exports.storeResultHash = async (resultHash, resultId) => {
     logger.info(`Blockchain: sealed tx=${tx.hash} block=${receipt.blockNumber}`);
 
     return {
-      txHash      : tx.hash,
-      blockNumber : receipt.blockNumber,
-      timestamp   : Math.floor(Date.now() / 1000),
-      gasUsed     : receipt.gasUsed?.toString(),
+      txHash: tx.hash,
+      blockNumber: receipt.blockNumber,
+      timestamp: Math.floor(Date.now() / 1000),
+      gasUsed: receipt.gasUsed?.toString(),
     };
   } catch (err) {
     logger.error(`storeResultHash error: ${err.message}`);
+    throw err;
+  }
+};
+
+/* ─── SEAL GENERIC DATA ───────────────────────────────────────────── */
+/**
+ * Anchor any data type to the blockchain
+ * @param {object|string} data - The data to hash and seal
+ * @param {string} type - Reference type (e.g., 'violation', 'mcqbank')
+ * @param {string} referenceId - Associated entity ID
+ */
+exports.sealGenericData = async (data, type, referenceId) => {
+  try {
+    const hashService = require('./hashService');
+    const dataStr = typeof data === 'object' ? JSON.stringify(data) : String(data);
+    const hash = hashService.computeHMAC(dataStr);
+
+    logger.info(`Blockchain: sealing ${type} [${referenceId}]`);
+
+    // We reuse sealResult as a generic anchor on the smart contract
+    return await this.storeResultHash(hash, `${type}:${referenceId}`);
+  } catch (err) {
+    logger.error(`sealGenericData error [${type}]: ${err.message}`);
     throw err;
   }
 };
@@ -157,7 +180,7 @@ exports.storeResultHash = async (resultHash, resultId) => {
  */
 exports.verifyResultOnBlockchain = async (resultHash) => {
   try {
-    const c      = getContract();
+    const c = getContract();
     const hash32 = hexToBytes32(resultHash);
 
     const [exists, resultId, timestamp, sealer, revoked] = await c.verifyResult(hash32);
@@ -170,7 +193,7 @@ exports.verifyResultOnBlockchain = async (resultHash) => {
       verified,
       exists,
       resultId,
-      timestamp  : timestamp ? new Date(Number(timestamp) * 1000).toISOString() : null,
+      timestamp: timestamp ? new Date(Number(timestamp) * 1000).toISOString() : null,
       sealer,
       revoked,
     };
@@ -183,9 +206,9 @@ exports.verifyResultOnBlockchain = async (resultHash) => {
 /* ─── REVOKE RESULT ───────────────────────────────────────────────── */
 exports.revokeResult = async (resultHash) => {
   try {
-    const c      = getContract();
+    const c = getContract();
     const hash32 = hexToBytes32(resultHash);
-    const tx     = await c.revokeResult(hash32, { gasLimit: 100000 });
+    const tx = await c.revokeResult(hash32, { gasLimit: 100000 });
     await tx.wait();
     logger.info(`Blockchain: revoked hash=${resultHash} tx=${tx.hash}`);
     return { success: true, txHash: tx.hash };
@@ -198,17 +221,17 @@ exports.revokeResult = async (resultHash) => {
 /* ─── GET STATS ───────────────────────────────────────────────────── */
 exports.getBlockchainStats = async () => {
   try {
-    const c     = getContract();
+    const c = getContract();
     const total = await c.getTotalSealed();
     const owner = await c.owner();
     const block = await provider.getBlockNumber();
-    const net   = await provider.getNetwork();
+    const net = await provider.getNetwork();
     return {
-      totalSealed  : total.toString(),
+      totalSealed: total.toString(),
       owner,
-      latestBlock  : block,
-      networkName  : net.name,
-      chainId      : net.chainId.toString(),
+      latestBlock: block,
+      networkName: net.name,
+      chainId: net.chainId.toString(),
     };
   } catch (err) {
     logger.error(`getBlockchainStats error: ${err.message}`);

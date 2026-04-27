@@ -1,0 +1,86 @@
+﻿node : C:\Users\Tarun Sidd
+appagoudar\surgical-app\ba
+ckend\node_modules\express
+\lib\router\route.js:216
+At line:1 char:1
++ node server.js > 
+out.log 2> err.log
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (C  
+  :\Users\Tarun ...er\r   
+ oute.js:216:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+        throw new 
+Error(msg);
+        ^
+
+Error: Route.delete() 
+requires a callback 
+function but got a 
+[object Undefined]
+    at Route.<computed> 
+[as delete] 
+(C:\Users\Tarun Siddappago
+udar\surgical-app\backend\
+node_modules\express\lib\r
+outer\route.js:216:15)
+    at proto.<computed> 
+[as delete] 
+(C:\Users\Tarun Siddappago
+udar\surgical-app\backend\
+node_modules\express\lib\r
+outer\index.js:521:19)
+    at Object.<anonymous> 
+(C:\Users\Tarun Siddappago
+udar\surgical-app\backend\
+src\routes\portalRoutes.js
+:25:14)
+    at Module._compile (no
+de:internal/modules/cjs/lo
+ader:1688:14)
+    at Object..js (node:in
+ternal/modules/cjs/loader:
+1820:10)
+    at Module.load (node:i
+nternal/modules/cjs/loader
+:1423:32)
+    at Function._load (nod
+e:internal/modules/cjs/loa
+der:1246:12)
+    at 
+TracingChannel.traceSync (
+node:diagnostics_channel:3
+22:14)
+    at wrapModuleLoad (nod
+e:internal/modules/cjs/loa
+der:235:24)
+    at Module.require (nod
+e:internal/modules/cjs/loa
+der:1445:12)
+    at require (node:inter
+nal/modules/helpers:135:16
+)
+    at Object.<anonymous> 
+(C:\Users\Tarun Siddappago
+udar\surgical-app\backend\
+server.js:8:22)
+    at Module._compile (no
+de:internal/modules/cjs/lo
+ader:1688:14)
+    at Object..js (node:in
+ternal/modules/cjs/loader:
+1820:10)
+    at Module.load (node:i
+nternal/modules/cjs/loader
+:1423:32)
+    at Function._load (nod
+e:internal/modules/cjs/loa
+der:1246:12)
+
+Node.js v22.18.0
