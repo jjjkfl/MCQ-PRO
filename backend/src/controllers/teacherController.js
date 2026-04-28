@@ -296,7 +296,8 @@ const PASS_SCORE = 60;
 
 exports.getGeneralAnalytics = async (req, res) => {
   try {
-    const courseIds = req.user.courseIds || [];
+    const courseIds = (req.user.courseIds || []).map(id => new mongoose.Types.ObjectId(id));
+
     if (courseIds.length === 0) {
       return res.json({
         success: true,

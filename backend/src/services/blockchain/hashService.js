@@ -3,7 +3,7 @@
  * SHA256 hashing utilities for result integrity
  */
 
-const crypto   = require('crypto');
+const crypto = require('crypto');
 const CryptoJS = require('crypto-js');
 
 /**
@@ -12,21 +12,22 @@ const CryptoJS = require('crypto-js');
  * @returns {string} hex hash
  */
 exports.computeResultHash = (resultData) => {
+  // Canonical payload uses actual Result schema fields
   const canonicalPayload = {
-    studentId      : resultData.student?.toString()  || resultData.studentId,
-    sessionId      : resultData.session?.toString()  || resultData.sessionId,
-    marksObtained  : Number(resultData.marksObtained),
-    totalMarks     : Number(resultData.totalMarks),
-    percentage     : Number(resultData.percentage),
-    grade          : resultData.grade,
-    submittedAt    : resultData.submittedAt instanceof Date
-                       ? resultData.submittedAt.toISOString()
-                       : resultData.submittedAt,
-    correctCount   : Number(resultData.correctCount),
-    totalQuestions : Number(resultData.totalQuestions),
+    resultId: resultData._id?.toString(),
+    studentId: resultData.studentId?.toString() || resultData.student?.toString(),
+    courseId: resultData.courseId?.toString(),
+    sessionId: resultData.sessionId?.toString() || resultData.session?.toString(),
+    score: Number(resultData.score),
+    timeTaken: Number(resultData.timeTaken || 0),
+    violationCount: Number(resultData.violationCount || 0),
+    // Hash the answer correctness pattern — any change to answers is detected
+    answersHash: resultData.answers
+      ? resultData.answers.map(a => `${a.selectedAnswer}:${a.correctAnswer}:${a.isCorrect}`).join('|')
+      : '',
   };
 
-  const sorted  = JSON.stringify(canonicalPayload, Object.keys(canonicalPayload).sort());
+  const sorted = JSON.stringify(canonicalPayload, Object.keys(canonicalPayload).sort());
   return crypto.createHash('sha256').update(sorted, 'utf8').digest('hex');
 };
 
@@ -83,11 +84,11 @@ exports.decryptHash = (encryptedHash) => {
  */
 exports.generateCertificateHash = (result, student) => {
   const payload = JSON.stringify({
-    resultId  : result._id?.toString(),
+    resultId: result._id?.toString(),
     resultHash: result.resultHash,
-    studentId : student._id?.toString(),
-    issuedAt  : new Date().toISOString(),
-    nonce     : crypto.randomBytes(16).toString('hex'),
+    studentId: student._id?.toString(),
+    issuedAt: new Date().toISOString(),
+    nonce: crypto.randomBytes(16).toString('hex'),
   });
   return crypto.createHash('sha256').update(payload).digest('hex');
 };

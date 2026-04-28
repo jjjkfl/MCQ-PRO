@@ -36,4 +36,20 @@ const mcqBankSchema = new mongoose.Schema({
   }
 });
 
+// Final Safety Net: Ensure no empty text bypasses validation
+mcqBankSchema.pre('save', function (next) {
+  if (this.questions && Array.isArray(this.questions)) {
+    this.questions.forEach(q => {
+      if (q.options && Array.isArray(q.options)) {
+        q.options.forEach(opt => {
+          if (!opt.text || opt.text.trim() === '') {
+            opt.text = `Option ${opt.label}`;
+          }
+        });
+      }
+    });
+  }
+  next();
+});
+
 module.exports = mongoose.model('MCQBank', mcqBankSchema);

@@ -895,3 +895,33 @@ tbody tr:hover {
     padding: 0 1rem;
   }
 }
+
+/* ─── MCQ Preview Styles ────────────────────────────────── */
+.preview-opt-img {
+  display: block;
+  max-width: 120px;
+  max-height: 80px;
+  margin-top: 8px;
+  border-radius: var(--radius-sm);
+  cursor: zoom-in;
+  transition: var(--transition-base);
+  border: 1px solid var(--border);
+}
+
+.preview-opt-img:hover {
+  transform: scale(1.05);
+  border-color: var(--primary);
+}
+
+.opt-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.preview-opt-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}

@@ -114,30 +114,30 @@ const Monitor = {
               <div class="p-dim" style="font-size:12px">${s.studentId}</div>
             </td>
             <td>
-              ${sub 
-                ? '<span class="status-pill status-online">SUBMITTED</span>' 
-                : isOnline 
-                  ? '<span class="status-pill status-online">ONLINE</span>'
-                  : '<span class="status-pill status-offline">WAITING</span>'
-              }
+              ${sub
+            ? '<span class="status-pill status-online">SUBMITTED</span>'
+            : isOnline
+              ? '<span class="status-pill status-online">ONLINE</span>'
+              : '<span class="status-pill status-offline">WAITING</span>'
+          }
             </td>
             <td>
-              ${sub 
-                ? `<strong style="color:var(--success)">${sub.score}%</strong> (${sub.correctCount}/${sub.totalQuestions})` 
-                : '<span class="p-dim">—</span>'
-              }
+              ${sub
+            ? `<strong style="color:var(--success)">${sub.score}%</strong> (${sub.correctCount}/${sub.totalQuestions})`
+            : '<span class="p-dim">—</span>'
+          }
             </td>
             <td>
               ${(sub && sub.violations > 0) || alertCount > 0
-                ? `<span class="status-pill status-warning">⚠️ ${sub ? sub.violations : alertCount} Alerts</span>` 
-                : '<span class="p-dim">None</span>'
-              }
+            ? `<span class="status-pill status-warning">⚠️ ${sub ? sub.violations : alertCount} Alerts</span>`
+            : '<span class="p-dim">None</span>'
+          }
             </td>
             <td>
-              ${sub 
-                ? `<span class="p-dim" style="font-size:11px">${new Date(sub.submittedAt).toLocaleTimeString()}</span>` 
-                : '<span class="p-dim">—</span>'
-              }
+              ${sub
+            ? `<span class="p-dim" style="font-size:11px">${new Date(sub.submittedAt).toLocaleTimeString()}</span>`
+            : '<span class="p-dim">—</span>'
+          }
             </td>
           </tr>
         `;
@@ -153,10 +153,10 @@ const Monitor = {
           <td><span class="status-pill status-online">SUBMITTED</span></td>
           <td><strong style="color:var(--success)">${s.score}%</strong> (${s.correctCount}/${s.totalQuestions})</td>
           <td>
-            ${s.violations > 0 
-              ? `<span class="status-pill status-warning">⚠️ ${s.violations}</span>` 
-              : '<span class="p-dim">None</span>'
-            }
+            ${s.violations > 0
+          ? `<span class="status-pill status-warning">⚠️ ${s.violations}</span>`
+          : '<span class="p-dim">None</span>'
+        }
           </td>
           <td><span class="p-dim" style="font-size:11px">${new Date(s.submittedAt).toLocaleTimeString()}</span></td>
         </tr>
@@ -165,7 +165,7 @@ const Monitor = {
   },
 
   handleSocketEvent(event, data) {
-    switch(event) {
+    switch (event) {
       case 'exam:studentJoined':
         this.updateStudentStatus(data.userId, 'online');
         break;
@@ -173,7 +173,7 @@ const Monitor = {
         this.updateStudentProgress(data.userId, data.answersGiven);
         break;
       case 'exam:suspiciousActivity':
-        this.addAlert(data.userId, data.tabSwitches);
+        this.addAlert(data.userId, data.violation || { type: 'tab-switch', detail: 'Tab switch detected' });
         break;
       case 'exam:studentOffline':
         this.updateStudentStatus(data.userId, 'offline');
@@ -217,11 +217,29 @@ const Monitor = {
     this.students.set(userId, s);
   },
 
-  addAlert(userId, count) {
-    const s = this.students.get(userId) || { status: 'online', progress: 0 };
-    s.alerts = count;
+  addAlert(userId, violation) {
+    const s = this.students.get(userId) || { status: 'online', progress: 0, alerts: 0, history: [] };
+    if (!s.history) s.history = [];
+
+    s.alerts++;
+    s.history.push(violation);
     this.students.set(userId, s);
-    notifications.warn(`⚠️ Student ${userId}: ${count} tab switches detected`);
+
+    // Dynamic UI update for the specific row
+    const row = document.getElementById(`student-${userId}`);
+    if (row) {
+      const alertCell = row.cells[3];
+      if (alertCell) {
+        alertCell.innerHTML = `
+          <span class="status-pill status-warning" title="${violation.detail}">
+            ⚠️ ${s.alerts} Alert${s.alerts > 1 ? 's' : ''}
+          </span>
+          <div class="p-dim" style="font-size:10px; margin-top:4px;">Latest: ${violation.type}</div>
+        `;
+      }
+    }
+
+    notifications.warn(`⚠️ Student Alert: ${violation.type} — ${violation.detail}`);
   }
 };
 

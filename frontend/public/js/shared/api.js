@@ -4,6 +4,7 @@
  */
 
 const API_BASE_URL = 'http://localhost:5000/api';
+const SERVER_URL = 'http://localhost:5000';
 
 const api = {
   /**
@@ -91,3 +92,4 @@ const api = {
 };
 
 window.api = api;
+window.SERVER_URL = SERVER_URL;

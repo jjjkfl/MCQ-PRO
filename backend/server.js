@@ -7,6 +7,8 @@ const connectDB = require('./src/config/database');
 const authRoutes = require('./src/routes/authRoutes');
 const portalRoutes = require('./src/routes/portalRoutes');
 const initSocket = require('./src/config/socket');
+const { initAuditPulse } = require('./src/services/blockchain/auditPulse');
+const { initChangeStreamGuardian } = require('./src/services/blockchain/changeStreamGuardian');
 
 const app = express();
 connectDB();
@@ -32,6 +34,13 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', '
 app.get('/student', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'index.html')));
 app.get('/teacher', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'teacher.html')));
 app.get('/exam', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'exam.html')));
+
+// Initialize Blockchain Audit Pulse (Super-Strength Integrity)
+initAuditPulse(5 * 60 * 1000); // 5 minute pulse
+
+// Initialize Change Stream Guardian (Self-Healing Immutable Results)
+// Note: Requires MongoDB with replica set (rs) mode for Change Streams
+setTimeout(initChangeStreamGuardian, 3000); // Start after DB is ready
 
 const PORT = process.env.PORT || 5000;
 const httpServer = http.createServer(app);

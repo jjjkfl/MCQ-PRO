@@ -37,7 +37,8 @@ const Analytics = {
         totalQuestions,
         correctCount,
         timeTaken: Number(r.timeTaken || 0),
-        violations: Number(r.violations || 0),
+        violations: Number(r.violationCount || r.violations || 0),
+        violationHistory: r.violationHistory || [],
         isPassed,
         grade
       };
@@ -68,7 +69,7 @@ const Analytics = {
   renderOverview(stats, title) {
     const container = document.getElementById('analytics-overview');
     const passRate = stats.total > 0 ? ((stats.passed / stats.total) * 100).toFixed(1) : '0.0';
-    
+
     container.innerHTML = `
       <div style="margin-bottom: 24px;">
         <h2 class="h2">${title || 'Session'} — Results</h2>
@@ -99,7 +100,7 @@ const Analytics = {
   renderResultsTable(results) {
     // Insert a table after the overview
     const overview = document.getElementById('analytics-overview');
-    
+
     // Remove old table if exists
     const oldTable = document.getElementById('results-table-section');
     if (oldTable) oldTable.remove();
@@ -153,9 +154,12 @@ const Analytics = {
                   <td>${r.correctCount}/${r.totalQuestions}</td>
                   <td>${formatTime(r.timeTaken)}</td>
                   <td>
-                    ${r.violations > 0 
-                      ? `<span class="status-pill status-warning">⚠️ ${r.violations}</span>` 
-                      : '<span class="p-dim">0</span>'}
+                    ${r.violations > 0
+        ? `<span class="status-pill status-warning" style="cursor:help" 
+                              title="${r.violationHistory.map(v => `${v.type}: ${v.detail}`).join('\n')}">
+                           ⚠️ ${r.violations}
+                         </span>`
+        : '<span class="p-dim">0</span>'}
                   </td>
                   <td><strong>${r.grade}</strong></td>
                   <td>

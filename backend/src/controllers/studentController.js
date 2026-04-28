@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Session = require('../models/Session');
 const Result = require('../models/Result');
+const ResultSnapshot = require('../models/ResultSnapshot');
 const Announcement = require('../models/Announcement');
 const logger = require('../utils/logger');
 const Course = require('../models/Course');
@@ -190,7 +191,7 @@ exports.getExamQuestions = async (req, res) => {
 
 exports.submitExam = async (req, res) => {
   try {
-    const { sessionId, answers, violations } = req.body;
+    const { sessionId, answers, violations, violationHistory } = req.body;
     const session = await Session.findById(sessionId);
     if (!session) return res.status(404).json({ message: 'Exam not found' });
 
@@ -235,7 +236,8 @@ exports.submitExam = async (req, res) => {
       submittedAt: new Date(),
       correctCount: correct,
       totalQuestions: totalQuestions,
-      violationCount: parseInt(violations, 10) || 0
+      violationCount: parseInt(violations, 10) || 0,
+      violationHistory: violationHistory || []
     };
 
     // Calculate SHA256 Result Hash
@@ -253,6 +255,24 @@ exports.submitExam = async (req, res) => {
       await result.save();
     } catch (bcErr) {
       console.warn('Blockchain anchoring failed, result saved off-chain:', bcErr.message);
+    }
+
+    // 🔒 Create immutable snapshot for self-healing protection
+    try {
+      await ResultSnapshot.create({
+        resultId: result._id,
+        studentId: result.studentId,
+        courseId: result.courseId,
+        sessionId: result.sessionId,
+        score: result.score,
+        timeTaken: result.timeTaken,
+        violationCount: result.violationCount,
+        answers: result.answers,
+        blockchainHash: resHash,
+      });
+    } catch (snapErr) {
+      // Snapshot creation failed (e.g., duplicate key on retry) — non-blocking
+      logger.warn(`Snapshot creation skipped: ${snapErr.message}`);
     }
 
     res.status(201).json({

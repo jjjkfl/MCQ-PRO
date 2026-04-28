@@ -166,14 +166,14 @@ const ExamEngine = {
         </div>
 
         <h2 style="font-size: 20px; font-weight: 500; margin: 20px 0 24px; line-height: 1.6; color: #1e293b;">
-          ${this._escapeHtml(q.questionText)}
+          ${this._escapeHtml(q.questionText && q.questionText.trim() ? q.questionText : (q.image ? '[Refer to the image below]' : `Question ${this.currentIdx + 1}`))}
         </h2>
 
         ${q.image ? `
           <div class="exam-image-container">
-            <img src="${q.image}" alt="Question Image" class="exam-question-image"
+            <img src="${window.SERVER_URL}${q.image}" alt="Question Image" class="exam-question-image"
                  onclick="ExamEngine._zoomImage(this.src)"
-                 onerror="this.parentElement.style.display='none'">
+                 onerror="this.src='/img/placeholder.png'; this.style.opacity='0.5';">
             <p class="p-dim" style="font-size: 11px; margin-top: 6px; text-align: center;">
               Click image to enlarge
             </p>
@@ -188,9 +188,9 @@ const ExamEngine = {
                 <div class="option-text">${this._escapeHtml(opt.text)}</div>
                 ${opt.image ? `
                   <div class="option-image-container">
-                    <img src="${opt.image}" alt="Option Image" class="exam-option-image"
+                    <img src="${window.SERVER_URL}${opt.image}" alt="Option Image" class="exam-option-image"
                          onclick="event.stopPropagation(); ExamEngine._zoomImage(this.src)"
-                         onerror="this.parentElement.style.display='none'">
+                         onerror="this.src='/img/placeholder.png'; this.style.opacity='0.5';">
                   </div>
                 ` : ''}
               </div>
@@ -332,7 +332,8 @@ const ExamEngine = {
           selectedOption: label
         })),
         timeTaken: Math.floor((Date.now() - this.startTime) / 1000),
-        violations: Proctor.violations.length
+        violations: Proctor.violations.length,
+        violationHistory: Proctor.violations
       };
 
       const result = await api.post('/portal/student/exams/submit', payload);
@@ -353,51 +354,52 @@ const ExamEngine = {
 
       const d = result.data;
 
-      // Show score summary overlay
-      document.getElementById('question-area').innerHTML = `
-        <div style="text-align:center; padding:48px 20px;" class="animate-fade-in">
-          <div style="font-size:56px; margin-bottom:16px;">🎉</div>
-          <h2 style="font-weight:700; font-size:24px; margin-bottom:8px; color:#1e293b;">Exam Submitted!</h2>
-          <p style="color:#64748b; margin-bottom:28px;">Your answers have been graded.</p>
-          
-          <div style="display:flex; justify-content:center; gap:32px; margin-bottom:32px;">
-            <div>
-              <div style="font-size:36px; font-weight:700; color:${d.isPassed ? '#16a34a' : '#dc2626'};">${d.percentage}%</div>
-              <div style="font-size:12px; color:#94a3b8;">Score</div>
+      // ── Replace ENTIRE page with a clean result screen ─────────────────────
+      // Exit fullscreen first
+      if (document.fullscreenElement) {
+        try { await document.exitFullscreen(); } catch (e) { }
+      }
+
+      // Replace entire body content with a clean white result screen
+      document.body.style.cssText = 'margin:0; padding:0; font-family:"Inter",-apple-system,sans-serif; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); min-height:100vh; display:flex; align-items:center; justify-content:center;';
+      document.body.innerHTML = `
+        <div style="background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.12); padding:48px 40px; max-width:520px; width:100%; text-align:center; animation: fadeIn 0.5s ease;">
+          <div style="font-size:64px; margin-bottom:16px;">${d.isPassed ? '🎉' : '📋'}</div>
+          <h1 style="font-size:26px; font-weight:800; color:#1e293b; margin-bottom:8px;">Exam Submitted!</h1>
+          <p style="color:#64748b; margin-bottom:32px; font-size:15px;">Your answers have been recorded and graded.</p>
+
+          <div style="display:flex; justify-content:center; gap:24px; margin-bottom:28px;">
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:20px 28px;">
+              <div style="font-size:42px; font-weight:800; color:${d.isPassed ? '#16a34a' : '#dc2626'};">${d.percentage}%</div>
+              <div style="font-size:12px; color:#94a3b8; margin-top:4px; font-weight:600; text-transform:uppercase; letter-spacing:1px;">Score</div>
             </div>
-            <div>
-              <div style="font-size:36px; font-weight:700; color:#2563eb;">${d.correctCount}/${d.totalQuestions}</div>
-              <div style="font-size:12px; color:#94a3b8;">Correct</div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:20px 28px;">
+              <div style="font-size:42px; font-weight:800; color:#2563eb;">${d.correctCount}/${d.totalQuestions}</div>
+              <div style="font-size:12px; color:#94a3b8; margin-top:4px; font-weight:600; text-transform:uppercase; letter-spacing:1px;">Correct</div>
             </div>
           </div>
 
-          <p style="font-size:14px; margin-bottom:24px; color:${d.isPassed ? '#16a34a' : '#dc2626'}; font-weight:600;">
+          <div style="display:inline-flex; align-items:center; gap:8px; padding:10px 24px; border-radius:100px; font-weight:700; font-size:15px; margin-bottom:32px; background:${d.isPassed ? '#ecfdf5' : '#fef2f2'}; color:${d.isPassed ? '#16a34a' : '#dc2626'}; border:1.5px solid ${d.isPassed ? '#86efac' : '#fca5a5'};">
             ${d.isPassed ? '✅ PASSED' : '❌ FAILED'}
-          </p>
-
-          <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-            <a href="/result.html?resultId=${d.resultId}" class="btn btn-primary" style="text-decoration:none;">
-              📋 View All Answers
-            </a>
-            <a href="/index.html" class="btn btn-outline" style="text-decoration:none;">
-              🏠 Home
-            </a>
-            <button onclick="auth.logout()" class="btn btn-outline" style="color:#dc2626; border-color:#fecaca;">
-              🚪 Logout
-            </button>
           </div>
+
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <a href="/result.html?resultId=${d.resultId}" style="display:block; padding:14px; background:#4f46e5; color:#fff; border-radius:12px; text-decoration:none; font-weight:700; font-size:15px; transition:all 0.2s;">
+              📋 View Detailed Results
+            </a>
+            <a href="/index.html" style="display:block; padding:12px; background:#f8fafc; color:#475569; border-radius:12px; text-decoration:none; font-weight:600; font-size:14px; border:1px solid #e2e8f0;">
+              🏠 Return to Dashboard
+            </a>
+          </div>
+
+          <p style="margin-top:24px; font-size:12px; color:#94a3b8;">🔒 Your result has been sealed to the blockchain.</p>
         </div>
+        <style>
+          @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        </style>
       `;
-
-      // Hide nav buttons
-      const nav = document.querySelector('.exam-nav');
-      if (nav) nav.style.display = 'none';
-      const progress = document.getElementById('exam-progress');
-      if (progress) progress.style.display = 'none';
-
-      notifications.success('✅ Exam submitted successfully!');
-
     } catch (err) {
+      this.isSubmitting = false;
       notifications.error('Submission failed: ' + err.message);
     }
   },

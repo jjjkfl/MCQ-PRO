@@ -6,6 +6,8 @@
 const { ethers } = require('ethers');
 const logger = require('../../utils/logger');
 const { hexToBytes32 } = require('./hashService');
+const signatureService = require('./signatureService');
+const merkleService = require('./merkleService');
 
 /* ─── ABI (matches CredentialSeal.sol) ───────────────────────────── */
 const CONTRACT_ABI = [
@@ -145,6 +147,41 @@ exports.storeResultHash = async (resultHash, resultId) => {
     };
   } catch (err) {
     logger.error(`storeResultHash error: ${err.message}`);
+    throw err;
+  }
+};
+
+/* ─── ANCHOR STATE ROOT ───────────────────────────────────────────── */
+/**
+ * Anchor the global state Merkle Root to the blockchain
+ * @param {string} root - The Merkle Root hash
+ * @returns {object} tx - Transaction details
+ */
+exports.anchorStateRoot = async (root) => {
+  try {
+    const c = getContract();
+    const root32 = hexToBytes32(root);
+
+    // We use a specific ID to identify the Global State Anchor
+    const anchorId = `STATE_ROOT_PULSE:${Date.now()}`;
+
+    // sign the root first for extra security
+    const systemSig = await signatureService.signHash(root);
+
+    logger.info(`Blockchain: anchoring state root pulse [${root}]`);
+
+    const tx = await c.sealResult(root32, anchorId, { gasLimit: 250000 });
+    const receipt = await tx.wait();
+
+    return {
+      success: true,
+      root,
+      txHash: tx.hash,
+      blockNumber: receipt.blockNumber,
+      signature: systemSig
+    };
+  } catch (err) {
+    logger.error(`anchorStateRoot error: ${err.message}`);
     throw err;
   }
 };

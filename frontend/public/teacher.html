@@ -4,204 +4,225 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teacher Command Center | MCQ Pro</title>
+  <title>Teacher Dashboard | MCQ Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/student.css">
   <link rel="stylesheet" href="/css/teacher.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-  <div class="container">
-    <div id="nav-container"></div>
+  <div class="student-layout">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1><i class="fas fa-chalkboard-teacher"></i> MCQPro</h1>
+      </div>
 
-    <!-- VIEW: Dashboard -->
-    <main id="view-dashboard" class="view">
-      <header class="dashboard-header animate-fade-in" style="margin-top: 20px;">
-        <div class="monitor-info">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <h1 class="dashboard-title">Command Center</h1>
-            <div class="welcome-badge" style="margin-top: -8px;">
-              <i class="fas fa-shield-alt"></i> Integrity Anchored
+      <div class="nav-item active" data-action="overview">
+        <i class="fas fa-chart-pie"></i> Dashboard
+      </div>
+      <div class="nav-item" data-action="courses">
+        <i class="fas fa-book"></i> Courses Management
+      </div>
+      <div class="nav-item" data-action="students">
+        <i class="fas fa-users"></i> Students
+      </div>
+      <div class="nav-item" data-action="forum">
+        <i class="fas fa-comments"></i> Forum
+      </div>
+      <div class="nav-item" data-action="analytics">
+        <i class="fas fa-chart-bar"></i> Global Analytics
+      </div>
+
+      <div style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 20px;">
+        <div class="nav-item" onclick="auth.logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- VIEW: Dashboard -->
+      <main id="view-dashboard" class="view">
+        <header class="dashboard-header animate-fade-in">
+          <div class="monitor-info">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <h1 class="dashboard-title">Welcome Back, <span id="teacher-name">Teacher</span>!</h1>
+              <div class="welcome-badge" style="margin-top: -8px;">
+                <i class="fas fa-shield-alt"></i> Integrity Anchored
+              </div>
             </div>
+            <p class="dashboard-subtitle">Manage examinations, question banks, and monitor live proctored sessions.</p>
           </div>
-          <p class="dashboard-subtitle">Manage examinations, question banks, and monitor live proctored sessions.</p>
-        </div>
-        <div class="glass-card"
-          style="padding: 12px; display: flex; gap: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.4);">
-          <button onclick="TeacherDashboard.broadcastAnnouncement()" class="btn btn-secondary"
-            style="border:none; background: rgba(0,0,0,0.03);">
-            <i class="fas fa-bullhorn" style="color: #6366f1;"></i> Broadcast
-          </button>
-          <button onclick="utils.setUrlParam('view', 'materials')" class="btn btn-secondary"
-            style="border:none; background: rgba(0,0,0,0.03);">
-            <i class="fas fa-book" style="color: #0ea5e9;"></i> Curriculum
-          </button>
-          <button onclick="utils.setUrlParam('view', 'marks')" class="btn btn-secondary"
-            style="border:none; background: rgba(0,0,0,0.03);">
-            <i class="fas fa-edit" style="color: #8b5cf6;"></i> Marks
-          </button>
-          <button onclick="document.getElementById('pdf-upload').click()" class="btn-premium"
-            style="padding: 10px 24px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-plus-circle"></i> Upload Document
-          </button>
-          <input type="file" id="pdf-upload" style="display: none" accept=".pdf,.doc,.docx"
-            onchange="PDFUpload.handleUpload(event)">
-        </div>
-      </header>
+          <div class="dashboard-actions">
+            <button onclick="TeacherDashboard.broadcastAnnouncement()" class="btn btn-secondary"><i
+                class="fas fa-bullhorn"></i> Broadcast</button>
+            <button onclick="utils.setUrlParam('view', 'materials')" class="btn btn-secondary"><i
+                class="fas fa-book"></i>
+              Curriculum</button>
+            <button onclick="document.getElementById('pdf-upload').click()" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Upload Document
+            </button>
+            <input type="file" id="pdf-upload" style="display: none" accept=".pdf,.doc,.docx"
+              onchange="PDFUpload.handleUpload(event)">
+          </div>
+        </header>
 
-      <div class="metrics-grid animate-fade-in">
-        <div class="metric-card">
-          <div class="metric-icon blue"><i class="fas fa-satellite-dish"></i></div>
-          <p class="metric-label">Active Sessions</p>
-          <div class="metric-value" id="stat-active">0</div>
+        <div class="metrics-grid animate-fade-in">
+          <div class="metric-card">
+            <div class="metric-icon blue"><i class="fas fa-satellite-dish"></i></div>
+            <p class="metric-label">Active Sessions</p>
+            <div class="metric-value" id="stat-active">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon purple"><i class="fas fa-users"></i></div>
+            <p class="metric-label">Total Students</p>
+            <div class="metric-value" id="stat-total-students">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon green"><i class="fas fa-database"></i></div>
+            <p class="metric-label">MCQ Banks</p>
+            <div class="metric-value" id="stat-banks">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon orange"><i class="fas fa-file-invoice"></i></div>
+            <p class="metric-label">Total Exams</p>
+            <div class="metric-value" id="stat-total-exams">0</div>
+          </div>
         </div>
-        <div class="metric-card">
-          <div class="metric-icon purple"><i class="fas fa-users"></i></div>
-          <p class="metric-label">Total Students</p>
-          <div class="metric-value" id="stat-total-students">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-icon green"><i class="fas fa-database"></i></div>
-          <p class="metric-label">MCQ Banks</p>
-          <div class="metric-value" id="stat-banks">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-icon orange"><i class="fas fa-file-invoice"></i></div>
-          <p class="metric-label">Total Exams</p>
-          <div class="metric-value" id="stat-total-exams">0</div>
-        </div>
-      </div>
 
-      <div class="dashboard-grid stagger">
-        <section class="section-card">
+        <div class="dashboard-grid stagger">
+          <section class="section-card">
+            <div class="section-header">
+              <h3 class="section-title"><i class="fas fa-history"></i> Recent Sessions</h3>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Scheduled</th>
+                    <th>Status</th>
+                    <th>Subs</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-sessions"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="section-card">
+            <div class="section-header">
+              <h3 class="section-title"><i class="fas fa-graduation-cap"></i> Recent Results</h3>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Exam</th>
+                    <th>Score</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-results"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <section style="margin-top: 2.5rem;">
           <div class="section-header">
-            <h3 class="section-title"><i class="fas fa-history"></i> Recent Sessions</h3>
+            <h3 class="section-title"><i class="fas fa-folder-open"></i> MCQ Banks</h3>
+            <span class="card-action" onclick="PDFUpload.togglePreview()">View Preview Log</span>
           </div>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Scheduled</th>
-                  <th>Status</th>
-                  <th>Subs</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="recent-sessions"></tbody>
-            </table>
-          </div>
+          <div id="mcq-banks-grid" class="mcq-banks-grid"></div>
         </section>
+      </main>
 
-        <section class="section-card">
-          <div class="section-header">
-            <h3 class="section-title"><i class="fas fa-graduation-cap"></i> Recent Results</h3>
+      <!-- VIEW: Monitoring -->
+      <main id="view-monitor" class="view" style="display: none;">
+        <div style="margin-bottom: 24px;">
+          <button onclick="window.location.href='/teacher.html'" class="btn btn-outline"
+            style="padding: 6px 12px; font-size: 12px; margin-bottom: 16px;">← Back to Dashboard</button>
+        </div>
+        <header class="flex-between" style="margin-bottom: 32px;">
+          <div>
+            <h2 class="h2" id="session-title">Monitoring</h2>
+            <p id="student-count" class="p-dim"></p>
           </div>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Exam</th>
-                  <th>Score</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody id="recent-results"></tbody>
-            </table>
+          <div class="flex-center" style="gap:12px;">
+            <button onclick="TeacherSocket.pauseExam()" class="btn btn-outline">Pause</button>
+            <button onclick="TeacherSocket.resumeExam()" class="btn btn-primary">Resume</button>
+            <button onclick="TeacherSocket.forceEnd()" class="btn btn-outline"
+              style="color:var(--danger); border-color:var(--danger)">End Exam</button>
           </div>
-        </section>
-      </div>
-
-      <section style="margin-top: 2.5rem;">
-        <div class="section-header">
-          <h3 class="section-title"><i class="fas fa-folder-open"></i> MCQ Banks</h3>
-          <span class="card-action" onclick="PDFUpload.togglePreview()">View Preview Log</span>
+        </header>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Status</th>
+                <th>Progress</th>
+                <th>Proctor Alerts</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="monitor-list"></tbody>
+          </table>
         </div>
-        <div id="mcq-banks-grid" class="mcq-banks-grid"></div>
-      </section>
-    </main>
+      </main>
 
-    <!-- VIEW: Monitoring -->
-    <main id="view-monitor" class="view" style="display: none;">
-      <div style="margin-bottom: 24px;">
-        <button onclick="window.location.href='/teacher.html'" class="btn btn-outline"
-          style="padding: 6px 12px; font-size: 12px; margin-bottom: 16px;">← Back to Dashboard</button>
-      </div>
-      <header class="flex-between" style="margin-bottom: 32px;">
-        <div>
-          <h2 class="h2" id="session-title">Monitoring</h2>
-          <p id="student-count" class="p-dim"></p>
+      <!-- VIEW: Analytics (Session Specific) -->
+      <main id="view-analytics" class="view" style="display: none;">
+        <div style="margin-bottom: 24px;">
+          <button onclick="window.location.href='/teacher.html'" class="btn btn-outline"
+            style="padding: 6px 12px; font-size: 12px; margin-bottom: 16px;">← Back to Dashboard</button>
         </div>
-        <div class="flex-center" style="gap:12px;">
-          <button onclick="TeacherSocket.pauseExam()" class="btn btn-outline">Pause</button>
-          <button onclick="TeacherSocket.resumeExam()" class="btn btn-primary">Resume</button>
-          <button onclick="TeacherSocket.forceEnd()" class="btn btn-outline"
-            style="color:var(--danger); border-color:var(--danger)">End Exam</button>
+        <div id="analytics-overview"></div>
+        <div class="glass-card" style="margin-top:40px;">
+          <h3 class="h3" style="margin-bottom:24px;">Grade Distribution</h3>
+          <div class="chart-container">
+            <canvas id="grade-distribution-chart"></canvas>
+          </div>
         </div>
-      </header>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Status</th>
-              <th>Progress</th>
-              <th>Proctor Alerts</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="monitor-list"></tbody>
-        </table>
-      </div>
-    </main>
+      </main>
 
-    <!-- VIEW: Analytics (Session Specific) -->
-    <main id="view-analytics" class="view" style="display: none;">
-      <div style="margin-bottom: 24px;">
-        <button onclick="window.location.href='/teacher.html'" class="btn btn-outline"
-          style="padding: 6px 12px; font-size: 12px; margin-bottom: 16px;">← Back to Dashboard</button>
-      </div>
-      <div id="analytics-overview"></div>
-      <div class="glass-card" style="margin-top:40px;">
-        <h3 class="h3" style="margin-bottom:24px;">Grade Distribution</h3>
-        <div class="chart-container">
-          <canvas id="grade-distribution-chart"></canvas>
-        </div>
-      </div>
-    </main>
+      <!-- VIEW: All Analytics (Global) -->
+      <main id="view-analytics-all" class="view" style="display: none;">
+        <header style="margin-bottom: 48px;">
+          <h2 class="h2">Academic Performance Overview</h2>
+          <p class="p-dim">Aggregated data across all active and completed exam sessions.</p>
+        </header>
 
-    <!-- VIEW: All Analytics (Global) -->
-    <main id="view-analytics-all" class="view" style="display: none;">
-      <header style="margin-bottom: 48px;">
-        <h2 class="h2">Academic Performance Overview</h2>
-        <p class="p-dim">Aggregated data across all active and completed exam sessions.</p>
-      </header>
+        <div id="global-analytics-stats"></div>
 
-      <div id="global-analytics-stats"></div>
-
-      <div class="glass-card" style="margin-top:40px;">
-        <h3 class="h3" style="margin-bottom:24px;">Global Grade Distribution</h3>
-        <div class="chart-container">
-          <canvas id="global-grade-chart"></canvas>
+        <div class="glass-card" style="margin-top:40px;">
+          <h3 class="h3" style="margin-bottom:24px;">Global Grade Distribution</h3>
+          <div class="chart-container">
+            <canvas id="global-grade-chart"></canvas>
+          </div>
         </div>
-      </div>
-    </main>
-    <!-- VIEW: Materials Management -->
-    <main id="view-materials" class="view" style="display: none;">
-      <header class="flex-between" style="margin-bottom: 32px;">
-        <div>
-          <h2 class="h2">Curriculum & Materials</h2>
-          <p class="p-dim">Manage course documents, videos, and study resources for student enrichment.</p>
-        </div>
-        <button onclick="TeacherDashboard.showUploadMaterial()" class="btn-premium"
-          style="padding: 10px 20px; border: none; font-weight: 700; cursor: pointer;">
-          <i class="fas fa-file-upload"></i> Upload Material
-        </button>
-      </header>
-      <div class="glass-card" style="padding: 0; overflow: hidden;">
-        <div id="teacher-materials-grid" class="table-container" style="border: none;">
+      </main>
+      <!-- VIEW: Materials Management -->
+      <main id="view-materials" class="view" style="display: none;">
+        <header class="flex-between" style="margin-bottom: 32px;">
+          <div>
+            <h2 class="h2">Curriculum & Materials</h2>
+            <p class="p-dim">Manage course documents, videos, and study resources.</p>
+          </div>
+          <button onclick="TeacherDashboard.showUploadMaterial()" class="btn btn-primary">+ Upload Material</button>
+        </header>
+        <div id="teacher-materials-grid" class="table-container">
           <table style="width:100%">
             <thead>
               <tr>
@@ -214,93 +235,60 @@
             <tbody id="materials-table-body"></tbody>
           </table>
         </div>
-    </main>
+      </main>
 
-    <!-- VIEW: Attendance & Analytics -->
-    <main id="view-students" class="view" style="display: none;">
-      <header class="flex-between" style="margin-bottom: 32px;">
-        <div>
-          <h2 class="h2">Student Tracking</h2>
-          <p class="p-dim">Monitor attendance and overall performance per session.</p>
-        </div>
-        <div style="display:flex; gap:12px;">
-          <select id="attendance-session-select" class="input-control" style="padding: 8px 16px;"
-            onchange="TeacherDashboard.loadAttendance(this.value)">
-            <option value="">Select Session...</option>
-          </select>
-        </div>
-      </header>
-      <div id="session-attendance-container" class="table-container">
-        <h3 class="h3" style="margin-bottom: 16px; font-size: 18px;">Session Attendance</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Student Name</th>
-              <th>Email</th>
-              <th>Status</th>
-              <th>Time</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="attendance-table-body"></tbody>
-        </table>
-      </div>
-
-      <div id="student-roster-container" class="table-container" style="margin-top: 40px;">
-        <h3 class="h3" style="margin-bottom: 16px; font-size: 18px;">Master Student Roster</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Student Name</th>
-              <th>Email</th>
-              <th>Division</th>
-              <th>Total Attendance</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="student-roster-table-body"></tbody>
-        </table>
-      </div>
-    </main>
-
-    <!-- VIEW: Marks Management -->
-    <main id="view-marks" class="view" style="display: none;">
-      <header class="flex-between" style="margin-bottom: 32px;">
-        <div>
-          <h2 class="h2">Internal Assessment Marks</h2>
-          <p class="p-dim">Manage ISA 1, ISA 2, and Lab assessment records for your assigned students.</p>
-        </div>
-        <div class="flex-center" style="gap:12px;">
-          <button onclick="TeacherDashboard.showAddMarkModal()" class="btn-premium"
-            style="padding: 10px 20px; border: none; font-weight: 700; cursor: pointer;">
-            <i class="fas fa-user-plus"></i> Add Mark Entry
-          </button>
-        </div>
-      </header>
-
-      <div class="glass-card" style="padding: 0; overflow: hidden;">
-        <div class="table-wrapper" style="border: none;">
+      <!-- VIEW: Attendance & Analytics -->
+      <main id="view-students" class="view" style="display: none;">
+        <header class="flex-between" style="margin-bottom: 32px;">
+          <div>
+            <h2 class="h2">Student Tracking</h2>
+            <p class="p-dim">Monitor attendance and overall performance per session.</p>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <select id="attendance-session-select" class="input-control" style="padding: 8px 16px;"
+              onchange="TeacherDashboard.loadAttendance(this.value)">
+              <option value="">Select Session...</option>
+            </select>
+          </div>
+        </header>
+        <div id="session-attendance-container" class="table-container">
+          <h3 class="h3" style="margin-bottom: 16px; font-size: 18px;">Session Attendance</h3>
           <table>
             <thead>
               <tr>
-                <th>Student</th>
-                <th>Course</th>
-                <th>Subject</th>
-                <th>Phase</th>
-                <th>Marks</th>
-                <th>Action</th>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Time</th>
+                <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="marks-list"></tbody>
+            <tbody id="attendance-table-body"></tbody>
           </table>
         </div>
-      </div>
-    </main>
 
-    <!-- VIEW: Forum -->
-    <main id="view-forum" class="view" style="display: none;">
-      <div id="teacher-forum-container"></div>
-    </main>
+        <div id="student-roster-container" class="table-container" style="margin-top: 40px;">
+          <h3 class="h3" style="margin-bottom: 16px; font-size: 18px;">Master Student Roster</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Division</th>
+                <th>Total Attendance</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="student-roster-table-body"></tbody>
+          </table>
+        </div>
+      </main>
+
+      <!-- VIEW: Forum -->
+      <main id="view-forum" class="view" style="display: none;">
+        <div id="teacher-forum-container"></div>
+      </main>
+    </div>
   </div>
 
   <!-- Shared Libs -->

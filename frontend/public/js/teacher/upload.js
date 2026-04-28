@@ -120,14 +120,22 @@ const PDFUpload = {
         <p style="font-weight: 500; margin: 12px 0;">${this._escapeHtml(q.questionText)}</p>
         ${q.image ? `
           <div class="preview-image-container">
-            <img src="${q.image}" alt="Question ${i + 1} Image" class="preview-image" 
-                 onerror="this.style.display='none'">
+            <img src="${window.SERVER_URL}${q.image}" alt="Question ${i + 1} Image" class="preview-image" 
+                 onerror="this.src='/img/placeholder.png'; this.style.opacity='0.5';">
           </div>` : ''}
         <div class="preview-options">
           ${(q.options || []).map(opt => `
             <div class="preview-option ${opt.label === q.correctAnswer ? 'correct' : ''}">
-              <span class="opt-label">${opt.label}</span>
-              <span>${this._escapeHtml(opt.text)}</span>
+              <div class="opt-main-content">
+                <span class="opt-label">${opt.label}</span>
+                <span>${this._escapeHtml(opt.text)}</span>
+              </div>
+              ${opt.image ? `
+                <div class="preview-opt-image">
+                  <img src="${window.SERVER_URL}${opt.image}" class="thumbnail-img" 
+                       onclick="window.open('${window.SERVER_URL}${opt.image}', '_blank')">
+                </div>
+              ` : ''}
             </div>
           `).join('')}
         </div>

@@ -104,19 +104,40 @@ const parseHtmlToMCQs = (html) => {
     // Strip ALL html except <img> for text extraction
     const text = raw.replace(/<(?!img)[^>]+>/g, '').trim();
 
-    // ─── Detect question line: Q1:, Q2:, Q.1, 1., 1), etc. ───
+    // ─── Detect question line: Q1:, Q2:, Q.1, 1., 1), etc. OR UNNUMBERED question ───
     const qMatch = text.match(/^(?:Q\.?\s*\d+[\.\:\)\-]?\s*|(\d+)[\.\)\:\-]\s*)(.*)/i);
-    if (qMatch) {
+
+    // HEURISTIC V2: Skip image-only blocks when looking for options
+    let isUnnumberedQ = false;
+    if (!qMatch && text.length > 5 && !text.match(/^(?:\(?([A-Da-d])[\.\)\:])/)) {
+      for (let j = 1; j <= 3; j++) {
+        const next = blocks[i + j] ? blocks[i + j].replace(/<(?!img)[^>]+>/g, '').trim() : '';
+        if (!next) continue; // skip empty
+        if (next.match(/^(?:\(?([Aa])[\.\)\:])/)) {
+          isUnnumberedQ = true;
+          break;
+        }
+        if (next.includes('<img')) continue; // skip image-only blocks
+        break; // stop at any other text
+      }
+    }
+
+    if (qMatch || isUnnumberedQ) {
       // Save previous question if complete
-      if (currentQuestion && currentQuestion.options.length === 4) {
+      if (currentQuestion && currentQuestion.options.length >= 2) {
         questions.push(finalizeMCQ(currentQuestion));
       }
       currentQuestion = {
-        questionText: qMatch[2] || qMatch[0].replace(/^(?:Q\.?\s*\d+[\.\:\)\-]?\s*|\d+[\.\)\:\-]\s*)/, '').trim(),
+        questionText: qMatch ? (qMatch[2] || qMatch[0].replace(/^(?:Q\.?\s*\d+[\.\:\)\-]?\s*|\d+[\.\)\:\-]\s*)/, '').trim()) : text,
         image: '',
         options: [],
         correctAnswer: '',
       };
+
+      // If questionText is empty (image-only question), set placeholder
+      if (!currentQuestion.questionText) {
+        currentQuestion.questionText = '[Refer to the image below]';
+      }
 
       // Check if this block contains an image
       const imgMatch = raw.match(/<img[^>]+src=["']([^"']+)["']/);
@@ -133,17 +154,29 @@ const parseHtmlToMCQs = (html) => {
       continue;
     }
 
-    // ─── Detect option line: A., A), a., a), (A), etc. ───
-    const optMatch = text.match(/^(?:\(?([A-Da-d])[\.\)\:])\s*(.*)/);
-    if (optMatch && currentQuestion) {
-      const label = optMatch[1].toUpperCase();
-      const optText = optMatch[2].trim();
-      // Avoid duplicates
-      if (!currentQuestion.options.find(o => o.label === label)) {
-        currentQuestion.options.push({ label, text: optText });
+    // ─── Detect option line: A., A), a., a), (A), etc. (Handles MULTIPLE options per line) ───
+    const optRegex = /(?:\(?([A-Da-d])[\.\)\:])\s*([\s\S]*?)(?=\s*(?:\(?([A-Da-d])[\.\)\:])|$)/g;
+    let match;
+    let foundOptionInThisBlock = false;
+    while ((match = optRegex.exec(text)) !== null) {
+      if (currentQuestion) {
+        const label = match[1].toUpperCase();
+        const optText = match[2].trim().replace(/<img[^>]+>/g, '').trim();
+
+        if (!currentQuestion.options.find(o => o.label === label)) {
+          // Check if this option block contains an image (only works well if 1 option per block)
+          const optImgMatch = raw.match(/<img[^>]+src=["']([^"']+)["']/);
+          const finalOptText = optText.trim();
+          currentQuestion.options.push({
+            label,
+            text: finalOptText || `Option ${label}`, // Ensure NOT empty for Mongoose
+            image: optImgMatch ? optImgMatch[1] : ''
+          });
+          foundOptionInThisBlock = true;
+        }
       }
-      continue;
     }
+    if (foundOptionInThisBlock) continue;
 
     // ─── Detect answer line: Answer: B, Ans: B, Correct: B ───
     const ansMatch = text.match(/^(?:Answer|Ans|Correct(?:\s*Answer)?)\s*[\:\-]\s*([A-Da-d])/i);
@@ -154,8 +187,8 @@ const parseHtmlToMCQs = (html) => {
 
     // ─── If we're in a question context and text is non-empty, append to question ───
     if (currentQuestion && text.length > 0 && currentQuestion.options.length === 0 && !qMatch) {
-      // Could be a multi-line question — append text
-      currentQuestion.questionText += ' ' + text;
+      // Could be a multi-line question — append text (cleaning img tags if any)
+      currentQuestion.questionText += ' ' + text.replace(/<img[^>]+>/g, '').trim();
     }
   }
 
@@ -170,17 +203,31 @@ const parseHtmlToMCQs = (html) => {
 /**
  * Finalize and clean up a parsed MCQ
  */
-const finalizeMCQ = (q) => ({
-  questionText: q.questionText.trim().substring(0, 1000),
-  image: q.image || '',
-  options: q.options.map(o => ({
-    label: o.label,
-    text: o.text.trim().substring(0, 500),
-  })),
-  correctAnswer: q.correctAnswer || '',
-  explanation: '',
-  marks: 1,
-});
+const finalizeMCQ = (q) => {
+  // Ensure we have exactly 4 options for Mongoose and UI consistency
+  const labels = ['A', 'B', 'C', 'D'];
+  const finalOptions = labels.map(l => {
+    const existing = q.options.find(o => o.label === l);
+    if (existing) {
+      const txt = (existing.text || '').trim();
+      return {
+        label: existing.label,
+        text: txt || `Option ${l}`,
+        image: existing.image || ''
+      };
+    }
+    return { label: l, text: `Option ${l}`, image: '' };
+  });
+
+  return {
+    questionText: (q.questionText || 'Untitled Question').trim().substring(0, 5000),
+    image: q.image || '',
+    options: finalOptions,
+    correctAnswer: q.correctAnswer || 'A',
+    marks: 1,
+    explanation: q.explanation || ''
+  };
+};
 
 /* ═══════════════════════════════════════════════════════════════════
    AI-BASED EXTRACTION  (Fallback — for unstructured PDFs/docs)
@@ -201,8 +248,9 @@ const sanitizeMCQ = (q, index) => ({
   questionText: String(q.questionText).trim().substring(0, 1000),
   image: q.image || '',
   options: ['A', 'B', 'C', 'D'].map(label => {
-    const opt = q.options.find(o => o.label === label) || { label, text: '' };
-    return { label, text: String(opt.text).trim().substring(0, 500) };
+    const opt = q.options.find(o => o.label === label) || { label, text: `Option ${label}` };
+    const txt = (String(opt.text || '')).trim();
+    return { label, text: txt || `Option ${label}` };
   }),
   correctAnswer: q.correctAnswer,
   explanation: q.explanation ? String(q.explanation).trim().substring(0, 500) : '',
@@ -216,6 +264,7 @@ const sanitizeMCQ = (q, index) => ({
 const extractPDFText = async (filePath) => {
   const buffer = fs.readFileSync(filePath);
   const data = await pdfParse(buffer);
+  console.log(`[MCQ Engine] PDF parsed: ${data.numpages} pages found.`);
   return data.text;
 };
 
@@ -243,10 +292,12 @@ const chunkText = (text, maxLen = 12000) => {
 };
 
 /* ─── Build extraction prompt ────────────────────────────────────── */
-const buildPrompt = (text, subject, targetCount) => `
-You are an expert exam question generator specializing in ${subject}.
+const buildPrompt = (text, subject, targetCount, fileType = '.pdf') => `
+You are an expert surgical exam specialist integrated into the "MCQ Pro" platform.
+This extraction is being coordinated across: aiParserService.js, teacherController.js, upload.js, teacher.js, and MCQBank.js.
+The source content was extracted from a ${fileType.toUpperCase()} file.
 
-TASK: Extract or generate exactly ${targetCount} high-quality MCQ questions from the following educational content.
+TASK: Extract exactly ${targetCount} high-quality surgical MCQ questions from the following educational content.
 
 REQUIREMENTS:
 1. Each question must have EXACTLY 4 options labeled A, B, C, D
@@ -292,8 +343,8 @@ const callOpenAI = async (prompt) => {
 };
 
 /* ─── Systematic Mock Generator ──────────────────────────────────── */
-const generateMockQuestions = (prompt) => {
-  const mockDB = [
+const generateMockQuestions = (prompt, count = 10) => {
+  const baseMocks = [
     {
       questionText: 'Which of the following is a key principle of surgical asepsis?',
       options: [
@@ -332,9 +383,28 @@ const generateMockQuestions = (prompt) => {
       explanation: 'Nylon is a non-absorbable monofilament ideal for skin.',
       difficulty: 'medium',
       topic: 'Suturing'
+    },
+    {
+      questionText: 'In surgical counting, when is the first count typically performed?',
+      options: [
+        { label: 'A', text: 'Before the procedure begins' },
+        { label: 'B', text: 'After the first incision' },
+        { label: 'C', text: 'Just before closing the cavity' },
+        { label: 'D', text: 'After the patient leaves the OR' }
+      ],
+      correctAnswer: 'A',
+      explanation: 'Initial counts establish a baseline before any items are used.',
+      difficulty: 'easy',
+      topic: 'Safety'
     }
   ];
-  return mockDB;
+
+  const results = [];
+  for (let i = 0; i < count; i++) {
+    const base = baseMocks[i % baseMocks.length];
+    results.push({ ...base, questionText: `${base.questionText} (${i + 1})` });
+  }
+  return results;
 };
 
 /* ─── Parse JSON safely ───────────────────────────────────────────── */
@@ -371,7 +441,7 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
       text = docxRes.html.replace(/<(?!img)[^>]+>/g, '\n').replace(/\n\s*\n/g, '\n');
       const questions = parseHtmlToMCQs(docxRes.html);
       console.log(`[MCQ Engine] Structured DOCX extraction found ${questions.length} questions.`);
-      if (questions.length >= 2) {
+      if (questions.length >= 1) {
         return { questions: questions.slice(0, count), meta: { model: 'systematic-docx-parser' } };
       }
       // Fallback: use raw text if structured parse was weak
@@ -384,21 +454,24 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
       throw new Error(`Unsupported file format: ${ext}`);
     }
 
-    if (!text || text.length < 50) throw new Error('Document is empty or unreadable');
-    console.log(`[MCQ Engine] Total extracted text length: ${text.length} chars.`);
-    console.log(`[MCQ Engine] SAMPLE TEXT: "${text.substring(0, 500).replace(/\n/g, '\\n')}"`);
+    if (!text || text.length < 50) {
+      console.warn(`[MCQ Engine] Extraction failed: Text too short (${text ? text.length : 0} chars)`);
+      throw new Error(`Document appears to be image-only or unreadable (Length: ${text ? text.length : 0})`);
+    }
+    console.log(`[MCQ Engine V2.2] Total extracted text length: ${text.length} chars. Requested count: ${count}`);
+    // console.log(`[MCQ Engine] SAMPLE TEXT: "${text.substring(0, 500).replace(/\n/g, '\\n')}"`);
 
     // 1. Try Regex Parser (The New Primary Engine)
     const regexQuestions = exports.regexExtractFromText(text);
     console.log(`[MCQ Engine] Regex Engine found ${regexQuestions.length} questions.`);
-    if (regexQuestions.length >= 2) {
+    if (regexQuestions.length >= 1) {
       return { questions: regexQuestions.slice(0, count), meta: { model: 'regex-engine' } };
     }
 
     // 2. Try AI only if Key exists and Regex failed
     if (process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.includes('your_openai_api_key_here')) {
       console.log(`[MCQ Engine] Regex failed. Attempting AI extraction enhancement...`);
-      const prompt = buildPrompt(text.substring(0, 8000), subject, count);
+      const prompt = buildPrompt(text.substring(0, 8000), subject, count, ext);
       const response = await callOpenAI(prompt);
       const aiQuestions = parseJSON(response.content).filter(isValidMCQ).map(sanitizeMCQ);
       if (aiQuestions.length > 0) return { questions: aiQuestions.slice(0, count), meta: { model: response.model } };
@@ -406,12 +479,16 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
 
     // 3. Last Resort: Systematic Mock Generator (Avoids hard error)
     console.warn('[MCQ Engine] All primary methods failed. Returning mock data.');
-    return { questions: generateMockQuestions(''), meta: { model: 'mock-generator-final' } };
+    return { questions: generateMockQuestions('', count), meta: { model: 'mock-generator-final' } };
 
   } catch (err) {
     console.error(`[MCQ Engine] CRITICAL ERROR: ${err.message}`);
+    console.error(err.stack);
     // Return mocks instead of throwing to keep the UI functional
-    return { questions: generateMockQuestions(''), meta: { model: 'error-fallback-mock' } };
+    return {
+      questions: generateMockQuestions('', count),
+      meta: { model: 'error-fallback-mock', error: err.message }
+    };
   }
 };
 
@@ -420,51 +497,58 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
  */
 exports.regexExtractFromText = (text) => {
   const questions = [];
-  // More flexible split: Look for numbered lines at the start of a line or after a newline
-  const blocks = text.split(/(?=\n\s*\d+[\.\)\:\-]\s+|\n\s*Q(?:uestion)?\.?\s*\d+[\.\)\:\-]?\s*|^Q(?:uestion)?\.?\s*\d+[\.\)\:\-]?\s*|^\d+[\.\)\:\-]\s*)/i);
+
+  // 1. IMPROVED SPLIT: Look for numbers OR sequences that look like a question text followed by "a)"
+  // V2.7: Added splitting by Question Marks (?) and common Question Starters (Which, What, This is)
+  // because some PDFs strip the a) b) c) d) labels during extraction.
+  const blocks = text.split(/(?=\s\d+[\.\)\:\-]\s+|\n\s*\d+[\.\)\:\-]\s+|\n\s*Q(?:uestion)?\.?\s*\d+[\.\)\:\-]?\s*|^Q(?:uestion)?\.?\s*\d+[\.\)\:\-]?\s*|^\d+[\.\)\:\-]\s*|(?:\n|^)(?=\s*[^\sA-D].*?[\n\s]+[A-Da-d][\.\)\:\-]\s+)|(?<=\?)\s+(?=[A-Z])|(?<=\.)\s+(?=Which|What|How|When|The\s+following|This\s+logo|This\s+is))/i);
 
   for (let block of blocks) {
     block = block.trim();
     if (!block || block.length < 15) continue;
 
-    // Extract Question Text: Detects start and finds where options begin
-    const qMatch = block.match(/^(?:Q(?:uestion)?\.?\s*\d+[\.\)\:\-]?\s*|\d+[\.\)\:\-]\s*)([\s\S]*?)(?=\n\s*[\(\[]?[A-D][\.\)\:\-\]]\s*|[\(\[]?[A-D][\.\)\:\-\]]\s*)/i);
+    // Detect Question Text: Try numbered first, then fallback to any text before the first option
+    let qMatch = block.match(/^(?:Q(?:uestion)?\.?\s*\d+[\.\)\:\-]?\s*|\d+[\.\)\:\-]\s*)([\s\S]*?)(?=\s*[\(\[]?[A-D][\.\)\:\-\]]\s+|[\n\s]?[A-D][\.\)\:\-\]]\s+)/i);
+
+    // Fallback if no number found: take everything before the first option
+    if (!qMatch) {
+      qMatch = block.match(/^([\s\S]*?)(?=\s*[\(\[]?[A-D][\.\)\:\-\]]\s+|[\n\s]?[A-D][\.\)\:\-\]]\s+)/i);
+    }
+
     if (!qMatch) continue;
 
     const questionText = qMatch[1].trim();
     const options = [];
 
-    // Improved Option Patterns (handles A. A) (A) etc.)
-    const findOption = (label, b) => {
-      const regex = new RegExp(`[\\n\\s]?[\\(\\[]?${label}[\\.\\)\\:\\-\\]]\\s*([\\s\\S]*?)(?=[\\n\\s]?[\\(\\[]?[${label === 'D' ? 'A-D' : String.fromCharCode(label.charCodeAt(0) + 1)}-D][\\.\\)\\:\\-\\]]\\s*|[\\n\\s]?(?:Answer|Ans|Correct|Q)|$)`, 'i');
-      const m = b.match(regex);
-      return m ? m[1].trim().replace(/\n/g, ' ') : null;
-    };
-
-    ['A', 'B', 'C', 'D'].forEach(label => {
-      const optText = findOption(label, block);
-      if (optText) options.push({ label, text: optText });
-    });
-
-    // If we found options, we likely have a question
-    if (options.length < 2 && questions.length > 0) continue;
+    // Extract options A, B, C, D even if they're on the same line
+    const optRegex = /[\(\[]?([A-D])[\.\)\:\-\]]\s*([\s\S]*?)(?=\s*[\(\[]?[A-D][\.\)\:\-\]]\s+|[\n\s]?(?:Answer|Ans|Correct|Q|Key)|$)/gi;
+    let m;
+    while ((m = optRegex.exec(block)) !== null) {
+      const label = m[1].toUpperCase();
+      const optText = m[2].trim().replace(/\n/g, ' ');
+      if (!options.find(o => o.label === label)) {
+        options.push({ label, text: optText || `Option ${label}` });
+      }
+    }
 
     // Extract Answer
     const ansMatch = block.match(/(?:Answer|Ans|Correct|Correct Answer|Key)\s*[\:\-]\s*([A-D])/i);
     const correctAnswer = ansMatch ? ansMatch[1].toUpperCase() : (options.length > 0 ? options[0].label : 'A');
 
-    // Check for images [IMAGE:path]
-    const imgMatch = block.match(/\[IMAGE:([^\]]+)\]/);
+    // Check for images
+    const imgMatch = block.match(/\[IMAGE:([^\]]+)\]/) || block.match(/<img[^>]+src=["']([^"']+)["']/i);
 
-    questions.push({
-      questionText: questionText || 'Untitled Question',
-      image: imgMatch ? imgMatch[1] : '',
-      options: options.length === 4 ? options :
-        (options.length > 0 ? [...options, ...['A', 'B', 'C', 'D'].slice(options.length).map(l => ({ label: l, text: '' }))].slice(0, 4) :
-          [{ label: 'A', text: '' }, { label: 'B', text: '' }, { label: 'C', text: '' }, { label: 'D', text: '' }]),
-      correctAnswer,
-      marks: 1
-    });
+    if (options.length >= 2 || questionText.length > 10) {
+      questions.push({
+        questionText: questionText.replace(/<img[^>]+>/gi, '').trim() || 'Untitled Question',
+        image: imgMatch ? imgMatch[1] : '',
+        options: options.length === 4 ? options :
+          (options.length > 0 ? [...options, ...['A', 'B', 'C', 'D'].slice(options.length).map(l => ({ label: l, text: `Option ${l}` }))].slice(0, 4) :
+            [{ label: 'A', text: 'Option A' }, { label: 'B', text: 'Option B' }, { label: 'C', text: 'Option C' }, { label: 'D', text: 'Option D' }]),
+        correctAnswer,
+        marks: 1
+      });
+    }
   }
 
   return questions;

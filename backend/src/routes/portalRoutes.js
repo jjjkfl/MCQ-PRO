@@ -86,4 +86,25 @@ router.get('/portal/student/results', rbac(['student']), (req, res) => studentCt
 router.get('/portal/student/announcements', rbac(['student']), (req, res) => studentCtrl().getAnnouncements(req, res));
 router.get('/portal/student/results/:resultId', rbac(['student']), (req, res) => studentCtrl().getResultDetail(req, res));
 
+// ─── Blockchain Integrity Endpoints ───────────────────────────────────────────
+const AuditLog = require('../models/AuditLog');
+const { getTamperAlert } = require('../services/blockchain/auditPulse');
+
+// Real-time tamper alert status
+router.get('/portal/security/tamper-status', rbac(['teacher', 'admin']), async (req, res) => {
+    const alert = getTamperAlert();
+    const recentTampers = await AuditLog.find({ status: 'tamper_detected' }).sort({ createdAt: -1 }).limit(5);
+    res.json({
+        tamperDetected: !!alert || recentTampers.length > 0,
+        latestAlert: alert,
+        recentTampers,
+    });
+});
+
+// Full audit log history
+router.get('/portal/security/audit-logs', rbac(['teacher', 'admin']), async (req, res) => {
+    const logs = await AuditLog.find().sort({ createdAt: -1 }).limit(20);
+    res.json({ logs });
+});
+
 module.exports = router;
