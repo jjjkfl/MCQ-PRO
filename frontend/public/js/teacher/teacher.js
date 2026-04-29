@@ -71,10 +71,13 @@ const TeacherDashboard = {
       const { data } = await api.get('/portal/teacher/dashboard');
       const { stats, recentSessions, recentResults, courses } = data;
 
-      this.courses = courses || [];
-      this.sessions = recentSessions || [];
+        this.courses = courses || [];
+        this.sessions = recentSessions || [];
 
-      // Helper to update with pulse
+        // Render Drive Buttons in Header
+        this.renderDriveActions(this.courses);
+
+        // Helper to update with pulse
       const updateStat = (id, val) => {
         const el = document.getElementById(id);
         if (el && el.innerText != val) {
@@ -98,6 +101,81 @@ const TeacherDashboard = {
       this.renderResults(recentResults);
     } catch (err) {
       console.error(err.message || 'Failed to load dashboard');
+    }
+  },
+  
+  renderDriveActions(courses) {
+    const container = document.querySelector('.dashboard-actions');
+    if (!container) return;
+
+    // Remove old drive buttons if any
+    container.querySelectorAll('.btn-drive-link').forEach(b => b.remove());
+
+    if (courses.length === 0) return;
+
+    courses.forEach(course => {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-secondary btn-drive-link';
+      btn.style.cssText = 'background: #4285f4; color: #fff; border-color: #4285f4; display: flex; align-items: center; gap: 8px;';
+      
+      if (course.driveLink) {
+        btn.innerHTML = `<i class="fab fa-google-drive"></i> ${course.courseName} Drive`;
+        btn.onclick = () => window.open(course.driveLink, '_blank');
+      } else {
+        btn.innerHTML = `<i class="fas fa-link"></i> Set ${course.courseName} Drive`;
+        btn.onclick = () => this.showEditDriveModal(course._id, course.courseName);
+      }
+      
+      // Add context menu / long press for editing if drive exists
+      if (course.driveLink) {
+        btn.oncontextmenu = (e) => {
+          e.preventDefault();
+          this.showEditDriveModal(course._id, course.courseName);
+        };
+        btn.title = 'Right-click to edit drive link';
+      }
+      
+      // Insert before the upload button (the primary button)
+      const uploadBtn = container.querySelector('.btn-primary');
+      if (uploadBtn) {
+        container.insertBefore(btn, uploadBtn);
+      } else {
+        container.appendChild(btn);
+      }
+    });
+  },
+
+  showEditDriveModal(courseId, courseName) {
+    const course = this.courses.find(c => String(c._id) === String(courseId));
+    Modal.show('edit-drive', `
+      <form onsubmit="TeacherDashboard.handleUpdateDrive(event, '${courseId}')">
+        <div class="form-group">
+          <label>Google Drive / Resource Link for <strong>${courseName}</strong></label>
+          <input type="url" name="driveLink" class="form-control" placeholder="https://drive.google.com/..." value="${course?.driveLink || ''}" required>
+          <p class="p-dim" style="font-size:12px; margin-top:8px;">This link will appear as a quick-access button on your dashboard. Right-click the button later to edit.</p>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Save Drive Link</button>
+      </form>
+    `, { title: 'Configure Course Drive' });
+  },
+
+  async handleUpdateDrive(event, courseId) {
+    event.preventDefault();
+    const driveLink = new FormData(event.target).get('driveLink');
+    try {
+      const res = await api.request(`/portal/teacher/courses/${courseId}/drive`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ driveLink })
+      });
+
+      if (res.success) {
+        notifications.success('Course Drive link updated');
+        Modal.close();
+        await this.loadDashboardData();
+      }
+    } catch (err) {
+      notifications.error('Failed to update drive link: ' + err.message);
     }
   },
 
@@ -358,7 +436,8 @@ const TeacherDashboard = {
           <td><strong>${m.title}</strong></td>
           <td>${m.courseName}</td>
           <td><span class="badge badge-med">${m.type.toUpperCase()}</span></td>
-          <td>
+          <td style="display:flex; gap:8px;">
+            <a href="${m.url}" target="_blank" class="btn btn-outline" style="padding:4px 8px; text-decoration:none; color:var(--primary);">View</a>
             <button onclick="TeacherDashboard.deleteMaterial('${m._id}')" class="btn btn-outline" style="color:#ef4444; padding:4px 8px;">Delete</button>
           </td>
         </tr>
@@ -384,35 +463,105 @@ const TeacherDashboard = {
           <input type="text" name="title" class="form-control" placeholder="e.g., Mathematics Lecture Notes" required>
         </div>
         <div class="form-group">
-          <label>Type</label>
-          <select name="type" class="form-control">
-            <option value="pdf">Document (PDF)</option>
-            <option value="video">Video Link</option>
-            <option value="link">Other Link</option>
+          <label>Target Grade</label>
+          <select name="targetClass" class="form-control" required>
+            <option value="Grade 6">Grade 6</option>
+            <option value="Grade 7">Grade 7</option>
+            <option value="Grade 8">Grade 8</option>
+            <option value="Grade 9">Grade 9</option>
+            <option value="Grade 10">Grade 10</option>
           </select>
         </div>
         <div class="form-group">
+          <label>Subject</label>
+          <select name="subject" class="form-control" required>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Science">Science</option>
+            <option value="English">English</option>
+            <option value="Social Studies">Social Studies</option>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Biology">Biology</option>
+            <option value="History">History</option>
+            <option value="Geography">Geography</option>
+            <option value="Computer Science">Computer Science</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Target Division</label>
+          <select name="targetDivision" class="form-control">
+            <option value="All">All Divisions</option>
+            <option value="A">Division A</option>
+            <option value="B">Division B</option>
+            <option value="C">Division C</option>
+            <option value="D">Division D</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select name="type" class="form-control" onchange="TeacherDashboard.toggleMaterialInput(this.value)">
+            <option value="link">External Link / Drive</option>
+            <option value="pdf">Document (PDF)</option>
+            <option value="note">Study Note (Docx/Text)</option>
+            <option value="video">Video Link</option>
+          </select>
+        </div>
+        <div class="form-group" id="material-url-group">
           <label>Resource URL</label>
           <input type="url" name="url" class="form-control" placeholder="https://..." required>
+        </div>
+        <div class="form-group" id="material-file-group" style="display:none;">
+          <label>Upload File (PDF / Word)</label>
+          <input type="file" name="file" class="form-control" accept=".pdf,.doc,.docx">
         </div>
         <div class="form-group">
           <label>Description (Optional)</label>
           <textarea name="description" class="form-control" rows="2"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" style="width:100%;">Upload to Curriculum</button>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Upload & Distribute</button>
       </form>
     `, { title: 'Upload Course Material' });
+    
+    // Set initial visibility correctly
+    this.toggleMaterialInput('link');
+  },
+
+  toggleMaterialInput(type) {
+    const isFile = ['pdf', 'note'].includes(type);
+    const fileGroup = document.getElementById('material-file-group');
+    const urlGroup = document.getElementById('material-url-group');
+    const urlInput = urlGroup?.querySelector('input');
+    const fileInput = fileGroup?.querySelector('input');
+
+    if (fileGroup && urlGroup) {
+      fileGroup.style.display = isFile ? 'block' : 'none';
+      urlGroup.style.display = isFile ? 'none' : 'block';
+      
+      // Update requirements
+      if (urlInput) urlInput.required = !isFile;
+      if (fileInput) fileInput.required = isFile;
+    }
   },
 
   async handleUploadMaterial(event) {
     event.preventDefault();
-    const data = Object.fromEntries(new FormData(event.target).entries());
+    const formData = new FormData(event.target);
     try {
-      const res = await api.post('/portal/edu/materials', data);
+      // Use fetch directly for FormData to avoid API helper issues with multipart
+      const res = await fetch('/api/portal/edu/materials', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${auth.getToken()}`
+        },
+        body: formData
+      }).then(r => r.json());
+
       if (res.success) {
-        notifications.success('Material added to course');
+        notifications.success('Material added and distributed');
         Modal.close();
         this.loadMaterials();
+      } else {
+        throw new Error(res.message);
       }
     } catch (err) {
       notifications.error('Upload failed: ' + err.message);

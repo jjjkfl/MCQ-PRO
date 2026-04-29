@@ -36,7 +36,7 @@ exports.getDashboard = async (req, res) => {
 
     const courses =
       courseIds.length > 0
-        ? await Course.find({ _id: { $in: courseIds } }).select('courseName')
+        ? await Course.find({ _id: { $in: courseIds } }).select('courseName driveLink')
         : [];
 
     const [activeSessions, totalSessions, totalStudents, totalMCQBanks, sessions, recentResultDocs] =
@@ -136,6 +136,25 @@ exports.createSession = async (req, res) => {
     });
 
     res.status(201).json({ success: true, data: session });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.updateCourseDrive = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { driveLink } = req.body;
+
+    // Authorization check
+    if (!req.user.courseIds.map(id => id.toString()).includes(courseId)) {
+      return res.status(403).json({ success: false, message: 'Unauthorized course' });
+    }
+
+    const course = await Course.findByIdAndUpdate(courseId, { driveLink }, { new: true });
+    if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
+
+    res.json({ success: true, data: course });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }

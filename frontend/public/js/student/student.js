@@ -241,9 +241,12 @@ const StudentDashboard = {
 
       list.innerHTML = materials.map(m => `
         <div class="glass-card" style="padding:20px; display:flex; flex-direction:column; gap:12px;">
-          <div style="font-size:24px;">${m.type === 'video' ? '📽️' : '📄'}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:24px;">${m.type === 'video' ? '📽️' : '📄'}</div>
+            <span class="badge badge-info" style="font-size:10px; background: rgba(79, 70, 229, 0.1); color: var(--primary);">${m.subject || 'General'}</span>
+          </div>
           <div style="font-weight:700; font-size:14px;">${m.title}</div>
-          <p class="p-dim" style="font-size:12px;">${m.description || 'Clinical Resource'}</p>
+          <p class="p-dim" style="font-size:12px;">${m.description || 'Academic Resource'}</p>
           <a href="${m.url}" target="_blank" class="btn btn-primary" style="margin-top:auto; font-size:12px; justify-content:center;">Review Content</a>
         </div>
       `).join('');

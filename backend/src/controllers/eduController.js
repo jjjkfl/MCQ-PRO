@@ -12,7 +12,17 @@ const hashService = require('../services/blockchain/hashService');
 exports.getMaterials = async (req, res) => {
     try {
         const { courseId } = req.params;
-        const materials = await CourseMaterial.find({ courseId }).sort('order');
+        const user = req.user;
+
+        const query = { courseId };
+
+        // STRICT ACCESS CONTROL for students
+        if (user.role === 'student') {
+            query.targetClass = user.classTag;
+            query.targetDivision = { $in: [user.division, 'All'] };
+        }
+
+        const materials = await CourseMaterial.find(query).sort('order');
         res.json({ success: true, data: materials });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
@@ -21,14 +31,64 @@ exports.getMaterials = async (req, res) => {
 
 exports.uploadMaterial = async (req, res) => {
     try {
-        const { courseId, title, description, type, url } = req.body;
+        const { courseId, title, description, type, url: providedUrl, targetClass, targetDivision, subject } = req.body;
+        
+        // Validate teacher ownership
+        if (!req.user.courseIds.map(id => id.toString()).includes(courseId)) {
+            return res.status(403).json({ success: false, message: 'Unauthorized course access' });
+        }
+
+        let finalUrl = providedUrl;
+        let fileData = null;
+        let contentType = null;
+
+        // Handle File Upload if present
+        if (req.file) {
+            const fs = require('fs').promises;
+            const path = require('path');
+            
+            // Read binary data for MongoDB storage
+            fileData = await fs.readFile(req.file.path);
+            contentType = req.file.mimetype;
+            
+            // We still store a URL as a pointer for the frontend
+            finalUrl = `/portal/edu/materials/download/temp`; 
+            
+            // Clean up the temporary file from the server disk
+            await fs.unlink(req.file.path);
+        }
+
         const material = await CourseMaterial.create({
-            courseId, title, description, type, url,
+            courseId, title, description, type, url: finalUrl, targetClass, targetDivision, subject,
+            fileData, contentType,
             createdBy: req.user._id
         });
+
+        // Update the URL to the permanent download link
+        if (fileData) {
+            material.url = `/api/portal/edu/materials/download/${material._id}`;
+            await material.save();
+        }
+
         res.status(201).json({ success: true, data: material });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
+    }
+};
+
+exports.downloadMaterial = async (req, res) => {
+    try {
+        const material = await CourseMaterial.findById(req.params.id);
+        if (!material || !material.fileData) {
+            return res.status(404).send('File not found');
+        }
+        
+        res.set('Content-Type', material.contentType);
+        // Force download if it's not a viewable type, otherwise let browser decide
+        res.set('Content-Disposition', `inline; filename="${material.title}"`);
+        res.send(material.fileData);
+    } catch (err) {
+        res.status(500).send('Error retrieving file');
     }
 };
 

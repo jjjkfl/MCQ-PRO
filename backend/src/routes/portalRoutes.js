@@ -14,7 +14,8 @@ router.use(authMiddleware);
 
 // Materials
 router.get('/portal/edu/courses/:courseId/materials', (req, res) => eduCtrl().getMaterials(req, res));
-router.post('/portal/edu/materials', rbac(['teacher']), (req, res) => eduCtrl().uploadMaterial(req, res));
+router.post('/portal/edu/materials', rbac(['teacher']), upload.single('file'), (req, res) => eduCtrl().uploadMaterial(req, res));
+router.get('/portal/edu/materials/download/:id', (req, res) => eduCtrl().downloadMaterial(req, res));
 router.delete('/portal/edu/materials/:id', rbac(['teacher']), (req, res) => eduCtrl().deleteMaterial(req, res));
 
 // Announcements
@@ -45,6 +46,7 @@ router.post('/portal/teacher/sessions', rbac(['teacher']), (req, res) => teacher
 router.put('/portal/teacher/sessions/:id', rbac(['teacher']), (req, res) => teacherCtrl().updateSession(req, res));
 router.delete('/portal/teacher/sessions/:id', rbac(['teacher']), (req, res) => teacherCtrl().deleteSession(req, res));
 router.patch('/portal/teacher/sessions/:sessionId/status', rbac(['teacher']), (req, res) => teacherCtrl().updateSessionStatus(req, res));
+router.patch('/portal/teacher/courses/:courseId/drive', rbac(['teacher']), (req, res) => teacherCtrl().updateCourseDrive(req, res));
 router.get('/portal/teacher/results/general-analytics', rbac(['teacher']), (req, res) => teacherCtrl().getGeneralAnalytics(req, res));
 router.get('/portal/teacher/sessions/:sessionId/results', rbac(['teacher']), (req, res) => teacherCtrl().getSessionResults(req, res));
 router.get('/portal/teacher/mcq-banks', rbac(['teacher']), (req, res) => teacherCtrl().getMCQBanks(req, res));

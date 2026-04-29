@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   },
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' }, // For students
   courseIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }], // For teachers
+  classTag: { type: String, default: '' }, // e.g. "10th Grade"
   division: { type: String, enum: ['A', 'B', 'C', 'D'], required: function() { return this.role === 'student'; } }
 }, { timestamps: true });
 
