@@ -13,7 +13,7 @@ const Proctor = {
   isDestroyed: false,
   faceModelsLoaded: false,
   noFaceViolationCount: 0,
-  maxNoFaceSequence: 3, // Alert after 3 consecutive failures (approx 6s)
+  maxNoFaceSequence: 3, // Faster warning (approx 2.4s at 800ms)
   detectionInterval: null,
 
   init(sessionId) {
@@ -304,6 +304,12 @@ const Proctor = {
 
   /* ─── Machine Learning Face Detection ────────────────────────── */
   async initFaceDetection() {
+    if (typeof faceapi === 'undefined') {
+      console.error('[Proctor] faceapi is not loaded. ML proctoring disabled.');
+      this.logViolation('ml-missing', 'face-api.js library failed to load');
+      return;
+    }
+
     try {
       console.log('[Proctor] Initializing ML Face Detection Models...');
 
@@ -324,51 +330,56 @@ const Proctor = {
     } catch (err) {
       console.error('[Proctor] ML Model Loading Failed:', err);
       // Fallback: Continue without ML but log it
-      this.logViolation('ml-failed', 'Face detection models failed to load');
+      this.logViolation('ml-failed', `Face detection models failed to load: ${err.message}`);
     }
   },
 
   startDetectionLoop(video) {
     if (this.detectionInterval) clearInterval(this.detectionInterval);
 
-    console.log('[Proctor] Starting Strong ML Face Detection Loop...');
+    console.log('[Proctor] Starting AGGRESSIVE ML Face Detection Loop...');
 
-    // Config for "Strong and Accurate"
-    const MIN_CONFIDENCE = 0.6; // Higher threshold to avoid false positives
-    const MIN_FACE_SIZE = 80;   // Minimum width/height in pixels
+    // Config for "MAX STRENGTH"
+    const MIN_CONFIDENCE = 0.65; // Higher threshold to ensure it's a real face
+    const MIN_FACE_SIZE = 45;    // Keep it sensitive but strict on quality
 
     this.detectionInterval = setInterval(async () => {
       if (this.isDestroyed || !this.faceModelsLoaded || !this.cameraActive) return;
 
+      if (video.readyState < 2) return;
+
       try {
-        // Detect faces with landmarks for accuracy
         const detections = await faceapi.detectAllFaces(
           video,
           new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: MIN_CONFIDENCE })
         ).withFaceLandmarks(true);
 
-        // Filter valid faces (minimum size to avoid background people)
-        const validFaces = detections.filter(d =>
-          d.detection.box.width > MIN_FACE_SIZE && d.detection.box.height > MIN_FACE_SIZE
-        );
+        // Filter valid faces
+        const validFaces = detections.filter(d => {
+          const box = d.detection.box;
+          const isSizeOk = box.width > MIN_FACE_SIZE && box.height > MIN_FACE_SIZE;
+          
+          // Occlusion Check: Ensure landmarks are spread across the face
+          const landmarks = d.landmarks;
+          const isOccluded = this.isFaceOccluded(landmarks, box);
+          
+          return isSizeOk && !isOccluded;
+        });
 
         const faceCount = validFaces.length;
         this.updateFaceStatus(faceCount);
+        this.updateVideoOverlay(faceCount);
 
         if (faceCount === 0) {
           this.noFaceViolationCount++;
           if (this.noFaceViolationCount >= this.maxNoFaceSequence) {
-            this.handleDetectionViolation('no-face', 'No person detected in camera frame.');
+            this.handleDetectionViolation('no-face', '🚨 SECURITY ALERT: Face not detected or covered!');
           }
         } else if (faceCount > 1) {
           this.noFaceViolationCount = 0;
-          // IMMEDIATE CRITICAL VIOLATION for multiple faces
           this.handleDetectionViolation('multiple-faces', `🚨 CRITICAL: ${faceCount} persons detected!`);
         } else {
-          // Exactly one face - Accurate check
           this.noFaceViolationCount = 0;
-
-          // Simple "Looking Away" detection via landmarks
           const landmarks = validFaces[0].landmarks;
           this.checkLookingAway(landmarks);
         }
@@ -376,7 +387,52 @@ const Proctor = {
       } catch (err) {
         console.warn('[Proctor] Face Detection Frame Error:', err);
       }
-    }, 1000); // Check every 1 second for "Strong" monitoring
+    }, 800); // Aggressive 800ms check
+  },
+
+  isFaceOccluded(landmarks, box) {
+    // A real face should have landmarks spread across at least 60% of the detection box
+    const points = landmarks.positions;
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    
+    points.forEach(p => {
+      if (p.x < minX) minX = p.x;
+      if (p.x > maxX) maxX = p.x;
+      if (p.y < minY) minY = p.y;
+      if (p.y > maxY) maxY = p.y;
+    });
+
+    const landmarkWidth = maxX - minX;
+    const landmarkHeight = maxY - minY;
+    
+    // If landmarks are too clustered (less than 40% of box size), it's likely a hand/object
+    const spreadX = landmarkWidth / box.width;
+    const spreadY = landmarkHeight / box.height;
+
+    if (spreadX < 0.4 || spreadY < 0.4) {
+      console.warn('[Proctor] Potential Occlusion Detected (Hand/Object covering face)');
+      return true;
+    }
+    return false;
+  },
+
+  updateVideoOverlay(faceCount) {
+    const video = document.getElementById('proctor-video');
+    const container = document.getElementById('proctor-camera');
+    if (!container) return;
+
+    let overlay = container.querySelector('.camera-alert-overlay');
+    if (faceCount === 0) {
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'camera-alert-overlay';
+        overlay.style.cssText = 'position:absolute; inset:0; background:rgba(239,68,68,0.4); display:flex; align-items:center; justify-content:center; color:white; font-size:12px; font-weight:800; text-align:center; z-index:5; pointer-events:none; border: 3px solid #ef4444;';
+        overlay.innerHTML = '<div>⚠️ NO FACE<br>DETECTED</div>';
+        container.appendChild(overlay);
+      }
+    } else {
+      if (overlay) overlay.remove();
+    }
   },
 
   checkLookingAway(landmarks) {
@@ -397,6 +453,7 @@ const Proctor = {
   },
 
   updateFaceStatus(count) {
+    this._lastFaceCount = count; // Save for updateSecurityBar
     const bar = document.getElementById('security-status');
     if (!bar) return;
 
@@ -404,15 +461,15 @@ const Proctor = {
     if (count === 1) {
       statusHtml = '<div class="sec-pill good"><i class="fas fa-user-check"></i> Face Detected</div>';
     } else if (count === 0) {
-      statusHtml = '<div class="sec-pill danger"><i class="fas fa-user-slash"></i> Searching...</div>';
+      statusHtml = '<div class="sec-pill danger"><i class="fas fa-user-slash"></i> 🚫 No face detected</div>';
     } else {
-      statusHtml = `<div class="sec-pill bad"><i class="fas fa-users"></i> ${count} Persons Detected!</div>`;
+      statusHtml = `<div class="sec-pill bad"><i class="fas fa-users"></i> 🚨 ${count} Persons Detected!</div>`;
     }
 
     // Update or Append face status to security bar
     const existing = bar.querySelector('.face-status-pill');
     if (existing) {
-      existing.outerHTML = `<div class="face-status-pill">${statusHtml}</div>`;
+      existing.innerHTML = statusHtml;
     } else {
       const pills = bar.querySelector('.security-pills');
       if (pills) {
@@ -567,6 +624,17 @@ const Proctor = {
     const switchesLeft = Math.max(0, this.maxSwitches - this.tabSwitchCount);
     const level = switchesLeft >= 2 ? 'secure' : switchesLeft >= 1 ? 'warning' : 'danger';
 
+    // Face status persistence
+    let faceHtml = '';
+    const count = this._lastFaceCount;
+    if (count === 1) {
+      faceHtml = '<div class="face-status-pill"><div class="sec-pill good"><i class="fas fa-user-check"></i> Face Detected</div></div>';
+    } else if (count === 0) {
+      faceHtml = '<div class="face-status-pill"><div class="sec-pill danger"><i class="fas fa-user-slash"></i> 🚫 No face detected</div></div>';
+    } else if (count > 1) {
+      faceHtml = `<div class="face-status-pill"><div class="sec-pill bad"><i class="fas fa-users"></i> 🚨 ${count} Persons Detected!</div></div>`;
+    }
+
     bar.innerHTML = `
       <div class="security-pills">
         <div class="sec-pill ${this.cameraActive ? 'good' : 'bad'}">
@@ -578,6 +646,7 @@ const Proctor = {
         <div class="sec-pill ${level}">
           ⚠️ ${switchesLeft}/${this.maxSwitches} warnings left
         </div>
+        ${faceHtml}
       </div>
     `;
   },
