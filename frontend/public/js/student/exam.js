@@ -338,32 +338,28 @@ const ExamEngine = {
 
       const result = await api.post('/portal/student/exams/submit', payload);
 
-      // Cleanup proctor
-      Proctor.destroy();
-      ExamTimer.stop();
-
-      // Clear any security blur/filter effects
+      // ── Cleanup Proctoring and Security ──
+      if (typeof Proctor !== 'undefined') Proctor.destroy();
+      if (typeof ExamTimer !== 'undefined') ExamTimer.stop();
+      
+      // Force clear all security UI side-effects
       document.body.style.filter = '';
-
-      // Exit fullscreen gracefully
-      if (document.fullscreenElement) {
-        try { await document.exitFullscreen(); } catch (e) { }
-      }
+      const overlay = document.querySelector('.camera-alert-overlay');
+      if (overlay) overlay.remove();
 
       if (!result.success) throw new Error(result.message);
 
       const d = result.data;
 
-      // ── Replace ENTIRE page with a clean result screen ─────────────────────
-      // Exit fullscreen first
-      if (document.fullscreenElement) {
-        try { await document.exitFullscreen(); } catch (e) { }
-      }
+      // ── Show Result View Gracefully ──
+      const mainContent = document.getElementById('main-exam-content');
+      const finishView = document.getElementById('finish-view');
+      const resultContainer = document.getElementById('result-container');
 
-      // Replace entire body content with a clean white result screen
-      document.body.style.cssText = 'margin:0; padding:0; font-family:"Inter",-apple-system,sans-serif; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); min-height:100vh; display:flex; align-items:center; justify-content:center;';
-      document.body.innerHTML = `
-        <div style="background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.12); padding:48px 40px; max-width:520px; width:100%; text-align:center; animation: fadeIn 0.5s ease;">
+      if (mainContent) mainContent.style.display = 'none';
+      if (finishView) {
+        finishView.style.display = 'flex';
+        resultContainer.innerHTML = `
           <div style="font-size:64px; margin-bottom:16px;">${d.isPassed ? '🎉' : '📋'}</div>
           <h1 style="font-size:26px; font-weight:800; color:#1e293b; margin-bottom:8px;">Exam Submitted!</h1>
           <p style="color:#64748b; margin-bottom:32px; font-size:15px;">Your answers have been recorded and graded.</p>
@@ -393,11 +389,8 @@ const ExamEngine = {
           </div>
 
           <p style="margin-top:24px; font-size:12px; color:#94a3b8;">🔒 Your result has been sealed to the blockchain.</p>
-        </div>
-        <style>
-          @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-        </style>
-      `;
+        `;
+      }
     } catch (err) {
       this.isSubmitting = false;
       notifications.error('Submission failed: ' + err.message);

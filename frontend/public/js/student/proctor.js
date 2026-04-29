@@ -654,10 +654,18 @@ const Proctor = {
   /* ─── Cleanup ──────────────────────────────────────────────────── */
   destroy() {
     this.isDestroyed = true;
+    if (this.detectionInterval) clearInterval(this.detectionInterval);
+    
     if (this.cameraStream) {
       this.cameraStream.getTracks().forEach(t => t.stop());
       this.cameraStream = null;
     }
+
+    // Force clear all UI side-effects
+    document.body.style.filter = '';
+    const overlay = document.querySelector('.camera-alert-overlay');
+    if (overlay) overlay.remove();
+
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => { });
     }
