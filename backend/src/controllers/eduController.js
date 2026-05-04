@@ -14,11 +14,14 @@ exports.getMaterials = async (req, res) => {
         const { courseId } = req.params;
         const user = req.user;
 
-        const query = { courseId };
+        const query = {};
+        if (courseId && courseId !== 'all') {
+            query.courseId = courseId;
+        }
 
         // STRICT ACCESS CONTROL for students
         if (user.role === 'student') {
-            query.targetClass = user.classTag;
+            query.targetClass = { $in: [user.classTag, 'All'] };
             query.targetDivision = { $in: [user.division, 'All'] };
         }
 

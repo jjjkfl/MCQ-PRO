@@ -183,24 +183,26 @@ const initSocket = (httpServer) => {
     });
 
     /* ── STUDENT: GENERAL VIOLATIONS ────────────────────────────── */
-    socket.on('exam:violation', ({ sessionId, violation }) => {
+    socket.on('exam:violation', (violationData) => {
       if (role !== 'student') return;
+      
+      const sessionId = violationData.sessionId;
 
       io.to(sessionId).emit('exam:suspiciousActivity', {
         userId,
-        violation,
+        violation: violationData,
         timestamp: new Date().toISOString(),
       });
 
       // Blockchain Anchor: Immutable Violation Proof
       const blockchain = require('../services/blockchain/blockchainService');
       blockchain.sealGenericData({
-        ...violation,
+        ...violationData,
         userId,
         sessionId
       }, 'violation', `${userId}:${Date.now()}`).catch(e => logger.warn(`Violation anchoring failed: ${e.message}`));
 
-      logger.warn(`Security violation: user=${userId} type=${violation.type}`);
+      logger.warn(`Security violation: user=${userId} type=${violationData.type}`);
     });
 
     /* ── TEACHER: FORCE END EXAM ─────────────────────────────────── */

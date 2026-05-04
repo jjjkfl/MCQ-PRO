@@ -16,7 +16,7 @@ const resultSchema = new mongoose.Schema({
   timeTaken: { type: Number, default: 0 },
   violationCount: { type: Number, default: 0 },
   violationHistory: [{
-    type: String,
+    violationType: String,
     detail: String,
     timestamp: { type: Date, default: Date.now }
   }],

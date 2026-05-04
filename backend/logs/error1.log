@@ -1,0 +1,10 @@
+[2026-05-02 23:57:05] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-02 23:57:05] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-02 23:57:05] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-02 23:58:16] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-02 23:58:16] ERROR: sealGenericData error [mcqbank]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-03 00:00:28] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-03 00:02:13] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-03 00:02:13] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-03 00:04:37] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-03 00:05:31] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545

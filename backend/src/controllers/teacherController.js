@@ -240,7 +240,7 @@ exports.getStudents = async (req, res) => {
 
 exports.createStudent = async (req, res) => {
   try {
-    const { name, email, password, courseId, division } = req.body;
+    const { name, email, password, courseId, division, classTag } = req.body;
 
     // Authorization check
     if (!req.user.courseIds.map(id => id.toString()).includes(courseId)) {
@@ -253,7 +253,8 @@ exports.createStudent = async (req, res) => {
       password,
       role: 'student',
       courseId,
-      division
+      division,
+      classTag
     });
 
     res.status(201).json({ success: true, data: student });
@@ -265,7 +266,7 @@ exports.createStudent = async (req, res) => {
 exports.updateStudent = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, courseId, division } = req.body;
+    const { name, email, courseId, division, classTag } = req.body;
 
     const student = await User.findById(id);
     if (!student || student.role !== 'student') {
@@ -284,6 +285,7 @@ exports.updateStudent = async (req, res) => {
     student.email = email || student.email;
     student.courseId = courseId || student.courseId;
     student.division = division || student.division;
+    student.classTag = classTag || student.classTag;
 
     await student.save();
     res.json({ success: true, data: student });
@@ -450,7 +452,7 @@ exports.uploadMCQ = async (req, res) => {
   const filePath = req.file.path;
   try {
     const { title, subject, numQuestions } = req.body;
-    const n = Math.min(100, Math.max(5, parseInt(String(numQuestions || 10), 10) || 10));
+    const n = Math.min(500, Math.max(1, parseInt(String(numQuestions || 20), 10) || 20));
 
     // Using the unified aiParserService which handles DOCX, PDF, Images, and Regex fallbacks
     const { questions, meta } = await aiParserSvc.extractMCQsFromDocument(
@@ -596,4 +598,48 @@ exports.deleteMark = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+// ─── Timetable Management ───────────────────────────────────────────────
 
+const Timetable = require('../models/Timetable');
+
+exports.getTimetable = async (req, res) => {
+  try {
+    const entries = await Timetable.find({ teacherId: req.user._id }).sort({ day: 1, time: 1 }).lean();
+    res.json({ success: true, data: entries });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.createTimetableEntry = async (req, res) => {
+  try {
+    const { day, time, title, targetClass, targetDivision } = req.body;
+    if (!day || !time || !title) {
+      return res.status(400).json({ success: false, message: 'Day, time, and title are required.' });
+    }
+
+    const entry = await Timetable.create({
+      day,
+      time,
+      title,
+      targetClass: targetClass || 'All',
+      targetDivision: targetDivision || 'All',
+      teacherId: req.user._id
+    });
+
+    res.status(201).json({ success: true, data: entry });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.deleteTimetableEntry = async (req, res) => {
+  try {
+    const entry = await Timetable.findOneAndDelete({ _id: req.params.id, teacherId: req.user._id });
+    if (!entry) return res.status(404).json({ success: false, message: 'Timetable entry not found' });
+    
+    res.json({ success: true, message: 'Entry deleted' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

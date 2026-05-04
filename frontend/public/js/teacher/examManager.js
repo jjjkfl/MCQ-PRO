@@ -129,7 +129,11 @@ const ExamManager = {
     const payload = Object.fromEntries(formData.entries());
 
     try {
-      await api.put(`/portal/teacher/sessions/${sessionId}`, payload);
+      await api.request(`/portal/teacher/sessions/${sessionId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
       notifications.success('Exam session updated successfully!');
       Modal.close();
       if (typeof TeacherDashboard !== 'undefined') {

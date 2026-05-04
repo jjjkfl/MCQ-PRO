@@ -8,8 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/css/common.css">
-  <link rel="stylesheet" href="/css/student.css">
+  <link rel="stylesheet" href="/css/common.css?v=3">
+  <link rel="stylesheet" href="/css/student.css?v=3">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -31,8 +31,9 @@
       <div class="nav-item" data-action="schedule">
         <i class="fas fa-calendar-alt"></i> Schedule
       </div>
-      <div class="nav-item" data-action="messages">
-        <i class="fas fa-bullhorn"></i> Messages
+      <div class="nav-item" data-action="messages" style="display: flex; justify-content: space-between; align-items: center;">
+        <div><i class="fas fa-bullhorn"></i> Messages</div>
+        <span id="unread-messages-badge" style="background: var(--danger, #ef4444); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; display: none;">0</span>
       </div>
       <div class="nav-item" data-action="live-exams">
         <i class="fas fa-stopwatch"></i> Live Exams
@@ -65,7 +66,7 @@
               <h1 class="welcome-title">Welcome back, <span id="prof-name">Resident</span>!</h1>
               <p class="welcome-subtitle" id="prof-section">Senior Scholar • Global Dataset Analysis</p>
             </div>
-            <div class="welcome-badge">
+            <div class="integrity-anchored animate-fade-in">
               <i class="fas fa-shield-alt"></i> Integrity Anchored
             </div>
           </div>
@@ -231,11 +232,18 @@
   <div id="announcement-toast"></div>
 
   <!-- Dash Scripts -->
-  <script src="/js/shared/utils.js"></script>
-  <script src="/js/shared/api.js"></script>
-  <script src="/js/shared/auth.js"></script>
-  <script src="/js/shared/notifications.js"></script>
-  <script src="/js/student/student.js"></script>
+  <script src="/js/shared/api.js?v=3"></script>
+  <script src="/js/shared/auth.js?v=3"></script>
+  <script src="/js/shared/utils.js?v=3"></script>
+  <script src="/js/shared/notifications.js?v=3"></script>
+
+  <!-- Components -->
+  <script src="/js/components/loader.js?v=3"></script>
+  <script src="/js/components/chart.js?v=3"></script>
+
+  <!-- Student Modules -->
+  <script src="/js/student/proctor.js?v=3"></script>
+  <script src="/js/student/student.js?v=3"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {

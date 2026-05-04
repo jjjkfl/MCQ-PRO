@@ -11,6 +11,7 @@
     "deploy-contracts": "cd ../blockchain/smart-contracts && npx hardhat run deploy.js --network localhost"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.92.0",
     "axios": "^1.15.2",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",

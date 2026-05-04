@@ -9,6 +9,7 @@ const ReadinessCheck = {
   async allowCamera() {
     try {
       await Proctor.startCamera();
+      if (typeof Proctor !== 'undefined') Proctor.preloadModels();
       this.checks.camera = true;
       document.getElementById('check-camera').classList.add('done');
       document.getElementById('btn-allow-camera').innerText = '✅ Active';
@@ -86,6 +87,9 @@ const ExamEngine = {
       return;
     }
 
+    // Background preload AI models immediately
+    if (typeof Proctor !== 'undefined') Proctor.preloadModels();
+
     // Wait for student to pass Readiness Check
     console.log('[ExamEngine] Waiting for Readiness Check...');
 
@@ -133,7 +137,7 @@ const ExamEngine = {
       this.updateCounters();
 
       // Start timer
-      const duration = (result.data.durationMinutes || 60) * 60;
+      const duration = (result.data.duration || result.data.durationMinutes || 60) * 60;
       ExamTimer.start(duration, () => this.autoSubmit());
 
       // Init security bar
@@ -321,10 +325,18 @@ const ExamEngine = {
 
   isSubmitting: false,
 
-  async submit() {
+  async submit(isForced = false) {
     if (this.isSubmitting) return;
+    
+    if (isForced) {
+      notifications.error('🚨 AUTO-SUBMITTING: Security protocol breach detected.');
+    }
+
     this.isSubmitting = true;
     try {
+      // ── 1. Stop the proctoring immediately but DON'T destroy yet ──
+      if (typeof ExamTimer !== 'undefined') ExamTimer.stop();
+      
       const payload = {
         sessionId: this.sessionId,
         answers: Object.entries(this.answers).map(([qId, label]) => ({
@@ -337,21 +349,10 @@ const ExamEngine = {
       };
 
       const result = await api.post('/portal/student/exams/submit', payload);
-
-      // ── Cleanup Proctoring and Security ──
-      if (typeof Proctor !== 'undefined') Proctor.destroy();
-      if (typeof ExamTimer !== 'undefined') ExamTimer.stop();
-      
-      // Force clear all security UI side-effects
-      document.body.style.filter = '';
-      const overlay = document.querySelector('.camera-alert-overlay');
-      if (overlay) overlay.remove();
-
       if (!result.success) throw new Error(result.message);
 
+      // ── 2. Show Result View FIRST (Prevents Black Screen) ──
       const d = result.data;
-
-      // ── Show Result View Gracefully ──
       const mainContent = document.getElementById('main-exam-content');
       const finishView = document.getElementById('finish-view');
       const resultContainer = document.getElementById('result-container');
@@ -361,7 +362,7 @@ const ExamEngine = {
         finishView.style.display = 'flex';
         resultContainer.innerHTML = `
           <div style="font-size:64px; margin-bottom:16px;">${d.isPassed ? '🎉' : '📋'}</div>
-          <h1 style="font-size:26px; font-weight:800; color:#1e293b; margin-bottom:8px;">Exam Submitted!</h1>
+          <h1 style="font-size:26px; font-weight:800; color:#1e293b; margin-bottom:8px;">Exam ${isForced ? 'Terminated' : 'Submitted'}!</h1>
           <p style="color:#64748b; margin-bottom:32px; font-size:15px;">Your answers have been recorded and graded.</p>
 
           <div style="display:flex; justify-content:center; gap:24px; margin-bottom:28px;">
@@ -391,6 +392,14 @@ const ExamEngine = {
           <p style="margin-top:24px; font-size:12px; color:#94a3b8;">🔒 Your result has been sealed to the blockchain.</p>
         `;
       }
+
+      // ── 3. FINALLY Cleanup Proctoring ──
+      setTimeout(() => {
+        if (typeof Proctor !== 'undefined') Proctor.destroy();
+        document.body.style.filter = 'none';
+        document.documentElement.style.filter = 'none';
+      }, 500);
+
     } catch (err) {
       this.isSubmitting = false;
       notifications.error('Submission failed: ' + err.message);

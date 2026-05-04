@@ -25,20 +25,24 @@ const Modal = {
     `;
 
     const modal = document.createElement('div');
-    modal.className = 'glass-card';
+    modal.className = 'card';
     modal.style.cssText = `
       width: 90%;
       max-width: ${options.width || '500px'};
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--bg-card, #ffffff);
+      border-radius: var(--radius-lg, 16px);
       padding: 32px;
       transform: scale(0.9) translateY(20px);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+      box-shadow: var(--shadow-xl, 0 20px 40px rgba(0,0,0,0.2));
     `;
 
     modal.innerHTML = `
-      <div class="flex-between" style="margin-bottom: 24px;">
-        <h3 class="h3">${options.title || ''}</h3>
-        <button onclick="Modal.close()" style="background: none; font-size: 24px; opacity: 0.5;">×</button>
+      <div class="flex-between" style="margin-bottom: 24px; position: sticky; top: 0; background: var(--bg-card, #ffffff); z-index: 10; padding-bottom: 8px;">
+        <h3 class="h3" style="margin: 0;">${options.title || ''}</h3>
+        <button onclick="Modal.close()" style="background: transparent; border: none; font-size: 28px; line-height: 1; cursor: pointer; color: var(--text-muted, #666); transition: opacity 0.2s; padding: 0;">&times;</button>
       </div>
       <div class="modal-body">${contentHtml}</div>
       ${options.footer ? `<div class="modal-footer" style="margin-top: 32px; display:flex; gap:12px; justify-content:flex-end;">${options.footer}</div>` : ''}

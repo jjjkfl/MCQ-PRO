@@ -32,6 +32,9 @@
       <div class="nav-item" data-action="students">
         <i class="fas fa-users"></i> Students
       </div>
+      <div class="nav-item" data-action="timetable">
+        <i class="fas fa-calendar-alt"></i> Timetable
+      </div>
       <div class="nav-item" data-action="forum">
         <i class="fas fa-comments"></i> Forum
       </div>
@@ -62,15 +65,20 @@
             <p class="dashboard-subtitle">Manage examinations, question banks, and monitor live proctored sessions.</p>
           </div>
           <div class="dashboard-actions">
-            <button onclick="TeacherDashboard.broadcastAnnouncement()" class="btn btn-secondary"><i
-                class="fas fa-bullhorn"></i> Broadcast</button>
-            <button onclick="utils.setUrlParam('view', 'materials')" class="btn btn-secondary"><i
-                class="fas fa-book"></i>
-              Curriculum</button>
-            <button onclick="document.getElementById('pdf-upload').click()" class="btn btn-primary">
+            <button onclick="TeacherDashboard.showBroadcastModal()" class="btn btn-secondary">
+              <i class="fas fa-bullhorn"></i> Broadcast
+            </button>
+            <button onclick="TeacherDashboard.navigateToView('materials')" class="btn btn-secondary">
+              <i class="fas fa-book"></i> Curriculum
+            </button>
+            <button onclick="TeacherDashboard.showMCQUpload()" class="btn btn-outline"
+              style="border-color:var(--primary); color:var(--primary);">
+              <i class="fas fa-robot"></i> Create Exam
+            </button>
+            <button onclick="TeacherDashboard.showUploadMaterial()" class="btn btn-primary">
               <i class="fas fa-plus"></i> Upload Document
             </button>
-            <input type="file" id="pdf-upload" style="display: none" accept=".pdf,.doc,.docx"
+            <input type="file" id="ai-mcq-upload" style="display: none" accept=".pdf,.doc,.docx"
               onchange="PDFUpload.handleUpload(event)">
           </div>
         </header>
@@ -213,21 +221,72 @@
           </div>
         </div>
       </main>
+      <!-- VIEW: Timetable Management -->
+      <main id="view-timetable" class="view" style="display: none;">
+        <header class="flex-between" style="margin-bottom: 32px;">
+          <div>
+            <h2 class="h2">Class Timetable</h2>
+            <p class="p-dim">Manage your weekly teaching schedule.</p>
+          </div>
+          <button class="btn btn-primary" onclick="TeacherDashboard.showAddTimetableModal()">+ Add Schedule</button>
+        </header>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Subject/Class</th>
+                <th>Grade</th>
+                <th>Division</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="timetable-list">
+              <tr>
+                <td colspan="6" class="p-dim" style="text-align:center;">Loading timetable...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+
       <!-- VIEW: Materials Management -->
       <main id="view-materials" class="view" style="display: none;">
         <header class="flex-between" style="margin-bottom: 32px;">
           <div>
             <h2 class="h2">Curriculum & Materials</h2>
-            <p class="p-dim">Manage course documents, videos, and study resources.</p>
+            <p class="p-dim">Manage and audit your division-wise academic resources.</p>
           </div>
-          <button onclick="TeacherDashboard.showUploadMaterial()" class="btn btn-primary">+ Upload Material</button>
+          <div style="display:flex; gap:12px;">
+            <select id="filter-material-grade" class="input-control" style="padding: 8px 16px;"
+              onchange="TeacherDashboard.loadMaterials()">
+              <option value="">All Grades</option>
+              <option value="Grade 6">Grade 6</option>
+              <option value="Grade 7">Grade 7</option>
+              <option value="Grade 8">Grade 8</option>
+              <option value="Grade 9">Grade 9</option>
+              <option value="Grade 10">Grade 10</option>
+            </select>
+            <select id="filter-material-division" class="input-control" style="padding: 8px 16px;"
+              onchange="TeacherDashboard.loadMaterials()">
+              <option value="">All Divisions</option>
+              <option value="A">Div A</option>
+              <option value="B">Div B</option>
+              <option value="C">Div C</option>
+              <option value="D">Div D</option>
+              <option value="All">Global (All)</option>
+            </select>
+            <button class="btn btn-primary" onclick="TeacherDashboard.showUploadMaterial()">+ Upload Material</button>
+          </div>
         </header>
-        <div id="teacher-materials-grid" class="table-container">
-          <table style="width:100%">
+        <div class="table-container">
+          <table>
             <thead>
               <tr>
                 <th>Title</th>
-                <th>Course</th>
+                <th>Subject</th>
+                <th>Target</th>
                 <th>Type</th>
                 <th>Actions</th>
               </tr>
@@ -268,12 +327,34 @@
         </div>
 
         <div id="student-roster-container" class="table-container" style="margin-top: 40px;">
-          <h3 class="h3" style="margin-bottom: 16px; font-size: 18px;">Master Student Roster</h3>
+          <div class="flex-between" style="margin-bottom: 20px;">
+            <h3 class="h3" style="font-size: 18px;">Master Student Roster</h3>
+            <div style="display:flex; gap:12px;">
+              <select id="filter-student-grade" class="input-control" style="padding: 6px 12px; font-size: 13px;"
+                onchange="TeacherDashboard.loadStudentRoster()">
+                <option value="">All Grades</option>
+                <option value="Grade 6">Grade 6</option>
+                <option value="Grade 7">Grade 7</option>
+                <option value="Grade 8">Grade 8</option>
+                <option value="Grade 9">Grade 9</option>
+                <option value="Grade 10">Grade 10</option>
+              </select>
+              <select id="filter-student-division" class="input-control" style="padding: 6px 12px; font-size: 13px;"
+                onchange="TeacherDashboard.loadStudentRoster()">
+                <option value="">All Divisions</option>
+                <option value="A">Division A</option>
+                <option value="B">Division B</option>
+                <option value="C">Division C</option>
+                <option value="D">Division D</option>
+              </select>
+            </div>
+          </div>
           <table>
             <thead>
               <tr>
                 <th>Student Name</th>
                 <th>Email</th>
+                <th>Grade</th>
                 <th>Division</th>
                 <th>Total Attendance</th>
                 <th>Actions</th>
@@ -294,24 +375,24 @@
   <!-- Shared Libs -->
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/js/shared/api.js"></script>
-  <script src="/js/shared/auth.js"></script>
-  <script src="/js/shared/utils.js"></script>
-  <script src="/js/shared/notifications.js"></script>
+  <script src="/js/shared/api.js?v=3"></script>
+  <script src="/js/shared/auth.js?v=3"></script>
+  <script src="/js/shared/utils.js?v=3"></script>
+  <script src="/js/shared/notifications.js?v=3"></script>
 
   <!-- Components -->
-  <script src="/js/components/navbar.js"></script>
-  <script src="/js/components/modal.js"></script>
-  <script src="/js/components/loader.js"></script>
-  <script src="/js/components/chart.js"></script>
+  <script src="/js/components/navbar.js?v=3"></script>
+  <script src="/js/components/modal.js?v=3"></script>
+  <script src="/js/components/loader.js?v=3"></script>
+  <script src="/js/components/chart.js?v=3"></script>
 
   <!-- Teacher Modules -->
-  <script src="/js/teacher/socket.js"></script>
-  <script src="/js/teacher/upload.js"></script>
-  <script src="/js/teacher/examManager.js"></script>
-  <script src="/js/teacher/monitor.js"></script>
-  <script src="/js/teacher/analytics.js"></script>
-  <script src="/js/teacher/teacher.js"></script>
+  <script src="/js/teacher/socket.js?v=3"></script>
+  <script src="/js/teacher/upload.js?v=3"></script>
+  <script src="/js/teacher/examManager.js?v=3"></script>
+  <script src="/js/teacher/monitor.js?v=3"></script>
+  <script src="/js/teacher/analytics.js?v=3"></script>
+  <script src="/js/teacher/teacher.js?v=3"></script>
 
 </body>
 

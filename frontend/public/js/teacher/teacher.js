@@ -39,6 +39,7 @@ const TeacherDashboard = {
       const viewMap = {
         'materials': () => this.loadMaterials(),
         'students': () => this.loadStudentsView(),
+        'timetable': () => this.loadTimetable(),
         'forum': () => this.loadForum()
       };
 
@@ -61,6 +62,10 @@ const TeacherDashboard = {
     }
   },
 
+  showMCQUpload() {
+    document.getElementById('ai-mcq-upload').click();
+  },
+
   switchView(viewName) {
     utils.$all('.view').forEach(v => v.style.display = 'none');
     utils.$(`#view-${viewName}`).style.display = 'block';
@@ -73,9 +78,6 @@ const TeacherDashboard = {
 
         this.courses = courses || [];
         this.sessions = recentSessions || [];
-
-        // Render Drive Buttons in Header
-        this.renderDriveActions(this.courses);
 
         // Helper to update with pulse
       const updateStat = (id, val) => {
@@ -105,28 +107,36 @@ const TeacherDashboard = {
   },
   
   renderDriveActions(courses) {
-    const container = document.querySelector('.dashboard-actions');
-    if (!container) return;
+    let container = document.getElementById('drive-actions-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'drive-actions-container';
+      container.className = 'drive-actions animate-fade-in';
+      container.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 2rem;';
+      
+      const header = document.querySelector('.dashboard-header');
+      if (header) {
+        header.parentNode.insertBefore(container, header.nextSibling);
+      }
+    }
 
-    // Remove old drive buttons if any
-    container.querySelectorAll('.btn-drive-link').forEach(b => b.remove());
+    container.innerHTML = '';
 
     if (courses.length === 0) return;
 
     courses.forEach(course => {
       const btn = document.createElement('button');
-      btn.className = 'btn btn-secondary btn-drive-link';
-      btn.style.cssText = 'background: #4285f4; color: #fff; border-color: #4285f4; display: flex; align-items: center; gap: 8px;';
+      btn.className = 'btn btn-secondary btn-drive-link btn-sm';
+      btn.style.cssText = 'background: #eff6ff; color: #3b82f6; border-color: #bfdbfe;';
       
       if (course.driveLink) {
-        btn.innerHTML = `<i class="fab fa-google-drive"></i> ${course.courseName} Drive`;
+        btn.innerHTML = `<i class="fab fa-google-drive"></i> ${course.courseName}`;
         btn.onclick = () => window.open(course.driveLink, '_blank');
       } else {
-        btn.innerHTML = `<i class="fas fa-link"></i> Set ${course.courseName} Drive`;
+        btn.innerHTML = `<i class="fas fa-plus"></i> ${course.courseName} Drive`;
         btn.onclick = () => this.showEditDriveModal(course._id, course.courseName);
       }
       
-      // Add context menu / long press for editing if drive exists
       if (course.driveLink) {
         btn.oncontextmenu = (e) => {
           e.preventDefault();
@@ -135,13 +145,7 @@ const TeacherDashboard = {
         btn.title = 'Right-click to edit drive link';
       }
       
-      // Insert before the upload button (the primary button)
-      const uploadBtn = container.querySelector('.btn-primary');
-      if (uploadBtn) {
-        container.insertBefore(btn, uploadBtn);
-      } else {
-        container.appendChild(btn);
-      }
+      container.appendChild(btn);
     });
   },
 
@@ -188,18 +192,18 @@ const TeacherDashboard = {
 
     list.innerHTML = sessions.map(s => `
       <tr>
-        <td>
-          ${s.title || s.examId} 
-          ${s.division ? `<span class="p-dim" style="font-size:12px; margin-left:8px;">(Div ${s.division})</span>` : ''}
+        <td style="white-space: nowrap;">
+          <strong>${s.title || s.examId}</strong>
+          ${s.division ? `<span class="badge" style="margin-left:8px; font-size:10px;">Div ${s.division}</span>` : ''}
         </td>
         <td>${utils.formatDate(s.scheduledStart || s.startTime)}</td>
-        <td><span class="status-pill ${s.status === 'active' ? 'active' : 'inactive'}">${s.status.toUpperCase()}</span></td>
+        <td><span class="status-pill ${s.status === 'active' ? 'status-online' : 'status-offline'}">${s.status.toUpperCase()}</span></td>
         <td>${s.submissions || 0} Students</td>
-        <td style="display:flex; gap:8px;">
-          <button onclick="ExamManager.showEditSession('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Edit</button>
-          <button onclick="TeacherDashboard.goToMonitor('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Monitor</button>
-          <button onclick="TeacherDashboard.goToAnalytics('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Results</button>
-          <button onclick="TeacherDashboard.deleteSession('${s._id}')" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; color:#ef4444;"><i class="fas fa-trash"></i></button>
+        <td style="display:flex; gap:6px;">
+          <button onclick="ExamManager.showEditSession('${s._id}')" class="btn btn-outline btn-sm">Edit</button>
+          <button onclick="TeacherDashboard.goToMonitor('${s._id}')" class="btn btn-outline btn-sm">Monitor</button>
+          <button onclick="TeacherDashboard.goToAnalytics('${s._id}')" class="btn btn-outline btn-sm">Results</button>
+          <button onclick="TeacherDashboard.deleteSession('${s._id}')" class="btn btn-outline btn-sm" style="color:var(--danger); border-color:rgba(239, 68, 68, 0.2);"><i class="fas fa-trash"></i></button>
         </td>
       </tr>
     `).join('');
@@ -252,12 +256,17 @@ const TeacherDashboard = {
 
   async loadMCQBanks() {
     const container = document.getElementById('mcq-banks-grid');
+    if (!container) return;
+    
+    // Show new global loader
+    Loader.show('mcq-banks-grid', 'Syncing MCQ Repositories...');
+
     try {
       const { data } = await api.get('/portal/teacher/mcq-banks');
       this.banks = data || [];
 
       if (data.length === 0) {
-        container.innerHTML = '<p class="p-dim">No MCQ banks found. Upload a PDF to get started.</p>';
+        container.innerHTML = '<p class="p-dim" style="grid-column: 1/-1; text-align: center; padding: 40px;">No MCQ banks found. Upload a PDF/DOCX to get started.</p>';
         return;
       }
 
@@ -346,23 +355,92 @@ const TeacherDashboard = {
 
     Modal.show('preview-bank', `
       <div class="preview-container">
-        <div style="margin-bottom:16px;">
-          <h3 class="h3">${bank.title}</h3>
-          <p class="p-dim">${bank.subject || 'General'} • ${(bank.questions || []).length} Questions</p>
+        <div style="
+          background: var(--primary-soft); 
+          padding: 24px; 
+          border-radius: 20px; 
+          margin-bottom: 32px;
+          border: 1px solid rgba(0,113,227,0.1);
+        ">
+          <h3 style="font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 4px; letter-spacing: -0.02em;">${bank.title}</h3>
+          <p style="font-size: 14px; font-weight: 600; color: var(--primary); opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em;">
+            ${bank.subject || 'General'} • ${(bank.questions || []).length} Questions
+          </p>
         </div>
-        <div class="preview-scroll" style="max-height:60vh; overflow:auto; display:grid; gap:16px;">
+
+        <div class="preview-scroll-custom" style="max-height: 60vh; overflow-y: auto; padding-right: 12px; margin-right: -12px;">
           ${(bank.questions || []).map((q, idx) => `
-            <div class="glass-card" style="padding:16px;">
-              <div class="preview-q-header" style="margin-bottom:10px;">
-                <strong>Q${idx + 1}</strong>
-                <span class="answer-badge">Answer: ${q.correctAnswer || '-'}</span>
+            <div style="
+              background: #fff; 
+              border: 1px solid #eef2f6; 
+              border-radius: 20px; 
+              margin-bottom: 24px; 
+              padding: 32px; 
+              box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            ">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <span style="
+                  background: var(--bg-main); 
+                  color: #64748b; 
+                  padding: 6px 16px; 
+                  border-radius: 10px; 
+                  font-size: 13px; 
+                  font-weight: 800;
+                  text-transform: uppercase;
+                ">QUESTION ${idx + 1}</span>
+                <span style="
+                  background: var(--success-soft); 
+                  color: var(--success); 
+                  padding: 6px 16px; 
+                  border-radius: 10px; 
+                  font-size: 13px; 
+                  font-weight: 700;
+                ">Answer Key: ${q.correctAnswer || '-'}</span>
               </div>
-              <div style="font-weight:600; margin-bottom:10px;">${q.questionText || 'Untitled question'}</div>
-              <div class="preview-options">
+
+              <div style="font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 24px; line-height: 1.6;">${q.questionText || 'Untitled question'}</div>
+              
+              ${q.image ? `
+                <div style="margin-bottom: 20px; border-radius: 12px; overflow: hidden; border: 1px solid #f1f5f9;">
+                  <img src="${window.SERVER_URL}${q.image}" style="max-width: 100%; display: block;" onerror="this.src='/img/placeholder.png'">
+                </div>
+              ` : ''}
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                 ${(q.options || []).map((opt) => `
-                  <div class="preview-option ${opt.label === q.correctAnswer ? 'correct' : ''}">
-                    <span class="opt-label">${opt.label}</span>
-                    <span>${opt.text}</span>
+                  <div style="
+                    display: flex; 
+                    align-items: flex-start; 
+                    gap: 16px; 
+                    padding: 18px; 
+                    background: ${opt.label === q.correctAnswer ? 'var(--success-soft)' : '#f8fafc'}; 
+                    border: 1px solid ${opt.label === q.correctAnswer ? 'rgba(16, 185, 129, 0.3)' : '#f1f5f9'}; 
+                    border-radius: 14px;
+                  ">
+                    <span style="
+                      width: 32px; 
+                      height: 32px; 
+                      background: ${opt.label === q.correctAnswer ? 'var(--success)' : '#fff'}; 
+                      color: ${opt.label === q.correctAnswer ? '#fff' : '#64748b'}; 
+                      display: flex; 
+                      align-items: center; 
+                      justify-content: center; 
+                      border-radius: 10px; 
+                      font-weight: 800; 
+                      font-size: 14px; 
+                      flex-shrink: 0;
+                      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+                    ">${opt.label}</span>
+                    <div style="flex: 1;">
+                      <div style="font-size: 15px; font-weight: 500; color: ${opt.label === q.correctAnswer ? '#065f46' : '#334155'}; line-height: 1.5; word-break: break-word;">
+                        ${opt.text}
+                      </div>
+                      ${opt.image ? `
+                        <div style="margin-top: 12px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); max-width: 200px;">
+                          <img src="${window.SERVER_URL}${opt.image}" style="width: 100%; display: block;" onerror="this.src='/img/placeholder.png'">
+                        </div>
+                      ` : ''}
+                    </div>
                   </div>
                 `).join('')}
               </div>
@@ -370,7 +448,7 @@ const TeacherDashboard = {
           `).join('') || '<p class="p-dim">No questions found.</p>'}
         </div>
       </div>
-    `, { title: 'MCQ Bank Preview' });
+    `, { title: '📚 MCQ Bank Library', width: '850px' });
   },
 
   editMCQBank(bankId) {
@@ -397,7 +475,11 @@ const TeacherDashboard = {
     const formData = new FormData(event.target);
     const payload = Object.fromEntries(formData.entries());
     try {
-      await api.put(`/portal/teacher/mcq-banks/${bankId}`, payload);
+      await api.request(`/portal/teacher/mcq-banks/${bankId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
       notifications.success('MCQ bank updated');
       Modal.close();
       await this.loadDashboardData();
@@ -412,38 +494,59 @@ const TeacherDashboard = {
   async loadMaterials() {
     const body = document.getElementById('materials-table-body');
     if (!body) return;
-    body.innerHTML = '<tr><td colspan="4" class="p-dim" style="text-align:center">Loading curriculum content...</td></tr>';
+    Loader.show('materials-table-body', 'Syncing curriculum content...');
 
     try {
-      // Need to load courses first to show labels
-      if (this.courses.length === 0) await this.loadDashboardData();
+      const response = await api.get('/portal/edu/courses/all/materials');
+      const materials = response.data || [];
+      
+      const filterGrade = document.getElementById('filter-material-grade')?.value;
+      const filterDiv = document.getElementById('filter-material-division')?.value;
 
-      // We'll iterate through all courses or provide a filter. 
-      // For now, let's just fetch all materials for all courses this teacher manages.
-      const materials = [];
-      for (const course of this.courses) {
-        const res = await api.get(`/portal/edu/courses/${course._id}/materials`);
-        if (res.success) materials.push(...res.data.map(m => ({ ...m, courseName: course.courseName })));
-      }
+      let filtered = materials || [];
+      if (filterGrade) filtered = filtered.filter(m => m.targetClass === filterGrade);
+      if (filterDiv) filtered = filtered.filter(m => m.targetDivision === filterDiv);
 
-      if (materials.length === 0) {
-        body.innerHTML = '<tr><td colspan="4" class="p-dim" style="text-align:center">No materials found. Click upload to add one.</td></tr>';
+      filtered.sort((a, b) => (a.targetClass || '').localeCompare(b.targetClass || '') || (a.targetDivision || '').localeCompare(b.targetDivision || ''));
+
+      if (filtered.length === 0) {
+        body.innerHTML = '<tr><td colspan="5" class="p-dim" style="text-align:center">No materials found.</td></tr>';
         return;
       }
 
-      body.innerHTML = materials.map(m => `
+      body.innerHTML = filtered.map(m => `
         <tr>
           <td><strong>${m.title}</strong></td>
-          <td>${m.courseName}</td>
+          <td style="color:var(--primary); font-weight:600;">${m.subject || 'General'}</td>
+          <td>
+            <span class="badge" style="background:#f1f5f9; color:#475569; font-size:10px;">${m.targetClass}</span>
+            <span class="badge" style="background:rgba(16, 185, 129, 0.1); color:#10b981; font-size:10px;">Div ${m.targetDivision}</span>
+          </td>
           <td><span class="badge badge-med">${m.type.toUpperCase()}</span></td>
           <td style="display:flex; gap:8px;">
-            <a href="${m.url}" target="_blank" class="btn btn-outline" style="padding:4px 8px; text-decoration:none; color:var(--primary);">View</a>
+            <button onclick="TeacherDashboard.viewMaterial('${m._id}', '${m.url}')" class="btn btn-outline" style="padding:4px 8px; color:var(--primary);">View</button>
             <button onclick="TeacherDashboard.deleteMaterial('${m._id}')" class="btn btn-outline" style="color:#ef4444; padding:4px 8px;">Delete</button>
           </td>
         </tr>
       `).join('');
     } catch (err) {
       notifications.error('Failed to load materials');
+    }
+  },
+
+  async viewMaterial(materialId, url) {
+    if (url.startsWith('http')) return window.open(url, '_blank');
+    try {
+      notifications.info('Opening secure material...');
+      const res = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${auth.getToken()}` }
+      });
+      if (!res.ok) throw new Error('File access denied');
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+    } catch (err) {
+      notifications.error(err.message);
     }
   },
 
@@ -465,6 +568,7 @@ const TeacherDashboard = {
         <div class="form-group">
           <label>Target Grade</label>
           <select name="targetClass" class="form-control" required>
+            <option value="All">All Grades</option>
             <option value="Grade 6">Grade 6</option>
             <option value="Grade 7">Grade 7</option>
             <option value="Grade 8">Grade 8</option>
@@ -522,7 +626,6 @@ const TeacherDashboard = {
       </form>
     `, { title: 'Upload Course Material' });
     
-    // Set initial visibility correctly
     this.toggleMaterialInput('link');
   },
 
@@ -537,7 +640,6 @@ const TeacherDashboard = {
       fileGroup.style.display = isFile ? 'block' : 'none';
       urlGroup.style.display = isFile ? 'none' : 'block';
       
-      // Update requirements
       if (urlInput) urlInput.required = !isFile;
       if (fileInput) fileInput.required = isFile;
     }
@@ -547,7 +649,6 @@ const TeacherDashboard = {
     event.preventDefault();
     const formData = new FormData(event.target);
     try {
-      // Use fetch directly for FormData to avoid API helper issues with multipart
       const res = await fetch('/api/portal/edu/materials', {
         method: 'POST',
         headers: {
@@ -586,7 +687,6 @@ const TeacherDashboard = {
     const headerDiv = document.querySelector('#view-students header div[style]');
     if (!select) return;
 
-    // Add buttons if not exists
     if (headerDiv && !document.getElementById('btn-manual-att')) {
       headerDiv.insertAdjacentHTML('afterbegin', `
         <button id="btn-manual-att" class="btn btn-outline" onclick="TeacherDashboard.showManualAttendance()">+ Manual Attendance</button>
@@ -594,7 +694,6 @@ const TeacherDashboard = {
       `);
     }
 
-    // Load sessions into select
     if (this.sessions.length === 0) await this.loadDashboardData();
     select.innerHTML = '<option value="">Select Session...</option>' +
       this.sessions.map(s => `<option value="${s._id}">${s.title || s.examId}</option>`).join('');
@@ -606,19 +705,28 @@ const TeacherDashboard = {
   async loadStudentRoster() {
     const body = document.getElementById('student-roster-table-body');
     if (!body) return;
-    body.innerHTML = '<tr><td colspan="5" class="p-dim" style="text-align:center">Loading student roster...</td></tr>';
+    Loader.show('student-roster-table-body', 'Syncing student database...');
 
     try {
       const { data: students } = await api.get('/portal/teacher/students');
-      if (students.length === 0) {
-        body.innerHTML = '<tr><td colspan="5" class="p-dim" style="text-align:center">No students found in your courses.</td></tr>';
+      
+      const filterGrade = document.getElementById('filter-student-grade')?.value;
+      const filterDiv = document.getElementById('filter-student-division')?.value;
+
+      let filtered = students || [];
+      if (filterGrade) filtered = filtered.filter(s => s.classTag === filterGrade);
+      if (filterDiv) filtered = filtered.filter(s => s.division === filterDiv);
+
+      if (filtered.length === 0) {
+        body.innerHTML = '<tr><td colspan="6" class="p-dim" style="text-align:center">No students found matching your filters.</td></tr>';
         return;
       }
 
-      body.innerHTML = students.map(s => `
+      body.innerHTML = filtered.map(s => `
         <tr>
           <td><strong>${s.name}</strong></td>
           <td>${s.email}</td>
+          <td><span class="badge badge-med" style="background:rgba(79, 70, 229, 0.1); color:var(--primary);">${s.classTag || 'N/A'}</span></td>
           <td><span class="badge badge-med">Div ${s.division}</span></td>
           <td style="font-weight:600; color:var(--primary)">${s.totalAttendance || 0} Sessions</td>
           <td>
@@ -653,6 +761,36 @@ const TeacherDashboard = {
           <label>Assign to Course</label>
           <select name="courseId" class="form-control" required>
             ${this.courses.map(c => `<option value="${c._id}">${c.courseName}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Grade</label>
+          <select name="classTag" class="form-control" required>
+            <option value="Grade 6">Grade 6</option>
+            <option value="Grade 7">Grade 7</option>
+            <option value="Grade 8">Grade 8</option>
+            <option value="Grade 9">Grade 9</option>
+            <option value="Grade 10">Grade 10</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Grade</label>
+          <select name="classTag" class="form-control" required>
+            <option value="Grade 6">Grade 6</option>
+            <option value="Grade 7">Grade 7</option>
+            <option value="Grade 8">Grade 8</option>
+            <option value="Grade 9">Grade 9</option>
+            <option value="Grade 10">Grade 10</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Grade</label>
+          <select name="classTag" class="form-control" required>
+            <option value="Grade 6" ${student.classTag === 'Grade 6' ? 'selected' : ''}>Grade 6</option>
+            <option value="Grade 7" ${student.classTag === 'Grade 7' ? 'selected' : ''}>Grade 7</option>
+            <option value="Grade 8" ${student.classTag === 'Grade 8' ? 'selected' : ''}>Grade 8</option>
+            <option value="Grade 9" ${student.classTag === 'Grade 9' ? 'selected' : ''}>Grade 9</option>
+            <option value="Grade 10" ${student.classTag === 'Grade 10' ? 'selected' : ''}>Grade 10</option>
           </select>
         </div>
         <div class="form-group">
@@ -887,7 +1025,15 @@ const TeacherDashboard = {
     }
   },
 
-  async broadcastAnnouncement() {
+  navigateToView(viewId) {
+    const url = new URL(window.location);
+    url.searchParams.set('view', viewId);
+    url.searchParams.delete('sessionId');
+    window.history.pushState({}, '', url);
+    this.init();
+  },
+
+  async showBroadcastModal() {
     if (this.courses.length === 0) return notifications.error('No courses available to broadcast to.');
 
     Modal.show('announcement', `
@@ -958,6 +1104,7 @@ const TeacherDashboard = {
       'dashboard': 'overview',
       'materials': 'courses',
       'students': 'students',
+      'timetable': 'timetable',
       'forum': 'forum',
       'analytics-all': 'analytics',
       'analytics': 'analytics'
@@ -966,9 +1113,113 @@ const TeacherDashboard = {
     const action = mapping[viewName] || 'overview';
     const navItem = document.querySelector(`.sidebar .nav-item[data-action="${action}"]`);
     if (navItem) navItem.classList.add('active');
+  },
+
+  // ─── Timetable Management ────────────────────────────────────────────────
+
+  async loadTimetable() {
+    const body = document.getElementById('timetable-list');
+    if (!body) return;
+    Loader.show('timetable-list', 'Syncing timetable...');
+
+    try {
+      const { data } = await api.get('/portal/teacher/timetable');
+      if (!data || data.length === 0) {
+        body.innerHTML = '<tr><td colspan="6" class="p-dim" style="text-align:center">No scheduled classes found.</td></tr>';
+        return;
+      }
+
+      body.innerHTML = data.map(entry => `
+        <tr>
+          <td><strong>${entry.day}</strong></td>
+          <td>${entry.time}</td>
+          <td style="color:var(--primary); font-weight:600;">${entry.title}</td>
+          <td><span class="badge" style="background:rgba(79, 70, 229, 0.1); color:var(--primary); font-size:10px;">${entry.targetClass}</span></td>
+          <td><span class="badge" style="background:#f1f5f9; color:#475569; font-size:10px;">Div ${entry.targetDivision}</span></td>
+          <td>
+            <button onclick="TeacherDashboard.deleteTimetableEntry('${entry._id}')" class="btn btn-outline btn-sm" style="color:var(--danger); border-color:rgba(239, 68, 68, 0.2);"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      notifications.error('Failed to load timetable');
+    }
+  },
+
+  showAddTimetableModal() {
+    Modal.show('add-timetable', `
+      <form onsubmit="TeacherDashboard.handleCreateTimetable(event)">
+        <div class="form-group">
+          <label>Day of Week</label>
+          <select name="day" class="form-control" required>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Time (e.g., 09:00 AM - 10:30 AM)</label>
+          <input type="text" name="time" class="form-control" placeholder="09:00 AM" required>
+        </div>
+        <div class="form-group">
+          <label>Subject / Class Title</label>
+          <input type="text" name="title" class="form-control" placeholder="e.g. Surgical Rounds" required>
+        </div>
+        <div class="form-group">
+          <label>Target Grade</label>
+          <select name="targetClass" class="form-control" required>
+            <option value="All">All Grades</option>
+            <option value="Grade 6">Grade 6</option>
+            <option value="Grade 7">Grade 7</option>
+            <option value="Grade 8">Grade 8</option>
+            <option value="Grade 9">Grade 9</option>
+            <option value="Grade 10">Grade 10</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Division</label>
+          <select name="targetDivision" class="form-control" required>
+            <option value="All">All Divisions</option>
+            <option value="A">Division A</option>
+            <option value="B">Division B</option>
+            <option value="C">Division C</option>
+            <option value="D">Division D</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Add to Schedule</button>
+      </form>
+    `, { title: 'Add Class Schedule' });
+  },
+
+  async handleCreateTimetable(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      await api.post('/portal/teacher/timetable', data);
+      notifications.success('Schedule added successfully');
+      Modal.close();
+      this.loadTimetable();
+    } catch (err) {
+      notifications.error('Failed to add schedule: ' + err.message);
+    }
+  },
+
+  async deleteTimetableEntry(id) {
+    if (!confirm('Are you sure you want to remove this scheduled class?')) return;
+    try {
+      await api.delete(`/portal/teacher/timetable/${id}`);
+      notifications.success('Schedule removed');
+      this.loadTimetable();
+    } catch (err) {
+      notifications.error('Failed to remove schedule');
+    }
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => TeacherDashboard.init());
 window.TeacherDashboard = TeacherDashboard;
-

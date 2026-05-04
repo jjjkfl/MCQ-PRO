@@ -381,4 +381,21 @@ exports.getMyMarks = async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
+};exports.getSchedule = async (req, res) => {
+  try {
+    const Timetable = require('../models/Timetable');
+    const { classTag, division } = req.user;
+
+    // Students can see entries meant for their specific grade/division OR 'All'
+    const entries = await Timetable.find({
+      $and: [
+        { targetClass: { $in: [classTag, 'All'] } },
+        { targetDivision: { $in: [division, 'All'] } }
+      ]
+    }).sort({ day: 1, time: 1 }).lean();
+
+    res.json({ success: true, data: entries });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };

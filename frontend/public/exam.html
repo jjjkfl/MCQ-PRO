@@ -68,11 +68,11 @@
     /* ─── Layout ─── */
     .exam-wrapper {
       display: grid;
-      grid-template-columns: 1fr 220px;
-      gap: 24px;
-      max-width: 1200px;
+      grid-template-columns: 1fr 280px;
+      gap: 32px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 32px 24px;
       min-height: 100vh;
     }
 
@@ -87,12 +87,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 24px;
-      background: #fff;
+      padding: 20px 28px;
+      background: rgba(255, 255, 255, 0.9);
       border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-md);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(229, 231, 235, 0.5);
+      position: sticky;
+      top: 24px;
+      z-index: 50;
     }
 
     .exam-title {
@@ -122,13 +125,15 @@
 
     /* ─── Question Area ─── */
     #question-area {
-      padding: 32px;
+      padding: 40px;
       border-radius: var(--radius-lg);
       background: #fff;
-      box-shadow: var(--shadow-md);
-      min-height: 340px;
+      box-shadow: var(--shadow-sm);
+      min-height: 380px;
       flex: 1;
-      border: 1px solid var(--gray-200);
+      border: 1px solid rgba(229, 231, 235, 0.6);
+      display: flex;
+      flex-direction: column;
     }
 
     .exam-q-header {
@@ -156,17 +161,20 @@
 
     /* ─── Options ─── */
     .options-list {
-      margin-top: 8px;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
     }
 
     .option-item {
       display: flex;
       align-items: center;
-      padding: 16px 20px;
+      padding: 18px 24px;
       background: var(--gray-50);
       border: 2px solid var(--gray-200);
       border-radius: var(--radius-md);
-      margin-top: 12px;
       cursor: pointer;
       transition: var(--transition);
     }
@@ -215,6 +223,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin: 12px 0 24px 0;
     }
 
     .btn {
@@ -294,11 +303,11 @@
 
     /* ─── Progress Grid ─── */
     #exam-progress {
-      padding: 20px 24px;
+      padding: 24px 32px;
       background: #fff;
       border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(229, 231, 235, 0.6);
     }
 
     .progress-legend {
@@ -345,13 +354,13 @@
     }
 
     .q-dot {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: var(--radius-md);
-      font-size: 13px;
+      border-radius: 12px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
@@ -393,9 +402,9 @@
     .proctor-sidebar {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 24px;
       position: sticky;
-      top: 24px;
+      top: 32px;
       height: fit-content;
     }
 
@@ -942,11 +951,15 @@
     <div class="proctor-sidebar">
       <div class="proctor-camera-box" id="proctor-camera">
         <div class="camera-header">
-          <div style="display:flex; align-items:center; gap:6px;">
+          <div style="display:flex; align-items:center; gap:8px;">
             <span class="status-dot inactive" id="camera-status-dot"></span>
             <span class="camera-label off" id="camera-status-label">OFF</span>
           </div>
-          <span style="font-size:10px; color:rgba(255,255,255,0.7);">PROCTOR CAM</span>
+          <!-- Audio Monitor -->
+          <div id="audio-monitor" style="flex:1; margin: 0 10px; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
+            <div id="audio-level-bar" style="height:100%; width:0%; background:#10b981; transition:width 0.1s ease;"></div>
+          </div>
+          <span style="font-size:10px; color:rgba(255,255,255,0.7);">v3.0</span>
         </div>
         <div class="camera-denied">
           <div class="spinner"
@@ -956,12 +969,12 @@
         </div>
       </div>
 
-      <div class="security-box" id="security-status">
+      <div class="security-box">
         <h4><i class="fas fa-shield-alt"></i> Security Status</h4>
-        <div class="security-pills">
-          <div class="sec-pill good"><i class="fas fa-camera"></i> Camera active</div>
-          <div class="sec-pill good"><i class="fas fa-desktop"></i> Screen secured</div>
-          <div class="sec-pill secure"><i class="fas fa-exclamation-triangle"></i> 3/3 warnings left</div>
+        <div id="security-status">
+          <div class="security-pills">
+            <!-- Dynamic pills from Proctor v3.0 -->
+          </div>
         </div>
       </div>
 
@@ -988,7 +1001,11 @@
   <script src="/js/components/loader.js"></script>
   <script src="/js/components/modal.js"></script>
   <script src="/js/student/timer.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
+  <!-- ULTRA-GRADE AI SECURITY ENGINE v3.0 -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.x/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@1.x/dist/face-landmarks-detection.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection@2.x/dist/hand-pose-detection.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.x/dist/coco-ssd.js"></script>
   <script src="/js/student/proctor.js"></script>
   <script src="/js/student/socket.js"></script>
   <script src="/js/student/exam.js"></script>

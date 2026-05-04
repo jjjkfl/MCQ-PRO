@@ -14,9 +14,33 @@ const StudentDashboard = {
 
     try {
       await this.renderAll();
+      this.checkUnreadMessages();
     } catch (err) {
       console.error('Dashboard stabilization check failed:', err);
       // Don't alert here; renderAll already notifies on actual API failure
+    }
+  },
+
+  async checkUnreadMessages() {
+    try {
+      const res = await api.get('/portal/student/announcements');
+      const messages = res.data || [];
+      const totalMessages = messages.length;
+      
+      const lastReadCount = parseInt(localStorage.getItem('mcqpro_messages_read_count') || '0', 10);
+      const unreadCount = Math.max(0, totalMessages - lastReadCount);
+      
+      const badge = document.getElementById('unread-messages-badge');
+      if (badge) {
+        if (unreadCount > 0) {
+          badge.innerText = unreadCount;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to check unread messages');
     }
   },
 
@@ -83,38 +107,57 @@ const StudentDashboard = {
     const container = document.getElementById('weekly-calendar');
     if (!container) return;
 
-    // Medical Calendar Headers (Mon-Fri)
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    Loader.show('weekly-calendar', 'Syncing academic schedule...');
 
-    // Sample Medical Rotations (Can be fetched from DB tasks in production)
-    const scheduleData = {
-      'Monday': [{ time: '08:00 AM', title: 'Surgical Rounds - Wing A' }, { time: '02:00 PM', title: 'Cardiology Lecture' }],
-      'Tuesday': [{ time: '09:30 AM', title: 'Case Study: Renal Failure' }, { time: '04:00 PM', title: 'Lab Practice' }],
-      'Wednesday': [{ time: '08:00 AM', title: 'Surgical Rounds - Wing B' }, { time: '11:00 AM', title: 'MCQ Pro Readiness Check' }],
-      'Thursday': [{ time: '10:00 AM', title: 'Endocrinology Dept' }, { time: '03:00 PM', title: 'Peer Review Session' }],
-      'Friday': [{ time: '08:00 AM', title: 'Grand Rounds' }, { time: '05:00 PM', title: 'Weekly Assessment' }]
-    };
+    try {
+      const res = await api.get('/portal/student/schedule');
+      const entries = res.data || [];
 
-    container.innerHTML = days.map(day => `
-      <div class="schedule-day">
-        <div class="schedule-day-header">${day}</div>
-        <div class="schedule-day-content">
-          ${(scheduleData[day] || []).map(entry => `
-            <div class="schedule-item">
-              <div class="schedule-item-time">${entry.time}</div>
-              <div class="schedule-item-title">${entry.title}</div>
+      const scheduleData = { 'Monday': [], 'Tuesday': [], 'Wednesday': [], 'Thursday': [], 'Friday': [] };
+      entries.forEach(entry => {
+        if (scheduleData[entry.day]) {
+          scheduleData[entry.day].push({ time: entry.time, title: entry.title });
+        }
+      });
+
+      container.innerHTML = days.map(day => {
+        const hasEntries = scheduleData[day] && scheduleData[day].length > 0;
+        return `
+          <div class="schedule-day ${hasEntries ? 'active' : ''}">
+            <div class="schedule-day-header">
+              <span>${day}</span>
+              <i class="far fa-calendar-alt"></i>
             </div>
-          `).join('')}
-          ${(!scheduleData[day] || scheduleData[day].length === 0) ? '<p class="text-muted" style="text-align:center; font-size:11px; padding:12px;">Free Day</p>' : ''}
-        </div>
-      </div>
-    `).join('');
+            <div class="schedule-day-content">
+              ${hasEntries ? (scheduleData[day].map(entry => `
+                <div class="schedule-item animate-fade-in">
+                  <div class="schedule-item-time-row">
+                     <i class="far fa-clock"></i>
+                     <span>${entry.time}</span>
+                  </div>
+                  <div class="schedule-item-title">${entry.title}</div>
+                  <div class="schedule-item-type">Clinical Lecture</div>
+                </div>
+              `).join('')) : `
+                <div class="schedule-empty animate-fade-in">
+                  <div class="empty-icon">☕</div>
+                  <div class="empty-text">Rest & Study Day</div>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      notifications.error('Failed to load schedule');
+    }
   },
 
   async loadMessages() {
     const container = document.getElementById('broadcast-container');
     if (!container) return;
-    container.innerHTML = '<p class="p-dim">Syncing secure transmissions...</p>';
+    Loader.show('broadcast-container', 'Syncing secure transmissions...');
 
     try {
       const res = await api.get('/portal/student/announcements');
@@ -154,19 +197,26 @@ const StudentDashboard = {
 
         return `
           <div class="announcement-card animate-slide-up">
-            <div class="announcement-avatar">${initials}</div>
+            <div class="announcement-avatar">${initials.toUpperCase()}</div>
             <div class="announcement-content">
               <div class="announcement-header">
                 <span class="announcement-author">${m.sender}</span>
                 <span class="badge badge-primary" style="font-size: 10px;">${m.faculty}</span>
                 <span class="announcement-time" style="margin-left: auto;">${m.time}</span>
               </div>
-              <div style="font-weight: 700; margin: 4px 0; color: var(--text-main); font-size: 1.125rem;">${m.title}</div>
+              <div class="announcement-title">${m.title}</div>
               <div class="announcement-text">${m.content}</div>
             </div>
           </div>
         `;
       }).join('');
+      
+      // Reset unread count
+      const totalMessages = (res.data || []).length;
+      localStorage.setItem('mcqpro_messages_read_count', totalMessages.toString());
+      const badge = document.getElementById('unread-messages-badge');
+      if (badge) badge.style.display = 'none';
+
     } catch (err) {
       console.error('Announcements Error Details:', {
         message: err.message,
@@ -186,7 +236,7 @@ const StudentDashboard = {
     const matView = document.getElementById('course-materials-view');
     if (matView) matView.style.display = 'none';
 
-    container.innerHTML = '<p class="p-dim">Syncing curriculum...</p>';
+    Loader.show('courses-grid', 'Syncing curriculum...');
 
     try {
       const res = await api.get('/portal/student/courses');
@@ -195,7 +245,7 @@ const StudentDashboard = {
       container.innerHTML = courses.map(c => `
         <div class="course-card" onclick="StudentDashboard.loadMaterials('${c._id}', '${c.courseName}')">
           <div class="course-header">
-            <div class="course-icon">📘</div>
+            <div class="course-icon"><i class="fas fa-book-open"></i></div>
             <div class="course-info">
               <h4 class="course-title">${c.courseName}</h4>
               <p class="course-instructor">${c.department || 'Clinical Department'}</p>
@@ -228,7 +278,7 @@ const StudentDashboard = {
 
     const list = document.getElementById('materials-list');
     if (!list) return;
-    list.innerHTML = '<p class="p-dim">Unlocking secure materials...</p>';
+    Loader.show('materials-list', 'Unlocking secure materials...');
 
     try {
       const res = await api.get(`/portal/edu/courses/${courseId}/materials`);
@@ -247,16 +297,38 @@ const StudentDashboard = {
           </div>
           <div style="font-weight:700; font-size:14px;">${m.title}</div>
           <p class="p-dim" style="font-size:12px;">${m.description || 'Academic Resource'}</p>
-          <a href="${m.url}" target="_blank" class="btn btn-primary" style="margin-top:auto; font-size:12px; justify-content:center;">Review Content</a>
+          <button onclick="StudentDashboard.viewMaterial('${m._id}', '${m.url}')" class="btn btn-primary" style="margin-top:auto; font-size:12px; justify-content:center;">Review Content</button>
         </div>
       `).join('');
     } catch (err) { notifications.error('Failed to load materials'); }
   },
 
+  async viewMaterial(materialId, url) {
+    // If it's an external link, just open it
+    if (url.startsWith('http')) {
+      return window.open(url, '_blank');
+    }
+
+    try {
+      notifications.info('Opening secure material...');
+      const res = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${auth.getToken()}` }
+      });
+
+      if (!res.ok) throw new Error('Could not retrieve file');
+
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+    } catch (err) {
+      notifications.error('Access Denied: ' + err.message);
+    }
+  },
+
   async loadLiveExams() {
     const container = document.getElementById('live-exams-grid');
     if (!container) return;
-    container.innerHTML = '<p class="p-dim">Initializing proctored session list...</p>';
+    Loader.show('live-exams-grid', 'Initializing proctored session list...');
 
     try {
       const res = await api.get('/portal/student/exams');
@@ -274,7 +346,7 @@ const StudentDashboard = {
           </div>
           <div class="exam-info">
             <div class="exam-title">${e.title}</div>
-            <div class="exam-meta">${e.durationMinutes || 60} min • Academic Assessment</div>
+            <div class="exam-meta">${e.duration || e.durationMinutes || 60} min • Academic Assessment</div>
           </div>
           <div class="exam-status live">LIVE</div>
           <button onclick="StudentDashboard.joinExam('${e._id}')" class="btn btn-primary btn-sm">Join Hall</button>
@@ -286,7 +358,7 @@ const StudentDashboard = {
   async loadResults() {
     const container = document.getElementById('results-detailed-list');
     if (!container) return;
-    container.innerHTML = '<p class="p-dim">Calculating academic Standing...</p>';
+    Loader.show('results-detailed-list', 'Calculating academic Standing...');
 
     try {
       const res = await api.get('/portal/student/results');
@@ -319,7 +391,7 @@ const StudentDashboard = {
   async loadInternalMarks() {
     const container = document.getElementById('student-marks-list');
     if (!container) return;
-    container.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:32px;">Syncing Assessment Data...</td></tr>';
+    Loader.show('student-marks-list', 'Syncing Assessment Data...');
 
     try {
       const res = await api.get('/portal/student/marks');
@@ -360,7 +432,7 @@ const StudentDashboard = {
     const viewer = document.getElementById('certificate-viewer');
     if (viewer) viewer.style.display = 'none';
 
-    list.innerHTML = '<p class="p-dim">Verifying blockchain credentials...</p>';
+    Loader.show('certificates-list', 'Verifying blockchain credentials...');
 
     try {
       const res = await api.get('/portal/student/courses');

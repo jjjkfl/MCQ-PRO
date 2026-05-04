@@ -13,6 +13,7 @@ const eduCtrl = () => require('../controllers/eduController');
 router.use(authMiddleware);
 
 // Materials
+router.get('/portal/edu/courses/all/materials', rbac(['teacher']), (req, res) => eduCtrl().getMaterials(req, res));
 router.get('/portal/edu/courses/:courseId/materials', (req, res) => eduCtrl().getMaterials(req, res));
 router.post('/portal/edu/materials', rbac(['teacher']), upload.single('file'), (req, res) => eduCtrl().uploadMaterial(req, res));
 router.get('/portal/edu/materials/download/:id', (req, res) => eduCtrl().downloadMaterial(req, res));
@@ -20,7 +21,6 @@ router.delete('/portal/edu/materials/:id', rbac(['teacher']), (req, res) => eduC
 
 // Announcements
 router.get('/portal/edu/courses/:courseId/announcements', (req, res) => eduCtrl().getAnnouncements(req, res));
-router.get('/portal/edu/courses/:courseId/materials', (req, res) => eduCtrl().getMaterials(req, res));
 router.post('/portal/edu/announcements', rbac(['teacher']), (req, res) => eduCtrl().createAnnouncement(req, res));
 
 // Attendance
@@ -66,6 +66,11 @@ router.post('/portal/teacher/students', rbac(['teacher']), (req, res) => teacher
 router.put('/portal/teacher/students/:id', rbac(['teacher']), (req, res) => teacherCtrl().updateStudent(req, res));
 router.delete('/portal/teacher/students/:id', rbac(['teacher']), (req, res) => teacherCtrl().deleteStudent(req, res));
 
+// Timetable Management (Teacher)
+router.get('/portal/teacher/timetable', rbac(['teacher']), (req, res) => teacherCtrl().getTimetable(req, res));
+router.post('/portal/teacher/timetable', rbac(['teacher']), (req, res) => teacherCtrl().createTimetableEntry(req, res));
+router.delete('/portal/teacher/timetable/:id', rbac(['teacher']), (req, res) => teacherCtrl().deleteTimetableEntry(req, res));
+
 // Admin Dashboard Extras
 router.get('/portal/admin/dashboard', rbac(['admin']), (req, res) => adminCtrl().getDashboard(req, res));
 router.get('/portal/admin/users', rbac(['admin']), (req, res) => adminCtrl().getUsers(req, res));
@@ -87,6 +92,7 @@ router.get('/portal/student/marks', rbac(['student']), (req, res) => studentCtrl
 router.get('/portal/student/results', rbac(['student']), (req, res) => studentCtrl().getMyResults(req, res));
 router.get('/portal/student/announcements', rbac(['student']), (req, res) => studentCtrl().getAnnouncements(req, res));
 router.get('/portal/student/results/:resultId', rbac(['student']), (req, res) => studentCtrl().getResultDetail(req, res));
+router.get('/portal/student/schedule', rbac(['student']), (req, res) => studentCtrl().getSchedule(req, res));
 
 // ─── Blockchain Integrity Endpoints ───────────────────────────────────────────
 const AuditLog = require('../models/AuditLog');
