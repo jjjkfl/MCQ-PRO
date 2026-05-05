@@ -97,33 +97,41 @@ const Proctor = {
     this.cameraActive = false;
     this.audioActive = false;
     this.faceVisible = true;
-    this.faceModelsLoaded = false;
-    this.handsModelsLoaded = false;
+    
+    // PRESERVE MODELS IF ALREADY LOADED
+    if (!this.faceDetector) this.faceModelsLoaded = false;
+    if (!this.handsDetector) this.handsModelsLoaded = false;
     this.mobileWarningGiven = false;
     this.mobileImmunityUntil = 0;
+    this.mobileDetectionFrames = 0;
+    this._lastFaceKP = null;
+    this._lastHandsKP = [];
   },
 
   async _asyncInit() {
+    // Start camera (Audio disabled per user request)
     this.startCamera();
-    this.startAudioMonitor();
+    
+    // Start DOM Guardian to prevent other scripts from deleting our camera
+    this._startDomGuardian();
 
     // Load ML models
     await this._loadModels();
   },
 
   /* ═════════════════════════════════ CAMERA ═════════════════════ */
-  async startCamera() {
-    const container = this._getContainer();
-    if (!container) return;
+  async startCamera(containerId = null) {
+    let container = containerId ? document.getElementById(containerId) : this._getContainer();
+    if (!container) {
+      console.warn('[PROCTOR] No camera container found, retrying in 500ms...');
+      setTimeout(() => this.startCamera(containerId), 500);
+      return;
+    }
 
     try {
       if (!this.cameraStream) {
         this.cameraStream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-            facingMode: 'user'
-          },
+          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
           audio: false
         });
       }
@@ -131,12 +139,13 @@ const Proctor = {
       this._setupVideoElement(container);
       this.cameraActive = true;
       this._updateCameraStatusUI(true);
-      this._startCameraMonitor();
+      this.updateSecurityBar();
+      this._startPersistenceCheck();
+      this._startDetectionLoop();
 
     } catch (err) {
       console.error('[PROCTOR] Camera error:', err.message);
       this.cameraActive = false;
-      this._showCameraError(container, err.message);
       this._updateCameraStatusUI(false);
       this._logViolation('camera-denied', err.message);
     }
@@ -144,31 +153,48 @@ const Proctor = {
 
   _getContainer() {
     const readinessView = document.getElementById('readiness-view');
-    const isExamStarted = readinessView && readinessView.style.display === 'none';
+    const examContent = document.getElementById('main-exam-content');
 
-    if (isExamStarted) {
-      return document.getElementById('proctor-camera')
-        || document.getElementById('camera-preview-box')
-        || document.querySelector('.camera-container');
+    // Use getComputedStyle for accurate detection of hidden elements
+    const isReadinessHidden = !readinessView || getComputedStyle(readinessView).display === 'none';
+    const isExamVisible = examContent && getComputedStyle(examContent).display !== 'none';
+
+    if (isExamVisible || isReadinessHidden) {
+      const container = document.getElementById('proctor-camera');
+      if (container) {
+        container.style.display = 'block';
+        return container;
+      }
     }
 
-    return document.getElementById('camera-preview-box')
-      || document.getElementById('proctor-camera')
-      || document.querySelector('.camera-container');
+    const container = document.getElementById('camera-preview-box');
+    if (container) {
+      container.style.display = 'block';
+      return container;
+    }
+
+    return null;
   },
 
   _setupVideoElement(container) {
+    if (!container) return;
     const header = container.querySelector('.camera-header');
     container.innerHTML = '';
     if (header) container.appendChild(header);
     container.style.position = 'relative';
+    container.style.display = 'block';
 
-    const video = document.createElement('video');
-    video.id = 'proctor-video';
-    video.srcObject = this.cameraStream;
-    video.autoplay = true;
-    video.playsInline = true;
-    video.muted = true;
+    // Reuse or Create Video
+    let video = this._video;
+    if (!video) {
+      video = document.createElement('video');
+      video.id = 'proctor-video';
+      video.srcObject = this.cameraStream;
+      video.autoplay = true;
+      video.playsInline = true;
+      video.muted = true;
+      this._video = video;
+    }
     video.width = 640;
     video.height = 480;
     video.style.cssText = `
@@ -177,10 +203,22 @@ const Proctor = {
       object-fit: cover;
       border-radius: 8px;
       transform: scaleX(-1);
+      position: relative;
+      z-index: 5;
     `;
 
-    const canvas = document.createElement('canvas');
-    canvas.id = 'proctor-canvas';
+    // Reuse or Create Canvas
+    let canvas = this._canvas;
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.id = 'proctor-canvas';
+      this._canvas = canvas;
+    }
+    // Always re-get context after a potential DOM move to ensure it's active
+    this._ctx = canvas.getContext('2d');
+
+    container.style.overflow = 'visible'; // Ensure absolute canvas isn't clipped
+
     canvas.width = 640;
     canvas.height = 480;
     canvas.style.cssText = `
@@ -190,8 +228,12 @@ const Proctor = {
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 10;
+      z-index: 2147483647;
       transform: scaleX(-1);
+      object-fit: cover;
+      visibility: visible !important;
+      display: block !important;
+      opacity: 1 !important;
     `;
 
     const badge = document.createElement('div');
@@ -206,7 +248,7 @@ const Proctor = {
       border-radius: 20px;
       font-size: 11px;
       font-weight: 600;
-      z-index: 15;
+      z-index: 15000;
     `;
     badge.innerHTML = '● LIVE';
 
@@ -214,17 +256,31 @@ const Proctor = {
     container.appendChild(canvas);
     container.appendChild(badge);
 
-    this._video = video;
-    this._canvas = canvas;
-    this._ctx = canvas.getContext('2d');
+    console.log(`[PROCTOR] Elements teleported to: ${container.id}`);
+
+    // Crucial: Video often pauses when re-attached to DOM
+    if (video.readyState >= 2) {
+      video.play().catch(e => console.warn('[PROCTOR] Playback resume failed:', e));
+    }
 
     video.onloadedmetadata = () => {
-      console.log('[PROCTOR] Camera ready');
-      video.play().catch(e => console.warn('Autoplay prevented:', e));
-      if (this.faceModelsLoaded) {
-        this._startDetectionLoop();
+      console.log(`[PROCTOR] Camera ready: ${video.videoWidth}x${video.videoHeight}`);
+      if (this._canvas) {
+        this._canvas.width = video.videoWidth || 640;
+        this._canvas.height = video.videoHeight || 480;
       }
+      video.play().catch(e => console.warn('Autoplay prevented:', e));
+
+      // Crucial: Clear any old loop before starting a new one for this container
+      this._startDetectionLoop();
     };
+
+    // If stream was already active, fire metadata handler manually with a safe delay
+    if (video.readyState >= 2) {
+      setTimeout(() => {
+        if (this._video === video) video.onloadedmetadata();
+      }, 500);
+    }
   },
 
   _showCameraError(container, message) {
@@ -294,6 +350,19 @@ const Proctor = {
       label.textContent = active ? 'LIVE' : 'OFF';
       label.style.color = active ? '#10b981' : '#ef4444';
     }
+  },
+
+  _startPersistenceCheck() {
+    if (this._persistenceInterval) clearInterval(this._persistenceInterval);
+    this._persistenceInterval = setInterval(() => {
+      if (this.isDestroyed || !this.cameraActive) return;
+
+      const container = this._getContainer();
+      if (container && this._canvas && this._canvas.parentElement !== container) {
+        console.warn('[PROCTOR] Canvas detached! Re-attaching...');
+        container.appendChild(this._canvas);
+      }
+    }, 2000);
   },
 
   /* ═══════════════════════════════ AUDIO ══════════════════════════ */
@@ -382,16 +451,68 @@ const Proctor = {
   async preloadModels() {
     if (this._preloadPromise) return this._preloadPromise;
     console.log('[PROCTOR] Preloading ML models in parallel...');
-    this._preloadPromise = Promise.all([
-      this._loadFaceMesh(),
-      this._loadHands(),
-      this._loadObjectDetection()
-    ]).then(() => console.log('[PROCTOR] All models preloaded successfully.'));
+
+    const update = (msg) => {
+      const status = document.getElementById('landmarks-status');
+      if (status) status.textContent = msg;
+    };
+
+    this._preloadPromise = (async () => {
+      try {
+        update('Syncing Face AI (Primary)...');
+        await this._loadFaceMesh();
+        update('Face AI Active. Calibrating landmarks...');
+
+        // Load secondary models in the background to avoid blocking the Readiness Check
+        this._loadSecondaryModels(update);
+
+      } catch (e) {
+        console.error('[PROCTOR] Primary sync failed:', e);
+        update('AI Calibration Error. Retrying...');
+        throw e;
+      }
+    })();
+
     return this._preloadPromise;
+  },
+
+  async _loadSecondaryModels(update) {
+    console.log('[PROCTOR] Loading secondary models in background...');
+    try {
+      await Promise.all([
+        this._loadHands().then(() => console.log('[PROCTOR] Hands Ready')),
+        this._loadObjectDetection().then(() => console.log('[PROCTOR] Object Detection Ready'))
+      ]);
+      console.log('[PROCTOR] Secondary models synchronized.');
+      // If we are still in readiness view, give a final update
+      const status = document.getElementById('landmarks-status');
+      if (status && status.textContent.includes('Ready')) {
+        status.textContent = 'AI Engine Fully Synchronized.';
+      }
+    } catch (e) {
+      console.warn('[PROCTOR] Background loading warning:', e.message);
+    } finally {
+      this.updateNavigationLock(); // Refresh UI once models are in
+    }
   },
 
   async _loadModels() {
     try {
+      if (typeof tf !== 'undefined') {
+        // Attempt WebGL first (fastest), fallback to CPU if it takes too long or fails
+        const backends = ['webgl', 'cpu'];
+        for (const b of backends) {
+          try {
+            console.log(`[PROCTOR] Attempting ${b} backend...`);
+            await tf.setBackend(b);
+            await tf.ready();
+            console.log(`[PROCTOR] TFJS initialized with ${b}`);
+            break;
+          } catch (err) {
+            console.warn(`[PROCTOR] Backend ${b} failed:`, err.message);
+          }
+        }
+      }
       await this.preloadModels();
     } catch (e) {
       console.error('[PROCTOR] Model loading error:', e);
@@ -469,8 +590,9 @@ const Proctor = {
     }
 
     try {
-      this.objectModel = await cocoSsd.load(); // Default model is more accurate
-      console.log('[PROCTOR] Object detection loaded');
+      // Use lite_mobilenet_v2 for much faster loading and better performance on low-end hardware
+      this.objectModel = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
+      console.log('[PROCTOR] Object detection (Lite) loaded');
     } catch (e) {
       console.error('[PROCTOR] Object detection failed:', e);
     }
@@ -490,42 +612,141 @@ const Proctor = {
 
   /* ══════════════════════════ DETECTION LOOP ═════════════════════ */
   _startDetectionLoop() {
-    if (this.detectionInterval) clearInterval(this.detectionInterval);
+    if (this.detectionInterval) {
+      if (typeof this.detectionInterval === 'number') clearInterval(this.detectionInterval);
+      else cancelAnimationFrame(this.detectionInterval);
+      this.detectionInterval = null;
+    }
+
+    if (this.isDestroyed || !this.cameraActive) return;
+
+    if (!this._video || this._video.readyState < 2) {
+      console.warn('[PROCTOR] Video not ready for loop, retrying in 500ms...');
+      setTimeout(() => this._startDetectionLoop(), 500);
+      return;
+    }
+
+    console.log('[PROCTOR] Detection loop started (Throttled 10FPS)');
     if (!this._video || !this._canvas || !this._ctx) return;
 
-    console.log('[PROCTOR] Detection loop started');
-
-    const loop = async () => {
+    let lastTime = 0;
+    let frameCount = 0;
+    const loop = async (now) => {
       if (this.isDestroyed) return;
-      if (!this.cameraActive || this._video.readyState < 2) return;
+      frameCount++;
+
+      // Heartbeat log every 100 frames (~10 seconds)
+      if (frameCount % 100 === 0) {
+        console.log(`[PROCTOR] Heartbeat: Frame ${frameCount}, AI Active: ${!!this.faceDetector}`);
+      }
+
+      // Throttle to ~10 FPS to save CPU/GPU and improve overall performance
+      if (now - lastTime < 100) {
+        this.detectionInterval = requestAnimationFrame(loop);
+        return;
+      }
+      lastTime = now;
+
+      if (!this.cameraActive || this._video.readyState < 2) {
+        this.detectionInterval = requestAnimationFrame(loop);
+        return;
+      }
 
       try {
+        const video = this._video;
+        const canvas = this._canvas;
         const ctx = this._ctx;
-        ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        if (!ctx || !video || !canvas) return;
 
-        // AI status
-        ctx.fillStyle = this.faceModelsLoaded ? '#10b981' : '#ef4444';
-        ctx.font = 'bold 11px monospace';
-        ctx.fillText(this.faceModelsLoaded ? '● AI ACTIVE' : '○ LOADING', 10, 18);
+        // Ensure dimensions are correct (especially after view switches)
+        if (video.videoWidth > 0 && (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight)) {
+          console.log(`[PROCTOR] Re-syncing canvas size: ${video.videoWidth}x${video.videoHeight}`);
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+        }
 
-        if (!this.faceDetector) return;
+        // Clear canvas with transparency
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Visible Diagnostic HUD (Top Right)
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.7)';
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText(`AI: ${this.faceModelsLoaded ? 'F' : '.'}${this.handsModelsLoaded ? 'H' : '.'}${!!this.objectModel ? 'O' : '.'} ${this._fps || 0}fps`, canvas.width - 10, 15);
+        ctx.textAlign = 'left';
+
+        // Draw center dot for proof of canvas
+        ctx.fillStyle = '#00ff00';
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Visible Diagnostic Border (Only visible if canvas is active)
+        ctx.strokeStyle = this.faceModelsLoaded ? '#10b981' : '#f59e0b';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+        // AI Model Status Indicators (Highly visible in small boxes)
+        const statusY = 15;
+        ctx.font = 'bold 9px Arial';
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+
+        const drawStatus = (label, loaded, x) => {
+          ctx.fillStyle = loaded ? '#10b981' : '#ef4444'; // Red if not loaded
+          ctx.fillText(`${loaded ? '●' : '○'} ${label}`, x, statusY);
+        };
+
+        drawStatus('FACE', this.faceModelsLoaded, 10);
+        drawStatus('HAND', this.handsModelsLoaded, 50);
+        drawStatus('OBJ', !!this.objectModel, 90);
+
+        // Accurate Frame Rate Counter (Internal)
+        if (frameCount % 10 === 0) {
+          this._fps = Math.round(1000 / (now - lastTime));
+        }
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.fillText(`${this._fps || 10}fps`, 130, statusY);
+
+        ctx.shadowBlur = 0;
+
+        if (!this.faceDetector && !this.handsDetector && !this.objectModel) {
+          this.detectionInterval = requestAnimationFrame(loop);
+          return;
+        }
+
+        // Diagnostic: Draw a small pulse in the corner to prove canvas is alive
+        const pulse = (Math.sin(now / 200) + 1) / 2;
+        ctx.fillStyle = `rgba(16, 185, 129, ${0.2 + pulse * 0.8})`;
+        ctx.beginPath();
+        ctx.arc(10, 10, 3, 0, Math.PI * 2);
+        ctx.fill();
 
         // Run detections
-        await this._detectObjects(ctx);
-        const faces = await this._detectFaces(ctx);
-        await this._detectHands(ctx);
+        if (this.objectModel) await this._detectObjects(ctx);
+        const faces = (this.faceDetector) ? await this._detectFaces(ctx) : [];
+        if (this.handsDetector) await this._detectHands(ctx);
+
+        // Landmark Readiness Check (only if in readiness view)
+        if (faces.length === 1 && typeof ReadinessCheck !== 'undefined' && ReadinessCheck.onLandmarksDetected) {
+          ReadinessCheck.onLandmarksDetected();
+        }
 
         // Update UI
         this._updateUI(faces?.length || 0);
-        this.updateNavigationLock();
+        this.updateNavigationLock(faces?.length || 0);
+        this.updateSecurityBar();
 
       } catch (e) {
         console.warn('[PROCTOR] Frame error:', e.message);
       }
+
+      if (!this.isDestroyed) {
+        this.detectionInterval = requestAnimationFrame(loop);
+      }
     };
 
-    this.detectionInterval = setInterval(loop, 500);
-    loop();
+    this.detectionInterval = requestAnimationFrame(loop);
   },
 
   /* ──────────── Object Detection ──────────── */
@@ -533,20 +754,44 @@ const Proctor = {
     if (!this.objectModel) return;
 
     try {
-      const objects = await this.objectModel.detect(this._video);
+      const video = this._video;
+      if (!video || video.readyState < 2) return;
+
+      const objects = await this.objectModel.detect(video);
+      if (objects.length > 0 && Math.random() < 0.1) {
+        console.log('[PROCTOR] AI seeing objects:', objects.map(o => `${o.class} (${Math.round(o.score * 100)}%)`).join(', '));
+      }
+
       const BANNED = ['cell phone', 'mobile phone', 'phone', 'book', 'laptop', 'remote', 'tablet', 'tv', 'monitor'];
+
+      let highConfidenceMobileInFrame = false;
+      const PHONE_THRESHOLD = 0.65; // Increased from 0.35 to reduce false positives
 
       objects.forEach(obj => {
         const isBanned = BANNED.some(b => obj.class.toLowerCase().includes(b.split(' ')[0]));
+        const isOnlyMobile = obj.class.toLowerCase().includes('phone');
         const [x, y, w, h] = obj.bbox;
         const label = obj.class.charAt(0).toUpperCase() + obj.class.slice(1);
 
-        if (isBanned && obj.score > 0.35) {
+        // Special handling for mobile phones (Silent Submission)
+        if (isOnlyMobile && obj.score > PHONE_THRESHOLD) {
+          highConfidenceMobileInFrame = true;
+
+          // Draw a warning box in debug (only visible on canvas)
+          ctx.strokeStyle = '#ff0000';
+          ctx.lineWidth = 4;
+          ctx.strokeRect(x, y, w, h);
+          ctx.fillStyle = '#ff0000';
+          ctx.fillText(`🚨 VERIFYING ${label}: ${Math.round(obj.score * 100)}%`, x + 5, y + 20);
+        }
+
+        // Handling for other banned objects or lower confidence mobile (Warning system)
+        if (isBanned && obj.score > 0.4 && !isOnlyMobile) {
           if (!this.mobileWarningGiven) {
             this.mobileWarningGiven = true;
             this._handleViolation('object', `Banned object: ${label}`);
             if (typeof notifications !== 'undefined') {
-              notifications.error(`⚠️ ${label.toUpperCase()} DETECTED. FINAL WARNING. NEXT OFFENSE WILL TERMINATE EXAM.`, { duration: 10000 });
+              notifications.error(`⚠️ ${label.toUpperCase()} DETECTED. FINAL WARNING.`, { duration: 10000 });
             }
             this.mobileImmunityUntil = Date.now() + 5000;
           } else if (Date.now() > this.mobileImmunityUntil) {
@@ -562,17 +807,45 @@ const Proctor = {
           ctx.fillStyle = '#ff0000';
           ctx.font = 'bold 12px monospace';
           ctx.fillText(`⛔ ${label}`, x + 4, y + 16);
-          
-        } else if (obj.class !== 'person' && obj.score > 0.3) {
-          // Draw a yellow debug box for non-banned objects to see what the AI is thinking
+        } else if (obj.score > 0.15) {
+          // Draw a yellow debug box for ALL other detections (including person) to see model performance
           ctx.strokeStyle = '#eab308';
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1;
           ctx.strokeRect(x, y, w, h);
           ctx.fillStyle = '#eab308';
-          ctx.font = '10px monospace';
-          ctx.fillText(`? ${label} (${Math.round(obj.score * 100)}%)`, x + 4, y + 12);
+          ctx.font = '8px monospace';
+          ctx.fillText(`${label} (${Math.round(obj.score * 100)}%)`, x + 2, y + 10);
         }
       });
+
+      // Logic for persistent mobile detection (1-Warning System)
+      if (highConfidenceMobileInFrame) {
+        this.mobileDetectionFrames++;
+
+        if (this.mobileDetectionFrames >= 5) { // ~0.5s of detection
+          if (!this.mobileWarningGiven) {
+            // 🚨 FIRST WARNING
+            this.mobileWarningGiven = true;
+            this.mobileDetectionFrames = 0; // Reset counter for the final strike
+            this.mobileImmunityUntil = Date.now() + 5000; // 5s grace period to hide the phone
+
+            this._handleViolation('mobile-warning', 'Mobile phone detected. First warning given.');
+            if (typeof notifications !== 'undefined') {
+              notifications.error(`⚠️ MOBILE PHONE DETECTED! THIS IS YOUR ONLY WARNING. HIDE IT NOW.`, { duration: 10000 });
+            }
+          } else if (Date.now() > this.mobileImmunityUntil) {
+            // 🚨 FINAL STRIKE: AUTO-SUBMIT
+            this._handleViolation('mobile-critical', 'Repeated mobile detection. Terminating exam.', true);
+            if (typeof ExamEngine !== 'undefined') {
+              ExamEngine.submit(true);
+            }
+          }
+        }
+      } else {
+        // Slowly reset counter if nothing detected
+        this.mobileDetectionFrames = Math.max(0, this.mobileDetectionFrames - 1);
+      }
+
     } catch (e) {
       console.warn('[PROCTOR] Object detection error', e);
     }
@@ -607,6 +880,18 @@ const Proctor = {
     // Multiple faces
     if (faces.length > 1) {
       this.multipleFacesCount++;
+      
+      // Draw a highly visible warning on the canvas
+      const w = this._canvas.width;
+      const h = this._canvas.height;
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+      ctx.fillRect(0, h - 40, w, 40);
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`🚫 MULTIPLE PERSONS DETECTED (${faces.length})`, w / 2, h - 15);
+      ctx.textAlign = 'left';
+
       if (this.multipleFacesCount >= this.maxMultipleFaces) {
         this._handleViolation('multiple-faces', `${faces.length} persons detected`);
         this.multipleFacesCount = 0;
@@ -673,28 +958,78 @@ const Proctor = {
   },
 
   _drawFaceMesh(ctx, kp, isPrimary) {
-    const color = isPrimary ? '#00ff00' : '#ff4444';
+    if (!kp) return;
+
+    // Temporal Smoothing (Moving Average)
+    if (isPrimary) {
+      if (!this._lastFaceKP) this._lastFaceKP = kp;
+      else {
+        this._lastFaceKP = kp.map((p, i) => ({
+          x: p.x * 0.5 + this._lastFaceKP[i].x * 0.5,
+          y: p.y * 0.5 + this._lastFaceKP[i].y * 0.5
+        }));
+        kp = this._lastFaceKP;
+      }
+    }
+
+    if (isPrimary) {
+      this._drawContours(ctx, kp, '#00ff00');
+    }
+
+    const color = isPrimary ? '#00ff00' : '#ff4444'; // Bright Green/Red
+    ctx.shadowBlur = 4;
+    ctx.shadowColor = color;
 
     kp.forEach((point, i) => {
+      // Draw larger dots for critical areas
+      const isCritical = [1, 33, 263, 61, 291, 168].includes(i); // Nose, Eyes, Mouth, Forehead
+
       ctx.beginPath();
-      ctx.arc(point.x, point.y, 1.5, 0, Math.PI * 2);
+      ctx.arc(point.x, point.y, isCritical ? 2.5 : 1.2, 0, Math.PI * 2);
 
       let c = color;
       if (isPrimary) {
-        if ((i >= 33 && i <= 133) || (i >= 362 && i <= 263)) c = '#00ffff'; // Eyes
-        else if (i >= 61 && i <= 291) c = '#ffff00'; // Mouth
-        else if (i >= 1 && i <= 10) c = '#ff00ff'; // Nose
+        if ((i >= 33 && i <= 133) || (i >= 362 && i <= 263)) c = '#00ffff'; // Eyes (Cyan)
+        else if (i >= 61 && i <= 291) c = '#ffff00'; // Mouth (Yellow)
+        else if (i >= 1 && i <= 10) c = '#ff00ff'; // Nose (Magenta)
       }
 
       ctx.fillStyle = c;
       ctx.fill();
     });
+    ctx.shadowBlur = 0;
 
-    // Draw irises if available
+    // Draw irises if available (Highly visible white/cyan)
     if (kp.length > 477 && kp[468] && kp[473]) {
-      this._drawIris(ctx, kp[468], '#00ffff');
-      this._drawIris(ctx, kp[473], '#00ffff');
+      this._drawIris(ctx, kp[468], '#ffffff');
+      this._drawIris(ctx, kp[473], '#ffffff');
     }
+  },
+
+  _drawContours(ctx, kp, color) {
+    const CONTOURS = {
+      outline: [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109],
+      lips: [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 308, 324, 318, 402, 317, 14, 87, 178, 88, 95],
+      leftEye: [33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161, 246],
+      rightEye: [263, 249, 390, 373, 374, 380, 381, 382, 362, 398, 384, 385, 386, 387, 388, 466]
+    };
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.3;
+
+    Object.values(CONTOURS).forEach(indices => {
+      ctx.beginPath();
+      indices.forEach((idx, i) => {
+        const p = kp[idx];
+        if (!p) return;
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.closePath();
+      ctx.stroke();
+    });
+    ctx.globalAlpha = 1.0;
   },
 
   _drawIris(ctx, iris, color) {
@@ -815,17 +1150,36 @@ const Proctor = {
     try {
       const hands = await this.handsDetector.estimateHands(this._video, { flipHorizontal: false });
 
-      hands.forEach(hand => {
-        this._processHand(ctx, hand);
-      });
+      if (hands && hands.length > 0) {
+        if (Math.random() < 0.05) console.log(`[PROCTOR] ${hands.length} Hand(s) detected`);
+        hands.forEach((hand, i) => {
+          this._processHand(ctx, hand, i);
+        });
+      } else {
+        this._lastHandsKP = []; // Reset smoothing when hands are lost
+      }
     } catch (e) {
-      console.warn('[PROCTOR] Hand detection error');
+      console.warn('[PROCTOR] Hand detection error:', e.message);
     }
   },
 
-  _processHand(ctx, hand) {
-    const kp = hand.keypoints;
-    const side = hand.handedness || 'Unknown';
+  _processHand(ctx, hand, index) {
+    let kp = hand.keypoints;
+    if (!kp || kp.length < 21) return;
+
+    // Temporal Smoothing for Hands
+    if (!this._lastHandsKP[index]) this._lastHandsKP[index] = kp;
+    else {
+      this._lastHandsKP[index] = kp.map((p, i) => ({
+        x: p.x * 0.5 + this._lastHandsKP[index][i].x * 0.5,
+        y: p.y * 0.5 + this._lastHandsKP[index][i].y * 0.5
+      }));
+      kp = this._lastHandsKP[index];
+    }
+
+    let side = 'Unknown';
+    if (typeof hand.handedness === 'string') side = hand.handedness;
+    else if (hand.handedness && hand.handedness.label) side = hand.handedness.label;
 
     this._drawHandSkeleton(ctx, kp, side);
 
@@ -865,13 +1219,13 @@ const Proctor = {
       [0, 9], [9, 10], [10, 11], [11, 12],
       [0, 13], [13, 14], [14, 15], [15, 16],
       [0, 17], [17, 18], [18, 19], [19, 20],
-      [5, 9], [9, 13], [13, 17]
+      [5, 9], [9, 13], [13, 17], [0, 5], [0, 17]
     ];
 
-    const color = side === 'Left' ? '#ff9f43' : '#54a0ff';
+    const color = side.toLowerCase().includes('left') ? '#ffff00' : '#00ffff'; // Yellow or Cyan (High Visibility)
 
     ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 4; // Thicker lines
 
     CONNECTIONS.forEach(([a, b]) => {
       if (!kp[a] || !kp[b]) return;
@@ -883,7 +1237,7 @@ const Proctor = {
 
     kp.forEach((p, i) => {
       ctx.beginPath();
-      ctx.arc(p.x, p.y, i === 0 ? 5 : 3, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, i === 0 ? 6 : 4, 0, Math.PI * 2); // Larger dots
       ctx.fillStyle = i === 0 ? '#ffffff' : color;
       ctx.fill();
     });
@@ -938,37 +1292,8 @@ const Proctor = {
   },
 
   _updateAlertOverlay(faceCount) {
-    const container = document.getElementById('proctor-camera');
-    if (!container) return;
-
-    let overlay = container.querySelector('.cam-alert-overlay');
-
-    if (faceCount === 0) {
-      if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.className = 'cam-alert-overlay';
-        overlay.style.cssText = `
-          position: absolute;
-          inset: 0;
-          background: rgba(239, 68, 68, 0.35);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-size: 13px;
-          font-weight: 800;
-          text-align: center;
-          z-index: 5;
-          pointer-events: none;
-          border: 3px solid #ef4444;
-          border-radius: 8px;
-        `;
-        overlay.innerHTML = '<div>⚠️ NO FACE<br>DETECTED</div>';
-        container.appendChild(overlay);
-      }
-    } else if (overlay) {
-      overlay.remove();
-    }
+    // Disabled per user request (no notification, just block navigation)
+    return;
   },
 
   updateSecurityBar() {
@@ -978,33 +1303,49 @@ const Proctor = {
     const warningsLeft = Math.max(0, this.maxTabSwitches - this.tabSwitchCount);
     const warnLevel = warningsLeft >= 2 ? 'good' : warningsLeft === 1 ? 'warning' : 'danger';
 
+    const aiReady = this.faceModelsLoaded;
+    const aiFullSync = aiReady && this.handsModelsLoaded && !!this.objectModel;
+    const aiStatus = aiReady ? 'good' : 'warning';
+    const aiLabel = aiFullSync ? '🛡️ AI ACTIVE' : aiReady ? '🛡️ AI ACTIVE (Syncing...)' : '🛡️ AI SYNCING';
+
     bar.innerHTML = `
       <div class="security-pills">
-        <span class="sec-pill ${this.cameraActive ? 'good' : 'bad'}">📷 ${this.cameraActive ? 'ON' : 'OFF'}</span>
-        <span class="sec-pill ${this.audioActive ? 'good' : 'bad'}">🎤 ${this.audioActive ? 'ON' : 'OFF'}</span>
-        <span class="sec-pill ${document.fullscreenElement ? 'good' : 'bad'}">🖥️ ${document.fullscreenElement ? 'FS' : 'WINDOW'}</span>
-        <span class="sec-pill ${warnLevel}">⚠️ ${warningsLeft}</span>
+        <span class="sec-pill ${this.cameraActive ? 'good' : 'bad'}">📷 CAMERA ${this.cameraActive ? 'ON' : 'OFF'}</span>
+        <span class="sec-pill ${document.fullscreenElement ? 'good' : 'bad'}">🖥️ FULLSCREEN ${document.fullscreenElement ? 'ACTIVE' : 'WINDOW'}</span>
+        <span class="sec-pill ${warnLevel}">⚠️ WARNINGS ${warningsLeft}</span>
+        <span class="sec-pill ${aiStatus}" id="ai-status-pill">${aiLabel}</span>
       </div>
     `;
   },
 
-  updateNavigationLock() {
+  updateNavigationLock(faceCount = 0) {
     const nextBtn = document.getElementById('next-btn');
     if (!nextBtn) return;
 
     if (!this.faceVisible || !this.cameraActive) {
       nextBtn.disabled = true;
-      nextBtn.style.opacity = '0.4';
-      nextBtn.style.cursor = 'not-allowed';
-      nextBtn.innerHTML = '⚠️ Face Required';
+      nextBtn.style.pointerEvents = 'none';
+      nextBtn.style.opacity = '0.9';
+      nextBtn.style.background = '#ef4444'; // Hard red
+      nextBtn.style.color = 'white';
+      nextBtn.innerHTML = '⚠️ NO FACE';
+    } else if (faceCount > 1) {
+      nextBtn.disabled = true;
+      nextBtn.style.pointerEvents = 'none';
+      nextBtn.style.opacity = '0.9';
+      nextBtn.style.background = '#ef4444'; // Hard red
+      nextBtn.style.color = 'white';
+      nextBtn.innerHTML = '🚫 MULTIPLE PERSONS';
     } else {
       nextBtn.disabled = false;
+      nextBtn.style.pointerEvents = 'auto';
       nextBtn.style.opacity = '1';
-      nextBtn.style.cursor = 'pointer';
+      nextBtn.style.background = ''; // Restore default
+      nextBtn.style.color = '';
 
       if (typeof ExamEngine !== 'undefined' && ExamEngine.questions) {
         const isLast = ExamEngine.currentIdx >= ExamEngine.questions.length - 1;
-        nextBtn.innerHTML = isLast ? '✅ Finish' : 'Next →';
+        nextBtn.innerHTML = isLast ? '✅ Finish Exam' : 'Next Question →';
       } else {
         nextBtn.innerHTML = 'Next →';
       }
@@ -1284,7 +1625,7 @@ const Proctor = {
   },
 
   /* ══════════════════════════ VIOLATIONS ═════════════════════════ */
-  _handleViolation(type, message) {
+  _handleViolation(type, message, silent = false) {
     const v = { type, message, timestamp: new Date().toISOString() };
     this.violations.push(v);
     console.warn(`[PROCTOR] ⛔ ${type}: ${message}`);
@@ -1302,7 +1643,14 @@ const Proctor = {
 
     // Send to server
     this._sendViolation(v);
-    this._notify('error', message);
+
+    // Skip notifications for common tracking blips to avoid distraction
+    const silentTypes = ['no-face', 'face-lost', 'tab-switch', 'multiple-faces'];
+    const isSilentType = silentTypes.includes(v.type);
+
+    if (!silent && !isSilentType) {
+      this._notify('error', message);
+    }
   },
 
   _logViolation(type, detail) {
@@ -1349,13 +1697,17 @@ const Proctor = {
     this.isDestroyed = true;
     this.fullscreenRequired = false;
 
-    // Clear intervals
-    ['detectionInterval', 'cameraMonitorInterval', 'audioInterval', 'clipboardInterval'].forEach(key => {
+    // Clear intervals/animation frames
+    ['cameraMonitorInterval', 'audioInterval', 'clipboardInterval', '_persistenceInterval'].forEach(key => {
       if (this[key]) {
         clearInterval(this[key]);
         this[key] = null;
       }
     });
+    if (this.detectionInterval) {
+      cancelAnimationFrame(this.detectionInterval);
+      this.detectionInterval = null;
+    }
 
     // Stop streams
     [this.cameraStream, this.audioStream].forEach(stream => {

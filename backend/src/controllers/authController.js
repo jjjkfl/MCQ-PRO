@@ -13,6 +13,9 @@ exports.register = async (req, res) => {
       user: { id: user._id, name: user.name, role: user.role } 
     });
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ success: false, message: 'This email address is already registered.' });
+    }
     res.status(400).json({ success: false, message: err.message });
   }
 };

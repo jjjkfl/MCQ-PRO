@@ -259,6 +259,9 @@ exports.createStudent = async (req, res) => {
 
     res.status(201).json({ success: true, data: student });
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ success: false, message: 'This email address is already registered in the system.' });
+    }
     res.status(400).json({ success: false, message: err.message });
   }
 };

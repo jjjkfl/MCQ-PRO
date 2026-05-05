@@ -4,16 +4,27 @@
  */
 
 const ReadinessCheck = {
-  checks: { camera: false, fullscreen: false, consent: false },
+  checks: { camera: false, fullscreen: false, consent: false, landmarks: false },
 
   async allowCamera() {
     try {
       await Proctor.startCamera();
-      if (typeof Proctor !== 'undefined') Proctor.preloadModels();
+      
+      // Granular loading progress
+      const lStatus = document.getElementById('landmarks-status');
+      const lLoader = document.getElementById('landmarks-loader');
+      if (lLoader) lLoader.style.display = 'block';
+
+      if (typeof Proctor !== 'undefined') {
+        if (lStatus) lStatus.textContent = 'Initializing AI engine...';
+        await Proctor._loadModels(); // Use internal _loadModels which handles backend and preloading
+      }
+      
       this.checks.camera = true;
       document.getElementById('check-camera').classList.add('done');
       document.getElementById('btn-allow-camera').innerText = '✅ Active';
       document.getElementById('btn-allow-camera').disabled = true;
+
       this.validate();
     } catch (err) {
       console.error('[Readiness] Camera Error:', err);
@@ -49,8 +60,26 @@ const ReadinessCheck = {
   },
 
   validate() {
-    const canStart = this.checks.camera && this.checks.fullscreen && this.checks.consent;
+    const canStart = this.checks.camera && this.checks.fullscreen && this.checks.consent && this.checks.landmarks;
     document.getElementById('btn-start-exam').disabled = !canStart;
+  },
+
+  onLandmarksDetected() {
+    if (this.checks.landmarks) return; // Already done
+    
+    this.checks.landmarks = true;
+    const item = document.getElementById('check-landmarks');
+    const loader = document.getElementById('landmarks-loader');
+    const done = document.getElementById('landmarks-done');
+    const status = document.getElementById('landmarks-status');
+    
+    if (item) item.classList.add('done');
+    if (loader) loader.style.display = 'none';
+    if (done) done.style.display = 'inline';
+    if (status) status.textContent = 'AI sync complete. Landmarks working well.';
+    
+    this.validate();
+    notifications.success('AI Proctoring Active: Landmarks detected.');
   },
 
   async startExam() {

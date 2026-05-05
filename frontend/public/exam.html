@@ -899,6 +899,17 @@
           </div>
           <input type="checkbox" id="consent-checkbox" onchange="ReadinessCheck.updateConsent()">
         </div>
+
+        <!-- AI Landmarks Check -->
+        <div class="check-item" id="check-landmarks">
+          <div class="check-icon">4</div>
+          <div style="flex: 1">
+            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">AI Landmarks Sync</h4>
+            <p class="p-dim" style="font-size: 14px;" id="landmarks-status">Waiting for AI initialization...</p>
+          </div>
+          <div id="landmarks-loader" class="spinner" style="width:20px; height:20px; margin:0; border-width:2px; display:none;"></div>
+          <span id="landmarks-done" style="display:none; color:var(--success); font-weight:700;">✅ Sync Active</span>
+        </div>
       </div>
 
       <button id="btn-start-exam" class="btn btn-primary" style="width: 100%; margin-top: 32px; padding: 18px;" disabled
