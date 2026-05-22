@@ -63,6 +63,7 @@ const SuperAdmin = {
     markers: {},
 
     async init() {
+        if (!auth.checkAuth()) return;
         console.log('🚀 SuperAdmin Initializing...');
         const saved = localStorage.getItem('admin-theme') || 'dark';
         this.applyTheme(saved);

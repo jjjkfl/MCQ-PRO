@@ -256,11 +256,11 @@
         <form id="login-form" onsubmit="handleLogin(event)">
           <div class="auth-input-group">
             <label><i class="fas fa-envelope"></i> Email Address</label>
-            <input type="email" name="email" class="form-control auth-control" placeholder="student@yourschool.com" required autocomplete="email">
+            <input type="email" name="student_email" id="student_email" class="form-control auth-control" placeholder="student@yourschool.com" required autocomplete="username">
           </div>
           <div class="auth-input-group">
             <label><i class="fas fa-lock"></i> Password</label>
-            <input type="password" name="password" class="form-control auth-control" placeholder="••••••••" required autocomplete="current-password">
+            <input type="password" name="student_password" id="student_password" class="form-control auth-control" placeholder="••••••••" required autocomplete="current-password">
           </div>
           <button type="submit" class="auth-submit btn-block mt-3" id="login-btn">
             <span id="btn-text"><i class="fas fa-sign-in-alt"></i> Sign In to Exam Portal</span>
@@ -341,8 +341,8 @@
       loginBtn.classList.add('loading');
       btnText.innerHTML = '<div class="auth-spinner"></div> Authenticating...';
 
-      const formData = new FormData(e.target);
-      const { email, password } = Object.fromEntries(formData);
+      const email = e.target.querySelector('input[type="email"]').value;
+      const password = e.target.querySelector('input[type="password"]').value;
 
       try {
         await auth.login(email, password, 'student');
@@ -386,6 +386,10 @@
         const user = auth.getUser();
         if (user && user.role === 'student') {
           auth.redirectByRole('student');
+        } else {
+          // Clear mismatched session silently to prevent session bleed
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
         }
       }
     });

@@ -7,6 +7,7 @@ const SchoolAdmin = {
     socket: null,
 
     async init() {
+        if (!auth.checkAuth()) return;
         console.log('🏫 SchoolAdmin Initializing...');
         this.bindEvents();
         this.initSocket();
