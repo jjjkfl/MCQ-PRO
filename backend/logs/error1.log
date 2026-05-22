@@ -677,3 +677,34 @@
 [2026-05-21 22:14:41] ERROR: Guardian: Failed to revert 69ec74d4f142d06c1f69ba7d: Connection to localhost:27017 interrupted due to server monitor timeout
 [2026-05-22 10:30:40] ERROR: AuditPulse failed: Operation `results.find()` buffering timed out after 10000ms
 [2026-05-22 10:30:44] ERROR: Guardian scan failed: Operation `resultsnapshots.find()` buffering timed out after 10000ms
+[2026-05-22 10:40:50] ERROR: ❌ MongoDB Connection Error: Server selection timed out after 10000 ms
+[2026-05-22 10:43:49] ERROR: ❌ MongoDB Connection Error: Server selection timed out after 10000 ms
+[2026-05-22 10:50:30] ERROR: ❌ MongoDB Connection Error: Server selection timed out after 10000 ms
+[2026-05-22 11:54:22] ERROR: AuditPulse failed: No document found for query "{ _id: new ObjectId('69f9cecaa60d7e111275db34') }" on model "AuditLog"
+[2026-05-22 11:58:49] ERROR: Guardian scan failed: connection <monitor> to 159.41.170.102:27017 timed out
+[2026-05-22 11:59:26] ERROR: AuditPulse failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 11:59:29] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:00:30] ERROR: Guardian scan failed: 948D0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:c:\ws\deps\openssl\openssl\ssl\record\rec_layer_s3.c:1605:SSL alert number 80
+
+[2026-05-22 12:01:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:02:30] ERROR: Guardian scan failed: 948D0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:c:\ws\deps\openssl\openssl\ssl\record\rec_layer_s3.c:1605:SSL alert number 80
+
+[2026-05-22 12:03:30] ERROR: Guardian scan failed: connect ETIMEDOUT 159.41.170.102:27017
+[2026-05-22 12:04:26] ERROR: AuditPulse failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:04:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:05:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:06:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:07:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:08:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:09:26] ERROR: AuditPulse failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:09:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:10:30] ERROR: Guardian scan failed: connect ETIMEDOUT 159.41.170.102:27017
+[2026-05-22 12:11:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:12:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:13:30] ERROR: Guardian scan failed: getaddrinfo ENOTFOUND ac-hozppkd-shard-00-00.l5ezibk.mongodb.net
+[2026-05-22 12:14:26] ERROR: AuditPulse failed: 948D0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:c:\ws\deps\openssl\openssl\ssl\record\rec_layer_s3.c:1605:SSL alert number 80
+
+[2026-05-22 12:14:30] ERROR: Guardian scan failed: 948D0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:c:\ws\deps\openssl\openssl\ssl\record\rec_layer_s3.c:1605:SSL alert number 80
+
+[2026-05-22 12:15:30] ERROR: Guardian scan failed: 948D0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:c:\ws\deps\openssl\openssl\ssl\record\rec_layer_s3.c:1605:SSL alert number 80
+
