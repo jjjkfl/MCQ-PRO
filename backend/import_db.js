@@ -1,57 +1,54 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
 
-const importDB = async () => {
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/surgical_exam_db';
+const BACKUP_FILE = path.join(__dirname, 'full_database_backup.json');
+
+async function importDatabase() {
+  console.log('🚀 Starting Full Database Import...');
+  
+  if (!fs.existsSync(BACKUP_FILE)) {
+    console.error(`❌ Error: Backup file not found at ${BACKUP_FILE}`);
+    process.exit(1);
+  }
+
+  console.log(`📡 Connecting to: ${MONGO_URI}`);
+
   try {
-    const uri = 'mongodb://127.0.0.1:27017/surgical_exam_db';
-    console.log(`Connecting to ${uri}...`);
-    await mongoose.connect(uri);
+    await mongoose.connect(MONGO_URI);
     const db = mongoose.connection.db;
+    
+    const backupData = JSON.parse(fs.readFileSync(BACKUP_FILE, 'utf8'));
+    const collectionNames = Object.keys(backupData);
 
-    const inputPath = path.join(__dirname, 'full_database_backup.json');
-    if (!fs.existsSync(inputPath)) {
-      console.error(`ERROR: Could not find ${inputPath}`);
-      process.exit(1);
-    }
+    console.log(`📂 Found ${collectionNames.length} collections in backup.`);
 
-    console.log('Reading backup file...');
-    const backupData = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
+    for (const name of collectionNames) {
+      console.log(`📥 Importing collection: ${name} (${backupData[name].length} documents)...`);
+      
+      // Drop existing collection to ensure a clean import
+      try {
+        await db.collection(name).drop();
+      } catch (e) {
+        // Collection might not exist, ignore error
+      }
 
-    // Drop database to ensure a clean slate
-    console.log('Clearing old database...');
-    await db.dropDatabase();
-
-    for (const [colName, documents] of Object.entries(backupData)) {
-      if (documents.length > 0) {
-        // Mongoose automatically revives ObjectIds when inserting using the raw driver
-        // but we need to ensure stringified dates are parsed back to Dates
-        const parsedDocs = documents.map(doc => {
-          for (let key in doc) {
-            if (typeof doc[key] === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(doc[key])) {
-              doc[key] = new Date(doc[key]);
-            }
-          }
-          if (doc._id && typeof doc._id === 'string') {
-             doc._id = new mongoose.Types.ObjectId(doc._id);
-          }
-          return doc;
-        });
-
-        await db.collection(colName).insertMany(parsedDocs);
-        console.log(`✅ Imported ${parsedDocs.length} records into ${colName}`);
-      } else {
-        console.log(`Skipped ${colName} (0 records)`);
+      if (backupData[name].length > 0) {
+        await db.collection(name).insertMany(backupData[name]);
       }
     }
 
-    console.log(`\n🎉 SUCCESS! Database fully synchronized!`);
-    process.exit(0);
+    console.log('\n✅ IMPORT SUCCESSFUL!');
+    console.log('🎉 Your database is now fully restored.');
+    
   } catch (err) {
-    console.error('Error importing database:', err);
-    process.exit(1);
+    console.error('❌ Import failed:', err);
+  } finally {
+    await mongoose.disconnect();
+    process.exit(0);
   }
-};
+}
 
-importDB();
+importDatabase();

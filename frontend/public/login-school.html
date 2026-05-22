@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Admin Login | MCQ Pro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <style>
+    :root {
+      --primary: #8b5cf6;
+      --primary-soft: #f5f3ff;
+      --primary-glow: rgba(139, 92, 246, 0.15);
+      --gradient-primary: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+      --gradient-warm: linear-gradient(135deg, #0f0a1c 0%, #111827 100%);
+      --bg-card: rgba(17, 24, 39, 0.8);
+      --border: rgba(139, 92, 246, 0.2);
+      --text-main: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+    }
+
+    body {
+      overflow-y: auto !important;
+    }
+
+    /* Split-screen Page Container */
+    .auth-page-container {
+      display: flex;
+      width: 100%;
+      max-width: 1000px;
+      min-height: 600px;
+      margin: auto;
+      background: rgba(17, 24, 39, 0.45);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 40px var(--primary-glow);
+      z-index: 5;
+      position: relative;
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Left Side: Rich Graphic Display */
+    .auth-graphic-side {
+      flex: 1.1;
+      position: relative;
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(11, 15, 25, 0.95) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3.5rem;
+      overflow: hidden;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .auth-graphic-side::before {
+      content: '';
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      background: var(--primary);
+      opacity: 0.12;
+      filter: blur(70px);
+      top: -50px;
+      left: -50px;
+      border-radius: 50%;
+    }
+
+    .auth-graphic-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .auth-graphic-logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-graphic-logo span {
+      color: var(--primary);
+    }
+
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .auth-graphic-title {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-top: 1.5rem;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .auth-graphic-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-top: 0.75rem;
+    }
+
+    .auth-graphic-image-container {
+      position: relative;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1.5rem 0;
+      min-height: 250px;
+    }
+
+    .auth-graphic-image {
+      max-width: 80%;
+      max-height: 240px;
+      object-fit: contain;
+      border-radius: 16px;
+      filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.5));
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .auth-graphic-footer {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Right Side: Interactive Login Form */
+    .auth-form-side {
+      flex: 0.9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3.5rem;
+      background: rgba(17, 24, 39, 0.2);
+    }
+
+    .auth-form-card {
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition-fast);
+      z-index: 10;
+    }
+
+    .back-btn:hover {
+      color: var(--primary);
+      transform: translateX(-2px);
+    }
+
+    /* Responsive alignment */
+    @media (max-width: 850px) {
+      .auth-page-container {
+        flex-direction: column;
+        max-width: 480px;
+        min-height: auto;
+        margin: 2rem auto;
+      }
+
+      .auth-graphic-side {
+        padding: 3rem 2rem 1.5rem 2rem;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .auth-graphic-image-container {
+        display: none;
+      }
+
+      .auth-form-side {
+        padding: 3rem 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="auth-body">
+  <a href="/login.html" class="back-btn">
+    <i class="fas fa-arrow-left"></i> Portals Hub
+  </a>
+
+  <div class="bg-pattern"></div>
+  <div class="floating-med-icons"></div>
+
+  <!-- Unified Split Panel Layout -->
+  <div class="auth-page-container">
+    <!-- Graphic Illustration Panel -->
+    <div class="auth-graphic-side">
+      <div class="auth-graphic-content">
+        <div class="auth-graphic-logo">MCQ<span>PRO</span></div>
+        <div>
+          <span class="role-badge"><i class="fas fa-user-shield"></i> Principal / Director</span>
+        </div>
+        <h2 class="auth-graphic-title">Academic Leadership Hub</h2>
+        <p class="auth-graphic-desc">Review faculty teaching assignments, audit classroom performance, approve syllabi, manage school calendars, and publish community bulletins.</p>
+      </div>
+
+      <div class="auth-graphic-image-container">
+        <img src="/images/login-school.png" alt="School Admin Illustration" class="auth-graphic-image">
+      </div>
+
+      <div class="auth-graphic-footer">
+        <i class="fas fa-network-wired"></i> Central Hub Synced
+      </div>
+    </div>
+
+    <!-- Interactive Login Panel -->
+    <div class="auth-form-side">
+      <div class="auth-form-card">
+        <div class="auth-header" style="text-align: left; margin-bottom: 2rem;">
+          <h2 class="h2" style="color: #ffffff;">Sign In</h2>
+          <p class="p-dim">Please verify your institutional credentials</p>
+        </div>
+
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="auth-input-group">
+            <label><i class="fas fa-envelope"></i> Email Address</label>
+            <input type="email" name="email" class="form-control auth-control" placeholder="admin@yourschool.com" required autocomplete="email">
+          </div>
+          <div class="auth-input-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" name="password" class="form-control auth-control" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="auth-submit btn-block mt-3" id="login-btn">
+            <span id="btn-text"><i class="fas fa-sign-in-alt"></i> Sign In to School Portal</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared JS -->
+  <script src="/js/shared/api.js"></script>
+  <script src="/js/shared/auth.js"></script>
+  <script src="/js/shared/notifications.js"></script>
+
+  <script>
+    function createFloatingIcons() {
+      const icons = ['🏫', '🏛️', '📊', '👥', '📋', '📁', '🔑', '📝'];
+      const container = document.querySelector('.floating-med-icons');
+      if (!container) return;
+
+      for (let i = 0; i < 8; i++) {
+        const icon = document.createElement('div');
+        icon.className = 'floating-icon';
+        icon.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+        icon.style.top = `${Math.random() * 90}%`;
+        icon.style.left = `${Math.random() * 90}%`;
+        icon.style.fontSize = `${Math.random() * 20 + 16}px`;
+        icon.style.animation = `float ${Math.random() * 10 + 10}s infinite ease-in-out`;
+        container.appendChild(icon);
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const loginBtn = document.getElementById('login-btn');
+      const btnText = document.getElementById('btn-text');
+      
+      loginBtn.disabled = true;
+      loginBtn.classList.add('loading');
+      btnText.innerHTML = '<div class="auth-spinner"></div> Authenticating...';
+
+      const formData = new FormData(e.target);
+      const { email, password } = Object.fromEntries(formData);
+
+      try {
+        await auth.login(email, password, 'school_admin');
+        notifications.success('Welcome back, Institutional Principal!');
+      } catch (err) {
+        notifications.error(err.message || 'Login failed');
+        loginBtn.disabled = false;
+        loginBtn.classList.remove('loading');
+        btnText.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In to School Portal';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      createFloatingIcons();
+      if (auth.isAuthenticated()) {
+        const user = auth.getUser();
+        if (user && user.role === 'school_admin') {
+          auth.redirectByRole('school_admin');
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

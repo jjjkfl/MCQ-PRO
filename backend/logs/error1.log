@@ -95,3 +95,585 @@
 [2026-05-04 10:48:51] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
 [2026-05-04 10:53:09] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
 [2026-05-04 10:58:09] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 11:56:52] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 11:56:52] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 11:56:52] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 11:56:52] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 11:56:52] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 11:58:09] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 11:59:59] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 11:59:59] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:00] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:00] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:01] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:01] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:14] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:14] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:00:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:03:09] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:12:20] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:12:20] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:12:20] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:12:20] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:12:20] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:13:09] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 12:18:09] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:16:13] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:16:13] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:16:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:16:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:16:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:16:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:17:40] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:17:40] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:17:42] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:17:42] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:17:42] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:17:42] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:24:36] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:28:09] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:33:05] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 13:33:09] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:45:26] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:45:26] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:45:26] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:45:26] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:46:40] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:46:40] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:46:41] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:46:41] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:46:41] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:46:41] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:46:41] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:48:10] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 15:53:10] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:47] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:47] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:49] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:49] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:49] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:02:49] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:20:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:20:22] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:20:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:20:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:20:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:20:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:20:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:20:26] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:20:26] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:09] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:09] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:50] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:50] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:51] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:51] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:57] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:57] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:59] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:59] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:59] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:21:59] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:23:10] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:28:10] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:33:40] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:33:40] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:34:02] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:34:02] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:34:20] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:34:20] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:34:20] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:34:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:34:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:35:51] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:35:51] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:35:51] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:35:51] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:38:10] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:40:29] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:40:29] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:40:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:40:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:40:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:40:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 16:43:10] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:24] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:24] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:38] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:38] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:56] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:56] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:56] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:07:56] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:12:00] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:12:00] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:12:16] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:12:16] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:12:18] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:12:18] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:12:18] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:12:18] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:13:45] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:13:45] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:13:47] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:13:47] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:13:47] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:13:47] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:09] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:09] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:10] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:10] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:13] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:13] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:19] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:19] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:26:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:38] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:38] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:38] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:38] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:51] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:51] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:53] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:53] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:53] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:31:53] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:43:59] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:43:59] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:44:01] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:44:01] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:44:01] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-04 17:44:01] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:20:56] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:20:56] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:20:57] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:20:57] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:21:00] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:21:00] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:21:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:21:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:21:56] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:21:56] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:21:56] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 09:21:56] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:17:40] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:17:40] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:18] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:18] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:22] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:22] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:24] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:24] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:24] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:24] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:33] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:19:33] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:20:14] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:20:14] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:20:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:20:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:20:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:20:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:36:27] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:36:27] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:36:29] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:36:29] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:36:29] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 10:36:29] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:43:56] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:43:56] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:43:57] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:43:57] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:14] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:14] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:18] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:18] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:24] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:24] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:44:41] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:45:28] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:45:28] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:46:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:46:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:46:40] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:46:40] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:47:03] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:47:03] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:47:05] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:47:05] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:47:05] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:47:05] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:49:41] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:14] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:14] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:39] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:39] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:43] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:43] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:45] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:45] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:45] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:54:45] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:55:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:55:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:55:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:55:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:55:26] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:55:26] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:55:26] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 13:55:26] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:10] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:10] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:10] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:10] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:10] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:10] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:20] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:20] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:20] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:20] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:27] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:02:27] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:28] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:28] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:30] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:30] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:35] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:35] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:36] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:36] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:36] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:03:36] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:19] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:19] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:27] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:27] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:32] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:32] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:33] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:33] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:33] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:33] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:37] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:37] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:37] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:37] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:41] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:41] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:41] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:41] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:52] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:52] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:17:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:21:35] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:21:35] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:21:35] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:21:35] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:23:47] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:23:47] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:02] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:02] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:06] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:06] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:12] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:12] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:12] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:12] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:15] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:15] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:44] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:44] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:44] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:44] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:44] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:24:44] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:22] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:22] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:23] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:23] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:24] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:24] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:24] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:24] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:24] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:24] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:24] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:24] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:27] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:27] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:32] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:32] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:38] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:38] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:38] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:38] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:40:38] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:44:42] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:26] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:26] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:29] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:29] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:30] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:30] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:30] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:30] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:30] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:30] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:38] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:38] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:39] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:39] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:39] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:39] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:39] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:40] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:40] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:40] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:41] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:41] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:50] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:50] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:51] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:51] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:51] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:51] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:52] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:52] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:52] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:52] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:53] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:53] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:58] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:58] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:58] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:58] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:59] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:59] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:59] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:59] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:59] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:46:59] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:00] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:00] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:01] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:01] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:03] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:03] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:09] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:09] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:26] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:26] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:34] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:34] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:36] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:36] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:36] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:36] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:36] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:47:36] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:49:41] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:05] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:05] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:05] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:05] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:13] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:13] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:15] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:15] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:15] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 14:53:15] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:07:25] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:07:25] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:07:37] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:07:37] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:07:37] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:07:37] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:07:37] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:07:37] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:08] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:08] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:09] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:09] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:10] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:10] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:12] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:12] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:12] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:12] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:19] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:19] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:20] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:20] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:20] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:20] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:29] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:29] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:30] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:30] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:30] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:30] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:30] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:30] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:49] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:49] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:59] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:59] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:59] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:08:59] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:22] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:22] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:27] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:27] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:30] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:30] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:30] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:17:30] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:20:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:20:11] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:20:13] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:20:13] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:20:13] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:20:13] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:25:17] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:25:17] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:25:31] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:25:31] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:26:02] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:26:02] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:26:09] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:26:09] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:26:15] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:26:15] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:26:15] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:26:15] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:32:42] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:32:42] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:32:44] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:32:44] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:32:44] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:32:44] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:41:26] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 15:41:26] ERROR: sealGenericData error [mcqbank]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:07:32] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:07:32] ERROR: sealGenericData error [mcqbank]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:42] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:42] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:42] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:42] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:43] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:43] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:43] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:43] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:44] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:26:44] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:27:15] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:27:15] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:27:21] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:27:21] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:27:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:27:22] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:27:22] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:28:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:28:54] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:28:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:28:54] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:29:10] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:29:10] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:29:10] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:29:10] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:29:10] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:29:10] ERROR: sealGenericData error [violation]: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:29:11] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:29:42] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:34:42] ERROR: anchorStateRoot error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-05 16:41:45] ERROR: storeResultHash error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-21 14:54:57] ERROR: getBlockchainStats error: connect ECONNREFUSED 127.0.0.1:8545
+[2026-05-21 22:14:41] ERROR: Guardian: Failed to revert 69ec74d4f142d06c1f69ba7d: Connection to localhost:27017 interrupted due to server monitor timeout
+[2026-05-22 10:30:40] ERROR: AuditPulse failed: Operation `results.find()` buffering timed out after 10000ms
+[2026-05-22 10:30:44] ERROR: Guardian scan failed: Operation `resultsnapshots.find()` buffering timed out after 10000ms

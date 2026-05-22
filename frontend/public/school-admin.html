@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Admin | Management Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin-style.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span id="school-name">SchoolAdmin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-tab="dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="live">
+                        <i class="fas fa-broadcast-tower"></i>
+                        <span>Live Monitor</span>
+                        <span class="badge-pill" id="sa-live-exam-count" style="background:#d97a7e; color:#fff; display:none; padding:2px 6px; font-size:10px; border-radius:10px; margin-left:5px;">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="students">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Students</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="teachers">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Teachers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="exams">
+                        <i class="fas fa-file-signature"></i>
+                        <span>Exams & Results</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="materials">
+                        <i class="fas fa-folder-open"></i>
+                        <span>Academic Materials</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="certificates">
+                        <i class="fas fa-certificate"></i>
+                        <span>Certificates</span>
+                    </a>
+                </li>
+                <li class="nav-item" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 5px; margin-top: 5px;">
+                    <a href="#" class="nav-link" data-tab="security" style="color: #30d158;">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Security Intel</span>
+                        <span class="badge-pill" style="background:#30d158; color:#000; padding:2px 6px; font-size:9px; border-radius:10px; margin-left:5px; font-weight:800;">ACTIVE</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>School Settings</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="nav-item mt-auto">
+                <a href="#" class="nav-link text-danger" onclick="auth.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header animate-fade-in">
+                <div>
+                    <h1 id="welcome-message">School Dashboard</h1>
+                    <p class="text-secondary" id="school-subtitle">Manage your institution's academic ecosystem.</p>
+                </div>
+                <div class="flex gap-2" style="align-items:center;">
+                    <button id="sa-theme-toggle" onclick="SchoolAdmin.toggleTheme()" title="Toggle Theme"
+                        style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#f5f5f7;padding:8px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all 0.3s;">
+                        <i class="fas fa-sun"></i> Light Mode
+                    </button>
+                    <button class="btn btn-primary" id="header-add-student-btn">
+                        <i class="fas fa-plus"></i> Add Student
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <div id="tab-dashboard" class="tab-content animate-slide-up">
+                <div class="stats-grid">
+                    <div class="glass-card stat-card">
+                        <span class="stat-label">Total Students</span>
+                        <div class="stat-value" id="stat-students">--</div>
+                        <span class="stat-trend trend-up"><i class="fas fa-arrow-up"></i> 4 new today</span>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <span class="stat-label">Total Teachers</span>
+                        <div class="stat-value" id="stat-teachers">--</div>
+                        <span class="stat-trend">Full capacity</span>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <span class="stat-label">Active Exams</span>
+                        <div class="stat-value" id="stat-exams">--</div>
+                        <span class="stat-trend trend-up">2 scheduled for today</span>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <span class="stat-label">Attendance Rate</span>
+                        <div class="stat-value text-primary" id="stat-attendance">--</div>
+                        <span class="stat-trend trend-up"><i class="fas fa-arrow-up"></i> 2% above average</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Monitoring Tab -->
+            <div id="tab-live" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card" style="border: 1px solid rgba(217,122,126,0.2); background: linear-gradient(135deg, rgba(217,122,126,0.05), rgba(0,0,0,0));">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 style="color:#d97a7e;"><i class="fas fa-satellite-dish animate-pulse"></i> Active School Sessions</h3>
+                            <p class="text-secondary" style="font-size:13px;">Monitor exams currently being conducted by your teachers in real-time.</p>
+                        </div>
+                        <div id="sa-live-timer-badge" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600;">
+                            <span>Refreshing in <span id="sa-refresh-timer">30</span>s</span>
+                            <button class="btn btn-ghost" style="padding:0; width:24px; height:24px;" onclick="SchoolAdmin.loadLiveExams()" title="Refresh Now">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="sa-live-exams-container" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1.25rem;">
+                        <!-- Live Exam Cards -->
+                        <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#8e8e93;">
+                            <i class="fas fa-ghost" style="font-size:3rem; opacity:0.2; display:block; margin-bottom:1rem;"></i>
+                            No exams currently in progress.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Tab -->
+            <div id="tab-students" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3>Student Enrollment</h3>
+                            <p class="text-secondary" style="font-size:13px;">All students registered in your institution</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" class="form-control" placeholder="🔍 Search students..." id="student-search" oninput="SchoolAdmin.filterStudents(this.value)" style="width:200px;">
+                            <button class="btn btn-primary" onclick="SchoolAdmin.showAddStudentModal()">
+                                <i class="fas fa-user-plus"></i> Add Student
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Class</th>
+                                    <th>Division</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-list">
+                                <tr><td colspan="5" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teachers Tab -->
+            <div id="tab-teachers" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3>Faculty Management</h3>
+                            <p class="text-secondary" style="font-size:13px;">All teachers and faculty members</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="SchoolAdmin.showAddTeacherModal()">
+                            <i class="fas fa-chalkboard-teacher"></i> Add Teacher
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Teacher</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teachers-list">
+                                <tr><td colspan="5" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exams Tab -->
+            <div id="tab-exams" class="tab-content animate-slide-up" style="display: none;">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-card">
+                        <h3>Examination Schedule</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Exam Name</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="exams-list-detailed"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3>Academic Performance & Proctoring Results</h3>
+                        <p class="text-secondary" style="font-size: 12px; margin-bottom: 12px;">Audits student grades and checks for active exam proctoring violation red-flags.</p>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Course/Exam</th>
+                                        <th>Grade</th>
+                                        <th>Proctoring Violations</th>
+                                        <th>Time Taken</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-summary">
+                                    <tr><td colspan="5" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading results...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificates Tab -->
+            <div id="tab-certificates" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card">
+                    <h3>Issued Certificates</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cert ID</th>
+                                    <th>Student</th>
+                                    <th>Exam</th>
+                                    <th>Issue Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="certificates-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="tab-settings" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card">
+                    <h3>School Profile & Branding</h3>
+                    <form id="settings-form" class="mt-3">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label>School Name</label>
+                                <input type="text" class="form-control" value="International Public School">
+                            </div>
+                            <div class="form-group">
+                                <label>Academic Year</label>
+                                <input type="text" class="form-control" value="2025-26">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Branding Colors</label>
+                            <div class="flex gap-2">
+                                <input type="color" class="form-control" value="#5c8d89">
+                                <input type="color" class="form-control" value="#1d1d1f">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">Save Settings</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Academic Materials Tab -->
+            <div id="tab-materials" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3>Academic Materials & Lesson Notes</h3>
+                            <p class="text-secondary" style="font-size:13px;">Manage, review, or delete teaching materials shared by faculty members</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <select class="form-control" id="materials-filter-division" onchange="SchoolAdmin.filterMaterials()" style="width:160px;">
+                                <option value="">Filter Division (All)</option>
+                                <option value="A">Division A</option>
+                                <option value="B">Division B</option>
+                                <option value="C">Division C</option>
+                                <option value="D">Division D</option>
+                            </select>
+                            <input type="text" class="form-control" id="materials-search-subject" placeholder="🔍 Search Subject..." oninput="SchoolAdmin.filterMaterials()" style="width:180px;">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Document Title</th>
+                                    <th>Subject</th>
+                                    <th>Target Class</th>
+                                    <th>Division</th>
+                                    <th>Uploaded By (Teacher)</th>
+                                    <th>Upload Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materials-list">
+                                <tr><td colspan="7" class="text-center" style="color:#8e8e93;">No study materials found.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Intelligence Tab -->
+            <div id="tab-security" class="tab-content animate-slide-up" style="display: none;">
+                <!-- Security Overview Cards -->
+                <div class="stats-grid mb-4">
+                    <div class="glass-card stat-card" style="border-left: 4px solid #30d158; padding: 1.25rem;">
+                        <span class="stat-label"><i class="fas fa-shield-alt" style="color:#30d158;"></i> Database Risk Status</span>
+                        <div class="stat-value text-success" id="security-threat-score" style="color:#30d158; font-size: 1.8rem; margin: 5px 0;">LOW</div>
+                        <span class="stat-trend" style="color:#8e8e93;">Average Risk Score: <strong id="security-avg-risk">12</strong>/100</span>
+                    </div>
+                    <div class="glass-card stat-card" style="border-left: 4px solid #0a84ff; padding: 1.25rem;">
+                        <span class="stat-label"><i class="fas fa-network-wired" style="color:#0a84ff;"></i> Zero Trust Gateway</span>
+                        <div class="stat-value" style="color:#0a84ff; font-size: 1.8rem; margin: 5px 0;">SECURE</div>
+                        <span class="stat-trend" style="color:#8e8e93;">Continuous context assessments active</span>
+                    </div>
+                    <div class="glass-card stat-card" style="border-left: 4px solid #bf5af2; padding: 1.25rem;">
+                        <span class="stat-label"><i class="fas fa-spider" style="color:#bf5af2;"></i> Deception Traps</span>
+                        <div class="stat-value" style="color:#bf5af2; font-size: 1.8rem; margin: 5px 0;">2 ACTIVE</div>
+                        <span class="stat-trend" style="color:#8e8e93;">Honeypot ports fully monitored</span>
+                    </div>
+                    <div class="glass-card stat-card" style="border-left: 4px solid #ff9f0a; padding: 1.25rem;">
+                        <span class="stat-label"><i class="fas fa-heartbeat" style="color:#ff9f0a;"></i> Self-Healing Nodes</span>
+                        <div class="stat-value" style="color:#ff9f0a; font-size: 1.8rem; margin: 5px 0;">ONLINE</div>
+                        <span class="stat-trend" style="color:#8e8e93;">Guardian scan running every 60s</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <!-- Blockchain State Integrity Audit Card -->
+                    <div class="glass-card" style="border: 1px solid rgba(10,132,255,0.2); padding: 1.25rem;">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 style="color:#0a84ff; font-size: 1.1rem; margin: 0;"><i class="fas fa-cubes"></i> Blockchain State Root Verification</h3>
+                            <span class="badge-pill" style="background:rgba(10,132,255,0.1); color:#0a84ff; font-weight:700; font-size: 10px; padding: 2px 8px; border-radius: 10px;">Ethereum Sealed</span>
+                        </div>
+                        <p class="text-secondary" style="font-size:12px; margin-bottom:15px; line-height: 1.4;">
+                            Compares MongoDB collection hash roots with smart contract state anchors on-chain. Forces validation of cryptographic evidence.
+                        </p>
+                        
+                        <div style="background:rgba(0,0,0,0.2); padding:12px; border-radius:10px; font-size:12.5px; border:1px solid rgba(255,255,255,0.05); margin-bottom:15px; font-family:monospace;">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-secondary">Network Target:</span>
+                                <span style="color:#f5f5f7;" id="sec-net-name">Local Hardhat Node (127.0.0.1:8545)</span>
+                            </div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-secondary">Contract Address:</span>
+                                <span style="color:#f5f5f7; font-size:11px;" id="sec-contract-addr">0x5FbDB2315678afecb367f032d93F642f64180aa3</span>
+                            </div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-secondary">Last Block Height:</span>
+                                <span style="color:#f5f5f7;" id="sec-block-height">Searching...</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-secondary">Sealed Hashes Count:</span>
+                                <span style="color:#f5f5f7;" id="sec-sealed-count">Analyzing...</span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button class="btn btn-primary" id="btn-run-audit" onclick="SchoolAdmin.runDatabaseVerification()" style="flex:1;">
+                                <i class="fas fa-check-double"></i> Run Cryptographic Integrity Check
+                            </button>
+                        </div>
+
+                        <!-- Verification Output (Live display area) -->
+                        <div id="audit-verify-output" style="display:none; margin-top:12px; padding:10px; border-radius:8px; font-size:12px; font-family:monospace; border: 1px solid rgba(255,255,255,0.08);"></div>
+                    </div>
+
+                    <!-- Autonomous Database Self-Healing Node Control Card -->
+                    <div class="glass-card" style="border: 1px solid rgba(255,159,10,0.2); padding: 1.25rem;">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 style="color:#ff9f0a; font-size: 1.1rem; margin: 0;"><i class="fas fa-redo"></i> Autonomous Recovery Control</h3>
+                            <span class="badge-pill" style="background:rgba(255,159,10,0.1); color:#ff9f0a; font-weight:700; font-size: 10px; padding: 2px 8px; border-radius: 10px;">Guardian Node</span>
+                        </div>
+                        <p class="text-secondary" style="font-size:12px; margin-bottom:15px; line-height: 1.4;">
+                            If database intrusion overrides access control, the Self-Healing Guardian automatically restores canon state and re-syncs records with immutable copies.
+                        </p>
+
+                        <div style="background:rgba(0,0,0,0.2); padding:12px; border-radius:10px; font-size:12.5px; border:1px solid rgba(255,255,255,0.05); margin-bottom:15px; font-family:monospace;">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-secondary">Guardian System Mode:</span>
+                                <span style="color:#30d158; font-weight:700;"><i class="fas fa-check-circle"></i> AUTO-HEALING ACTIVE</span>
+                            </div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-secondary">Detection Speed:</span>
+                                <span style="color:#f5f5f7;">Realtime Event Streams + 60s Polling</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-secondary">Discrepancy Action:</span>
+                                <span style="color:#ff453a; font-weight:600;">Revert & Lock Intruder Session</span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button class="btn btn-secondary" id="btn-trigger-recovery" onclick="SchoolAdmin.triggerSelfHealingRecovery()" style="flex:1; border: 1px solid #ff9f0a; color:#ff9f0a; background:rgba(255,159,10,0.05);">
+                                <i class="fas fa-sync-alt"></i> Trigger Manual Recovery & State Re-Sync
+                            </button>
+                        </div>
+                        
+                        <!-- Recovery Output (Live display area) -->
+                        <div id="recovery-output" style="display:none; margin-top:12px; padding:10px; border-radius:8px; font-size:12px; font-family:monospace; background:rgba(255,159,10,0.1); border:1px solid rgba(255,159,10,0.2); color:#ff9f0a;"></div>
+                    </div>
+                </div>
+
+                <!-- Forensic Security Logs Tab -->
+                <div class="glass-card" style="padding: 1.25rem;">
+                    <div class="flex justify-between items-center mb-3">
+                        <div>
+                            <h3 style="margin: 0;">Immutable Cryptographic Forensic Log</h3>
+                            <p class="text-secondary" style="font-size:12px; margin: 3px 0 0 0;">Forensic trail of all system access checks. Each log item is cryptographically chained to the previous entry.</p>
+                        </div>
+                        <button class="btn btn-ghost" onclick="SchoolAdmin.loadSecurityIntel()"><i class="fas fa-sync-alt"></i> Refresh Log</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Security Category</th>
+                                    <th>Risk Level</th>
+                                    <th>Risk Score</th>
+                                    <th>Details</th>
+                                    <th>Chained State Block (SHA-256 Hash)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="security-logs-tbody">
+                                <tr><td colspan="6" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading secure forensic ledger...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="modal-add-student" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:460px; max-width:95vw; padding:2rem;">
+            <div class="flex justify-between items-center mb-4">
+                <h3><i class="fas fa-user-graduate"></i> Add New Student</h3>
+                <button class="btn btn-ghost" onclick="SchoolAdmin.closeModal('modal-add-student')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-student-form">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" class="form-control" id="s-name" placeholder="e.g. Alice Johnson" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" class="form-control" id="s-email" placeholder="alice@school.com" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label>Class / Grade</label>
+                        <input type="text" class="form-control" id="s-class" placeholder="e.g. 10th Grade">
+                    </div>
+                    <div class="form-group">
+                        <label>Division</label>
+                        <select class="form-control" id="s-division">
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Temporary Password</label>
+                    <input type="password" class="form-control" id="s-password" placeholder="Default: Student@123">
+                </div>
+                <div class="flex gap-2" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" id="add-student-btn">
+                        <i class="fas fa-plus"></i> Add Student
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="SchoolAdmin.closeModal('modal-add-student')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Teacher Modal -->
+    <div id="modal-add-teacher" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:460px; max-width:95vw; padding:2rem;">
+            <div class="flex justify-between items-center mb-4">
+                <h3><i class="fas fa-chalkboard-teacher"></i> Add New Teacher</h3>
+                <button class="btn btn-ghost" onclick="SchoolAdmin.closeModal('modal-add-teacher')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-teacher-form">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" class="form-control" id="t-name" placeholder="e.g. Dr. Robert Smith" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" class="form-control" id="t-email" placeholder="teacher@school.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Temporary Password</label>
+                    <input type="password" class="form-control" id="t-password" placeholder="Default: Teacher@123">
+                </div>
+                <div class="flex gap-2" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" id="add-teacher-btn">
+                        <i class="fas fa-plus"></i> Add Teacher
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="SchoolAdmin.closeModal('modal-add-teacher')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit User Modal (Teacher/Student) -->
+    <div id="modal-edit-user" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:460px; max-width:95vw; padding:2rem;">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="edit-modal-title"><i class="fas fa-edit"></i> Edit User</h3>
+                <button class="btn btn-ghost" onclick="SchoolAdmin.closeModal('modal-edit-user')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="edit-user-form">
+                <input type="hidden" id="edit-user-id">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" class="form-control" id="edit-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" class="form-control" id="edit-email" required>
+                </div>
+                <div id="edit-student-fields" style="display:none;">
+                    <div class="form-group">
+                        <label>Class / Grade</label>
+                        <input type="text" class="form-control" id="edit-class">
+                    </div>
+                    <div class="form-group">
+                        <label>Division</label>
+                        <select class="form-control" id="edit-division">
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select class="form-control" id="edit-active">
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+                <div class="flex gap-2" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" id="edit-user-btn">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="SchoolAdmin.closeModal('modal-edit-user')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/shared/api.js"></script>
+    <script src="/js/shared/auth.js"></script>
+    <script src="/js/shared/utils.js"></script>
+    <script src="/js/shared/notifications.js"></script>
+    <script src="/js/admin/school-admin.js"></script>
+</body>
+</html>

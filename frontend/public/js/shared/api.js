@@ -3,8 +3,8 @@
  * Centralized API handler for backend communication
  */
 
-const API_BASE_URL = 'http://localhost:5000/api';
-const SERVER_URL = 'http://localhost:5000';
+const API_BASE_URL = window.location.origin + '/api';
+const SERVER_URL = window.location.origin;
 
 const api = {
   /**
@@ -25,6 +25,7 @@ const api = {
     };
 
     try {
+      console.log(`🌐 API Request: ${options.method || 'GET'} ${endpoint}`);
       const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
       const result = await response.json();
 
@@ -50,6 +51,13 @@ const api = {
   post(endpoint, body) {
     return this.request(endpoint, {
       method: 'POST',
+      body: JSON.stringify(body)
+    });
+  },
+
+  put(endpoint, body) {
+    return this.request(endpoint, {
+      method: 'PUT',
       body: JSON.stringify(body)
     });
   },

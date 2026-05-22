@@ -8,7 +8,8 @@
     padding: 2rem;
     background: var(--gradient-warm);
     position: relative;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* Soft floating shapes */

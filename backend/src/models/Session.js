@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const sessionSchema = new mongoose.Schema({
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
+  schoolId: { type: mongoose.Schema.Types.ObjectId, ref: 'School' }, // For global tracking
+  teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // The creator of the session
   division: { type: String, enum: ['A', 'B', 'C', 'D'], required: true },
   title: { type: String, required: true },
   /** Carried from MCQ bank (or set manually) for per-subject reporting */

@@ -7,13 +7,15 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { 
     type: String, 
-    enum: ['student', 'teacher'], 
+    enum: ['student', 'teacher', 'super_admin', 'school_admin'], 
     default: 'student' 
   },
+  schoolId: { type: mongoose.Schema.Types.ObjectId, ref: 'School' },
+  isActive: { type: Boolean, default: true },
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' }, // For students
   courseIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }], // For teachers
   classTag: { type: String, default: '' }, // e.g. "10th Grade"
-  division: { type: String, enum: ['A', 'B', 'C', 'D'], required: function() { return this.role === 'student'; } }
+  division: { type: String, enum: ['A', 'B', 'C', 'D', ''], default: '' }
 }, { timestamps: true });
 
 userSchema.pre('save', async function(next) {

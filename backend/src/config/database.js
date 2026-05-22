@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const logger = require('../utils/logger');
+const seedSecurityLogs = require('./seedSecurityLogs');
 
 const connectDB = async () => {
   try {
@@ -8,6 +9,9 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
     logger.info(`✅ MongoDB Connected: ${conn.connection.host}`);
+    
+    // Seed security logs database
+    await seedSecurityLogs();
   } catch (err) {
     logger.error(`❌ MongoDB Connection Error: ${err.message}`);
     process.exit(1);

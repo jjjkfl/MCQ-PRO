@@ -60,7 +60,7 @@ const ResultDetail = {
           <div class="glass-card" style="margin-bottom: 24px; padding: 24px; text-align: left; border-left: 4px solid var(--primary);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
               <h3 style="font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary);">🛡️ Security Audit</h3>
-              <span class="badge" style="background: rgba(52, 199, 89, 0.1); color: var(--success); font-size: 11px;">Validated</span>
+              <span class="badge" style="background: rgba(107, 168, 122, 0.1); color: var(--success); font-size: 11px;">Validated</span>
             </div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
@@ -104,7 +104,7 @@ const ResultDetail = {
 
       Modal.show('verify', `
         <div style="text-align: left">
-          <div style="background: rgba(52, 199, 89, 0.1); color: var(--success); padding: 16px; border-radius: 12px; margin-bottom: 24px; display:flex; align-items:center; gap:12px;">
+          <div style="background: rgba(107, 168, 122, 0.1); color: var(--success); padding: 16px; border-radius: 12px; margin-bottom: 24px; display:flex; align-items:center; gap:12px;">
              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
              <div>
                <div style="font-weight: 600;">Hash Verified!</div>

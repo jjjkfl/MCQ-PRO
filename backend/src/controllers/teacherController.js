@@ -132,7 +132,9 @@ exports.createSession = async (req, res) => {
       questions,
       startTime: new Date(scheduledStart),
       duration: durationMinutes,
-      courseId
+      courseId,
+      schoolId: req.user.schoolId,
+      teacherId: req.user.id
     });
 
     res.status(201).json({ success: true, data: session });

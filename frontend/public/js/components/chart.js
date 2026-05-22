@@ -18,8 +18,8 @@ const Charts = {
         datasets: [{
           label: 'Students',
           data: Object.values(data),
-          backgroundColor: 'rgba(0, 113, 227, 0.5)',
-          borderColor: '#0071e3',
+          backgroundColor: 'rgba(92, 141, 137, 0.5)',
+          borderColor: '#5c8d89',
           borderWidth: 1,
           borderRadius: 8
         }]

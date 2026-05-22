@@ -12,6 +12,11 @@ const eduCtrl = () => require('../controllers/eduController');
 
 router.use(authMiddleware);
 
+// Apply Web Application Firewall (WAF) and Zero Trust Context-Aware Assessor
+const { wafGuard, zeroTrustAssessor } = require('../middleware/securityEngine');
+router.use(wafGuard);
+router.use(zeroTrustAssessor);
+
 // Materials
 router.get('/portal/edu/courses/all/materials', rbac(['teacher']), (req, res) => eduCtrl().getMaterials(req, res));
 router.get('/portal/edu/courses/:courseId/materials', (req, res) => eduCtrl().getMaterials(req, res));
@@ -99,7 +104,7 @@ const AuditLog = require('../models/AuditLog');
 const { getTamperAlert } = require('../services/blockchain/auditPulse');
 
 // Real-time tamper alert status
-router.get('/portal/security/tamper-status', rbac(['teacher', 'admin']), async (req, res) => {
+router.get('/portal/security/tamper-status', rbac(['teacher', 'admin', 'school_admin']), async (req, res) => {
     const alert = getTamperAlert();
     const recentTampers = await AuditLog.find({ status: 'tamper_detected' }).sort({ createdAt: -1 }).limit(5);
     res.json({
@@ -110,9 +115,100 @@ router.get('/portal/security/tamper-status', rbac(['teacher', 'admin']), async (
 });
 
 // Full audit log history
-router.get('/portal/security/audit-logs', rbac(['teacher', 'admin']), async (req, res) => {
+router.get('/portal/security/audit-logs', rbac(['teacher', 'admin', 'school_admin']), async (req, res) => {
     const logs = await AuditLog.find().sort({ createdAt: -1 }).limit(20);
     res.json({ logs });
+});
+
+// Real-time forensic threat logs & average database risk score
+router.get('/portal/security/threat-logs', rbac(['teacher', 'admin', 'school_admin']), async (req, res) => {
+    try {
+        const SecurityLog = require('../models/SecurityLog');
+        const logs = await SecurityLog.find().sort({ createdAt: -1 }).limit(30);
+        
+        // Calculate average database risk score
+        const recentLogs = await SecurityLog.find().sort({ createdAt: -1 }).limit(15);
+        let totalRisk = 0;
+        if (recentLogs.length > 0) {
+            recentLogs.forEach(l => totalRisk += l.riskScore);
+            totalRisk = Math.round(totalRisk / recentLogs.length);
+        } else {
+            totalRisk = 12; // default low base risk
+        }
+
+        res.json({
+            success: true,
+            logs,
+            averageRiskScore: totalRisk
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// Run manual blockchain + database verification check
+router.post('/portal/security/verify-database', rbac(['teacher', 'admin', 'school_admin']), async (req, res) => {
+    try {
+        // Run audit pulse to recheck root
+        const { runAuditPulse } = require('../services/blockchain/auditPulse');
+        await runAuditPulse();
+        
+        // Run full verifier suite
+        const { verifySystemIntegrity } = require('../services/blockchain/verifierService');
+        const auditResult = await verifySystemIntegrity();
+        
+        // Log the check
+        const SecurityLog = require('../models/SecurityLog');
+        await SecurityLog.create({
+            eventType: 'blockchain_verification',
+            severity: auditResult.isHealthy ? 'low' : 'high',
+            description: `Database Integrity Audit: Verified ${auditResult.verifiedRecords} records. Status: ${auditResult.isHealthy ? 'CLEAN' : 'COMPROMISED - ' + auditResult.discrepancies.length + ' anomalies detected'}.`,
+            riskScore: auditResult.isHealthy ? 12 : 85,
+            deviceScore: req.deviceScore || 100
+        });
+
+        res.json({
+            success: true,
+            verifiedRecords: auditResult.verifiedRecords,
+            discrepancies: auditResult.discrepancies,
+            isHealthy: auditResult.isHealthy,
+            blockchain: auditResult.blockchain,
+            forensicLogStatus: auditResult.forensicLogStatus
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// Trigger manual self-healing state re-sync
+router.post('/portal/security/trigger-recovery', rbac(['teacher', 'admin', 'school_admin']), async (req, res) => {
+    try {
+        const { runGuardianScan } = require('../services/blockchain/changeStreamGuardian');
+        const { restoreEncryptionSystem } = require('../services/blockchain/encryptionService');
+        
+        // Restore isolated encryption keys
+        restoreEncryptionSystem();
+        
+        // Save pre-healing state log
+        const SecurityLog = require('../models/SecurityLog');
+        await SecurityLog.create({
+            eventType: 'self_healing_revert',
+            severity: 'medium',
+            description: `Manual Self-Healing State Recovery initiated. Isolated keys restored. Scanning database for unauthorized state changes.`,
+            riskScore: 25,
+            deviceScore: req.deviceScore || 100
+        });
+
+        // Run guardian check which auto-reverts any tampered result
+        await runGuardianScan();
+
+        res.json({
+            success: true,
+            message: 'Self-healing state recovery sequence executed successfully. Isolated encryption keys restored and all database records re-synced.'
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
 });
 
 module.exports = router;

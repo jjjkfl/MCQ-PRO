@@ -4,27 +4,27 @@
   /* ─── Minimalist Apple / Tesla Palette ──────────────────── */
 
   /* Primary - Clean Apple Blue */
-  --primary: #0071e3;
+  --primary: #5c8d89;
   --primary-soft: #e8f0fe;
-  --primary-glow: rgba(0, 113, 227, 0.15);
+  --primary-glow: rgba(92, 141, 137, 0.15);
 
   /* Secondary - Tesla Slate Gray */
   --secondary: #1d1d1f;
   --secondary-soft: #f5f5f7;
 
   /* Accent - Subtle Coral/Red for errors */
-  --accent: #ff3b30;
+  --accent: #d97a7e;
 
   /* Success - Apple Green */
-  --success: #34c759;
+  --success: #6ba87a;
   --success-soft: #e5f9e7;
 
   /* Warning - Apple Orange */
-  --warning: #ff9500;
+  --warning: #dca368;
   --warning-soft: #fff4e5;
 
   /* Danger - Apple Red */
-  --danger: #ff3b30;
+  --danger: #d97a7e;
   --danger-soft: #ffeceb;
 
   /* Backgrounds - Sleek Apple Light Gray */
@@ -51,8 +51,8 @@
   --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.06);
 
   /* Gradients - Flat and Sleek */
-  --gradient-primary: linear-gradient(135deg, #0071e3 0%, #0077ed 100%);
-  --gradient-soft: linear-gradient(135deg, rgba(0, 113, 227, 0.05) 0%, rgba(29, 29, 31, 0.02) 100%);
+  --gradient-primary: linear-gradient(135deg, #5c8d89 0%, #0077ed 100%);
+  --gradient-soft: linear-gradient(135deg, rgba(92, 141, 137, 0.05) 0%, rgba(29, 29, 31, 0.02) 100%);
   --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
   --gradient-warm: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
 
@@ -82,17 +82,17 @@
 
 /* ─── Dark Theme (Soft & Easy on Eyes) ───────────────────── */
 [data-theme="dark"] {
-  --bg-main: #1a1d23;
-  --bg-card: #22262e;
-  --bg-elevated: #2a2f38;
-  --bg-subtle: #2a2f38;
-  --bg-muted: #363c48;
+  --bg-main: #1c2326;
+  --bg-card: #222b2f;
+  --bg-elevated: #283237;
+  --bg-subtle: #283237;
+  --bg-muted: #303c42;
 
   --text-main: #f1f5f9;
   --text-secondary: #cbd5e1;
   --text-muted: #64748b;
 
-  --border: #363c48;
+  --border: #303c42;
   --border-soft: rgba(255, 255, 255, 0.05);
 
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -1002,4 +1002,38 @@ tbody tr:hover {
 @keyframes barUp5 {
   0%, 40%, 100% { transform: scale(1, 1); }
   50%, 90% { transform: scale(1, 0.2); }
+}
+
+/* ─── Browser Autofill Fixes ─── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 30px #1a1d23 inset !important;
+    -webkit-text-fill-color: #f5f5f7 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+body[data-theme="light"] input:-webkit-autofill,
+body[data-theme="light"] input:-webkit-autofill:hover, 
+body[data-theme="light"] input:-webkit-autofill:focus, 
+body[data-theme="light"] input:-webkit-autofill:active,
+body[data-theme="light"] select:-webkit-autofill,
+body[data-theme="light"] select:-webkit-autofill:hover,
+body[data-theme="light"] select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 30px #f0f4ff inset !important;
+    -webkit-text-fill-color: #1d1d1f !important;
+}
+
+select option {
+    background-color: var(--bg-card, #1a1d23);
+    color: var(--text-main, #f5f5f7);
+}
+
+body[data-theme="light"] select option {
+    background-color: #ffffff;
+    color: #1d1d1f;
 }

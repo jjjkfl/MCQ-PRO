@@ -177,7 +177,7 @@ const ExamEngine = {
       notifications.error('Failed to load exam: ' + err.message);
       document.getElementById('question-area').innerHTML = `
         <div style="text-align:center; padding:60px;">
-          <p style="font-size:18px; font-weight:600; color:#ff3b30;">Failed to Load Exam</p>
+          <p style="font-size:18px; font-weight:600; color:#d97a7e;">Failed to Load Exam</p>
           <p class="p-dim" style="margin-top:8px;">${err.message}</p>
           <button onclick="window.location.href='/index.html'" class="btn btn-outline" style="margin-top:20px;">Return to Dashboard</button>
         </div>`;

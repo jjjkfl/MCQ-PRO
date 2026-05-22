@@ -27,9 +27,9 @@ const notifications = {
     toast.className = 'glass-card animate-fade-in';
 
     const colors = {
-      success: '#34c759',
-      error: '#ff3b30',
-      info: '#0071e3',
+      success: '#6ba87a',
+      error: '#d97a7e',
+      info: '#5c8d89',
       warning: '#ff9f0a'
     };
 

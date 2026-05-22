@@ -7,9 +7,13 @@ const auth = {
   /**
    * Login user and save token
    */
-  async login(email, password) {
+  async login(email, password, requiredRole) {
     try {
-      const result = await api.post('/auth/login', { email, password });
+      const payload = { email, password };
+      if (requiredRole) {
+        payload.requiredRole = requiredRole;
+      }
+      const result = await api.post('/auth/login', payload);
       this.setSession(result.accessToken, result.user);
       this.redirectByRole(result.user.role);
     } catch (error) {
@@ -49,14 +53,39 @@ const auth = {
   },
 
   logout() {
+    const user = this.getUser();
+    let role = user ? user.role : null;
+    if (!role) {
+      const path = window.location.pathname;
+      if (path.includes('super-admin')) role = 'super_admin';
+      else if (path.includes('school-admin')) role = 'school_admin';
+      else if (path.includes('teacher')) role = 'teacher';
+      else if (path.includes('student') || path.includes('index.html') || path === '/' || path.includes('exam')) role = 'student';
+    }
+
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/login.html';
+
+    if (role === 'super_admin') {
+      window.location.href = '/login/super';
+    } else if (role === 'school_admin') {
+      window.location.href = '/login/school';
+    } else if (role === 'teacher') {
+      window.location.href = '/login/teacher';
+    } else if (role === 'student') {
+      window.location.href = '/login/student';
+    } else {
+      window.location.href = '/login.html';
+    }
   },
 
   redirectByRole(role) {
     if (role === 'teacher') {
       window.location.href = '/teacher.html';
+    } else if (role === 'super_admin') {
+      window.location.href = '/super-admin.html';
+    } else if (role === 'school_admin') {
+      window.location.href = '/school-admin.html';
     } else if (role === 'admin') {
       window.location.href = '/admin.html';
     } else {
@@ -69,7 +98,18 @@ const auth = {
    */
   checkAuth() {
     if (!this.isAuthenticated()) {
-      window.location.href = '/login.html';
+      const path = window.location.pathname;
+      if (path.includes('super-admin')) {
+        window.location.href = '/login/super';
+      } else if (path.includes('school-admin')) {
+        window.location.href = '/login/school';
+      } else if (path.includes('teacher')) {
+        window.location.href = '/login/teacher';
+      } else if (path.includes('student') || path.includes('index.html') || path === '/' || path.includes('exam')) {
+        window.location.href = '/login/student';
+      } else {
+        window.location.href = '/login.html';
+      }
       return false;
     }
 
@@ -80,6 +120,17 @@ const auth = {
     }
 
     const path = window.location.pathname;
+
+    // Prevent unauthorized access to admin dashboards
+    if (path.includes('super-admin') && user.role !== 'super_admin') {
+      this.redirectByRole(user.role);
+      return false;
+    }
+
+    if (path.includes('school-admin') && user.role !== 'school_admin') {
+      this.redirectByRole(user.role);
+      return false;
+    }
 
     // Prevent student from accessing teacher dashboard
     if (path.includes('teacher') && user.role !== 'teacher') {

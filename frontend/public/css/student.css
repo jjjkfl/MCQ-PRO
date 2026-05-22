@@ -183,8 +183,8 @@
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
-  background: radial-gradient(circle at top right, rgba(0, 113, 227, 0.03), transparent 400px),
-              radial-gradient(circle at bottom left, rgba(0, 113, 227, 0.02), transparent 400px);
+  background: radial-gradient(circle at top right, rgba(92, 141, 137, 0.03), transparent 400px),
+              radial-gradient(circle at bottom left, rgba(92, 141, 137, 0.02), transparent 400px);
 }
 
 /* ─── Welcome Section ────────────────────────────────────── */

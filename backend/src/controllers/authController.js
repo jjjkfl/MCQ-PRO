@@ -22,10 +22,17 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, requiredRole } = req.body;
     const user = await User.findOne({ email });
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    if (requiredRole && user.role !== requiredRole) {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Unauthorized access: You do not have the required role to log in through this portal.' 
+      });
     }
 
     const accessToken = jwt.sign({ 

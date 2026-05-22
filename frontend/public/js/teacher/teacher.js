@@ -360,7 +360,7 @@ const TeacherDashboard = {
           padding: 24px; 
           border-radius: 20px; 
           margin-bottom: 32px;
-          border: 1px solid rgba(0,113,227,0.1);
+          border: 1px solid rgba(92,141,137,0.1);
         ">
           <h3 style="font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 4px; letter-spacing: -0.02em;">${bank.title}</h3>
           <p style="font-size: 14px; font-weight: 600; color: var(--primary); opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em;">

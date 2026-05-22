@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin | Global Command Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="/css/admin-style.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fas fa-shield-halved"></i>
+                <span>SuperAdmin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-tab="dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="live">
+                        <i class="fas fa-broadcast-tower"></i>
+                        <span>Live Monitor</span>
+                        <span class="badge-pill" id="live-exam-count-badge" style="background:#d97a7e; color:#fff; display:none; padding:2px 6px; font-size:10px; border-radius:10px; margin-left:5px;">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="schools">
+                        <i class="fas fa-school"></i>
+                        <span>Schools</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="users">
+                        <i class="fas fa-users"></i>
+                        <span>User Control</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="billing">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Subscriptions</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="announcements">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Announcements</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="security">
+                        <i class="fas fa-lock"></i>
+                        <span>Security & Audit</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="permissions">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Role Permissions</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="nav-item mt-auto">
+                <a href="#" class="nav-link text-danger" onclick="auth.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header animate-fade-in">
+                <div>
+                    <h1>Platform Overview</h1>
+                    <p class="text-secondary">Global metrics and institutional performance tracking.</p>
+                </div>
+                <div class="flex gap-2" style="align-items:center;">
+                    <button id="theme-toggle" onclick="SuperAdmin.toggleTheme()" title="Toggle Theme"
+                        style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#f5f5f7;padding:8px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all 0.3s;">
+                        <i class="fas fa-sun"></i> Light Mode
+                    </button>
+                    <div id="connection-status" class="integrity-anchored" style="background: rgba(255,255,255,0.05); color: #8e8e93;">
+                        <i class="fas fa-circle-notch fa-spin"></i> Connecting...
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <div id="tab-dashboard" class="tab-content" style="display:block;">
+
+                <!-- 3-Col Stat Cards (no Revenue) -->
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:1.75rem;">
+
+                    <!-- Total Schools -->
+                    <div class="glass-card" style="padding:1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:0.8px;">Total Schools</span>
+                            <div style="width:38px;height:38px;background:rgba(92,141,137,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-school" style="color:#5c8d89;font-size:15px;"></i>
+                            </div>
+                        </div>
+                        <div id="stat-schools" style="font-size:2.5rem;font-weight:800;line-height:1;">--</div>
+                        <span style="font-size:12px;color:#6ba87a;"><i class="fas fa-arrow-up"></i> 12% vs last month</span>
+                    </div>
+
+                    <!-- Active Users -->
+                    <div class="glass-card" style="padding:1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:0.8px;">Active Users</span>
+                            <div style="width:38px;height:38px;background:rgba(107,168,122,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-users" style="color:#6ba87a;font-size:15px;"></i>
+                            </div>
+                        </div>
+                        <div id="stat-users" style="font-size:2.5rem;font-weight:800;line-height:1;">--</div>
+                        <span style="font-size:12px;color:#6ba87a;"><i class="fas fa-arrow-up"></i> 5% vs last month</span>
+                    </div>
+
+                    <!-- System Health -->
+                    <div class="glass-card" style="padding:1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:0.8px;">System Health</span>
+                            <div style="width:38px;height:38px;background:rgba(107,168,122,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-heartbeat" style="color:#6ba87a;font-size:15px;"></i>
+                            </div>
+                        </div>
+                        <div id="stat-health" style="font-size:2.5rem;font-weight:800;line-height:1;color:#6ba87a;">100%</div>
+                        <span style="font-size:12px;color:#6ba87a;"><i class="fas fa-check-circle"></i> All systems operational</span>
+                    </div>
+
+                </div>
+
+                <!-- Charts Row -->
+                <div style="display:grid;grid-template-columns:3fr 2fr;gap:1.25rem;margin-bottom:1.75rem;">
+                    <div class="glass-card" style="padding:1.5rem;">
+                        <h3 style="font-size:15px;font-weight:700;margin-bottom:1rem;">School Growth (6 Months)</h3>
+                        <div style="height:200px;position:relative;">
+                            <canvas id="schoolGrowthChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-card" style="padding:1.5rem;">
+                        <h3 style="font-size:15px;font-weight:700;margin-bottom:1rem;">User Distribution</h3>
+                        <div style="height:200px;position:relative;">
+                            <canvas id="userDistChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Schools + Quick Actions -->
+                <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;">
+                    <div class="glass-card" style="padding:1.5rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3 style="font-size:15px;font-weight:700;">Recently Registered Schools</h3>
+                            <a href="#" onclick="event.preventDefault();SuperAdmin.switchTab('schools')" style="color:#5c8d89;font-size:13px;text-decoration:none;font-weight:600;">View All →</a>
+                        </div>
+                        <table style="width:100%;border-collapse:collapse;">
+                            <thead>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.08);">
+                                    <th style="text-align:left;padding:0.5rem 0.75rem;font-size:11px;color:#8e8e93;font-weight:700;text-transform:uppercase;">School</th>
+                                    <th style="text-align:left;padding:0.5rem 0.75rem;font-size:11px;color:#8e8e93;font-weight:700;text-transform:uppercase;">Plan</th>
+                                    <th style="text-align:left;padding:0.5rem 0.75rem;font-size:11px;color:#8e8e93;font-weight:700;text-transform:uppercase;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-schools-list">
+                                <tr><td colspan="3" style="text-align:center;color:#8e8e93;padding:2rem;font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="glass-card" style="padding:1.5rem;">
+                        <h3 style="font-size:15px;font-weight:700;margin-bottom:1rem;">Quick Actions</h3>
+                        <div style="display:flex;flex-direction:column;gap:0.6rem;">
+                            <button onclick="SuperAdmin.showAddSchoolModal()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(135deg,#5c8d89,#005bb5);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;width:100%;">
+                                <i class="fas fa-plus-circle"></i> Register New School
+                            </button>
+                            <button onclick="SuperAdmin.switchTab('users')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.05);color:inherit;border:1px solid rgba(255,255,255,0.1);border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;width:100%;">
+                                <i class="fas fa-users-cog" style="color:#5c8d89;"></i> Manage Users
+                            </button>
+                            <button onclick="SuperAdmin.switchTab('permissions')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.05);color:inherit;border:1px solid rgba(255,255,255,0.1);border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;width:100%;">
+                                <i class="fas fa-user-shield" style="color:#7a82ab;"></i> Edit Permissions
+                            </button>
+                            <button onclick="SuperAdmin.switchTab('security')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.05);color:inherit;border:1px solid rgba(255,255,255,0.1);border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;width:100%;">
+                                <i class="fas fa-shield-alt" style="color:#dca368;"></i> Audit Logs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Live Monitoring Tab -->
+            <div id="tab-live" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card" style="border: 1px solid rgba(217,122,126,0.2); background: linear-gradient(135deg, rgba(217,122,126,0.05), rgba(0,0,0,0));">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 style="color:#d97a7e;"><i class="fas fa-satellite-dish animate-pulse"></i> Active Global Sessions</h3>
+                            <p class="text-secondary" style="font-size:13px;">Real-time monitoring of exams currently in progress across all registered schools.</p>
+                        </div>
+                        <div id="live-timer-badge" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600;">
+                            <span>Auto-refreshing in <span id="refresh-timer">30</span>s</span>
+                            <button class="btn btn-ghost" style="padding:0; width:24px; height:24px;" onclick="SuperAdmin.loadLiveExams()" title="Refresh Now">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="live-exams-container" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1.25rem;">
+                        <!-- Live Exam Cards -->
+                        <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#8e8e93;">
+                            <i class="fas fa-ghost" style="font-size:3rem; opacity:0.2; display:block; margin-bottom:1rem;"></i>
+                            No live exams at this moment.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schools Tab -->
+            <div id="tab-schools" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card" style="padding: 1.5rem;">
+                    <div class="flex justify-between items-center mb-4" style="flex-wrap: wrap; gap: 1rem;">
+                        <h3>Global School Management</h3>
+                        <div class="flex gap-2" style="flex:1; max-width:600px; flex-wrap: wrap;">
+                            <select class="form-control" id="filter-state" onchange="SuperAdmin.onFilterStateChange()" style="flex:1; min-width: 120px;">
+                                <option value="">All States</option>
+                            </select>
+                            <select class="form-control" id="filter-district" onchange="SuperAdmin.filterSchools()" disabled style="flex:1; min-width: 120px;">
+                                <option value="">All Districts</option>
+                            </select>
+                            <input type="text" class="form-control" id="school-search" placeholder="Search name or board..." oninput="SuperAdmin.filterSchools()" style="flex:2; min-width: 200px;">
+                        </div>
+                        <button class="btn btn-primary" onclick="SuperAdmin.showAddSchoolModal()">+ Register School</button>
+                    </div>
+                    
+                    <!-- Two-column Grid for Map and Hierarchical Directory -->
+                    <div class="schools-dashboard-grid" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; min-height: 520px; align-items: stretch; margin-top: 1rem;">
+                        <!-- Left Side: Interactive Map -->
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <div id="schools-map" style="flex: 1; min-height: 480px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); z-index: 10; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); background: rgba(0,0,0,0.2); overflow: hidden;"></div>
+                        </div>
+                        
+                        <!-- Right Side: Hierarchical Directory Accordion -->
+                        <div style="display: flex; flex-direction: column; max-height: 480px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 1rem;">
+                                <span style="font-size: 13px; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.8px;">Geographic Directory</span>
+                                <span id="school-total-count-badge" class="badge-pill" style="background: rgba(92, 141, 137, 0.15); color: #5c8d89; font-size: 11px; padding: 2px 8px; border-radius: 10px;">0 Schools</span>
+                            </div>
+                            <div id="schools-hierarchy-container" style="flex: 1; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                                <div style="text-align: center; color: #8e8e93; padding: 3rem;"><i class="fas fa-spinner fa-spin"></i> Loading tree view...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="tab-users" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3>Platform User Control</h3>
+                        <div class="flex gap-2">
+                            <input type="text" class="form-control" placeholder="Search users..." id="user-search" oninput="SuperAdmin.filterUsers(this.value)">
+                            <button class="btn btn-primary" onclick="SuperAdmin.showCreateUserModal()">+ Create User</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Institution</th>
+                                    <th>Last Login</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-list">
+                                <!-- Dynamic users -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing Tab -->
+            <div id="tab-billing" class="tab-content animate-slide-up" style="display: none;">
+                <div class="stats-grid">
+                    <div class="glass-card stat-card">
+                        <span class="stat-label">Active Subscriptions</span>
+                        <div class="stat-value">18</div>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <span class="stat-label">Pending Invoices</span>
+                        <div class="stat-value">3</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-card">
+                        <h3>Subscription Plans</h3>
+                        <div id="plans-list" class="mt-2">
+                            <!-- Dynamic plans -->
+                        </div>
+                        <button class="btn btn-secondary w-full mt-3" onclick="SuperAdmin.showCreatePlanModal()">+ Create New Plan</button>
+                    </div>
+                    <div class="glass-card">
+                        <h3>Recent Payments</h3>
+                        <div class="table-container">
+                            <tbody id="payments-list"></tbody>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcements Tab -->
+            <div id="tab-announcements" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card">
+                    <form id="announcement-form" class="mt-3">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="announcement-title" class="form-control" placeholder="Maintenance Alert, New Feature, etc." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea id="announcement-message" class="form-control" placeholder="Type your message here..." required></textarea>
+                        </div>
+                        <button type="submit" id="broadcast-announcement-btn" class="btn btn-primary">Send Broadcast</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Security Tab -->
+            <div id="tab-security" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card">
+                    <h3>System Audit Logs</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Event ID</th>
+                                    <th>User</th>
+                                    <th>Operation</th>
+                                    <th>IP Address</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-logs-detailed"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permissions Tab -->
+            <div id="tab-permissions" class="tab-content animate-slide-up" style="display: none;">
+                <div class="glass-card mb-4" style="padding:1.5rem;">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3><i class="fas fa-user-shield" style="color:#5c8d89;margin-right:8px;"></i>Role Permissions Matrix</h3>
+                            <p class="text-secondary" style="font-size:13px;margin-top:4px;">Configure what each role can access and perform. Changes are saved to the database instantly.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="btn btn-secondary" onclick="SuperAdmin.loadPermissions()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                            <button class="btn btn-primary" onclick="SuperAdmin.savePermissions()" id="save-perms-btn"><i class="fas fa-save"></i> Save All Changes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="permissions-matrix-container">
+                    <div class="glass-card" style="text-align:center;padding:3rem;color:#8e8e93;">
+                        <i class="fas fa-spinner fa-spin" style="font-size:24px;"></i>
+                        <p style="margin-top:1rem;">Loading permissions...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- School Details Modal (Deep Dive) -->
+    <div id="modal-school-details" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(10px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:900px; max-width:95vw; max-height:90vh; overflow-y:auto; padding:0; border:none;">
+            <div style="padding:1.5rem 2rem; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02);">
+                <div>
+                    <h2 id="sd-school-name" style="margin:0; font-size:20px;">School Details</h2>
+                    <p id="sd-school-admin" style="margin:4px 0 0; font-size:13px; color:#8e8e93;">Admin: Loading...</p>
+                </div>
+                <button class="btn btn-ghost" onclick="SuperAdmin.closeSchoolDetails()"><i class="fas fa-times" style="font-size:1.2rem;"></i></button>
+            </div>
+            
+            <div style="padding:2rem;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+                    <!-- Teachers List -->
+                    <div>
+                        <h3 style="font-size:16px; margin-bottom:1rem; display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-chalkboard-teacher" style="color:#5c8d89;"></i> Teachers
+                        </h3>
+                        <div class="table-container" style="max-height:400px; overflow-y:auto;">
+                            <table style="width:100%; border-collapse:collapse;">
+                                <thead style="position:sticky; top:0; background:var(--glass-bg); z-index:10;">
+                                    <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#8e8e93;">Name</th>
+                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#8e8e93;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sd-teachers-list">
+                                    <tr><td colspan="2" style="text-align:center; padding:2rem; color:#8e8e93;">Loading teachers...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Exams List -->
+                    <div>
+                        <h3 style="font-size:16px; margin-bottom:1rem; display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-file-invoice" style="color:#7a82ab;"></i> Exams
+                        </h3>
+                        <div class="table-container" style="max-height:400px; overflow-y:auto;">
+                            <table style="width:100%; border-collapse:collapse;">
+                                <thead style="position:sticky; top:0; background:var(--glass-bg); z-index:10;">
+                                    <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#8e8e93;">Exam Title</th>
+                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#8e8e93;">Creator</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sd-exams-list">
+                                    <tr><td colspan="2" style="text-align:center; padding:2rem; color:#8e8e93;">Loading exams...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register School Modal -->
+    <div id="modal-register-school" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:500px; max-width:95vw; padding:2rem;">
+            <div class="flex justify-between items-center mb-4">
+                <h3><i class="fas fa-school"></i> Register New School</h3>
+                <button class="btn btn-ghost" onclick="SuperAdmin.closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="register-school-form">
+                <div class="form-group">
+                    <label>School Name *</label>
+                    <input type="text" class="form-control" id="reg-school-name" placeholder="e.g. Global Academy" required>
+                </div>
+                <div class="form-group">
+                    <label>Board Type</label>
+                    <select class="form-control" id="reg-board-type">
+                        <option value="CBSE">CBSE</option>
+                        <option value="ICSE">ICSE</option>
+                        <option value="State">State Board</option>
+                        <option value="IB">IB</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subscription Plan</label>
+                    <select class="form-control" id="reg-subscription-plan">
+                        <!-- Dynamic options loaded from backend -->
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>State *</label>
+                        <select class="form-control" id="reg-school-state" required onchange="SuperAdmin.onSchoolLocationChange('reg')">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>District *</label>
+                        <select class="form-control" id="reg-school-district" required onchange="SuperAdmin.onSchoolLocationChange('reg')">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Latitude *</label>
+                        <input type="number" step="any" class="form-control" id="reg-school-lat" placeholder="e.g. 12.9716" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Longitude *</label>
+                        <input type="number" step="any" class="form-control" id="reg-school-lng" placeholder="e.g. 77.5946" required>
+                    </div>
+                </div>
+                <hr style="border-color:rgba(255,255,255,0.1); margin:1rem 0;">
+                <p style="color:#8e8e93; font-size:13px; margin-bottom:1rem;">School Admin Account</p>
+                <div class="form-group">
+                    <label>Admin Full Name *</label>
+                    <input type="text" class="form-control" id="reg-admin-name" placeholder="e.g. John Smith" required>
+                </div>
+                <div class="form-group">
+                    <label>Admin Email *</label>
+                    <input type="email" class="form-control" id="reg-admin-email" placeholder="admin@school.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Temporary Password</label>
+                    <input type="password" class="form-control" id="reg-admin-pass" placeholder="Leave blank for default: Admin@123">
+                </div>
+                <div class="flex gap-2" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" id="register-school-btn">
+                        <i class="fas fa-plus"></i> Register School
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="SuperAdmin.closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit School Modal -->
+    <div id="modal-edit-school" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:500px; max-width:95vw; padding:2rem;">
+            <div class="flex justify-between items-center mb-4">
+                <h3><i class="fas fa-edit"></i> Edit School</h3>
+                <button class="btn btn-ghost" onclick="SuperAdmin.closeEditSchoolModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="edit-school-form">
+                <input type="hidden" id="edit-school-id">
+                <div class="form-group">
+                    <label>School Name *</label>
+                    <input type="text" class="form-control" id="edit-school-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Board Type</label>
+                    <select class="form-control" id="edit-school-board-type">
+                        <option value="CBSE">CBSE</option>
+                        <option value="ICSE">ICSE</option>
+                        <option value="State">State Board</option>
+                        <option value="IB">IB</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subscription Plan</label>
+                    <select class="form-control" id="edit-school-plan">
+                        <!-- Dynamic options loaded from backend -->
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>State *</label>
+                        <select class="form-control" id="edit-school-state" required onchange="SuperAdmin.onSchoolLocationChange('edit')">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>District *</label>
+                        <select class="form-control" id="edit-school-district" required onchange="SuperAdmin.onSchoolLocationChange('edit')">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Latitude *</label>
+                        <input type="number" step="any" class="form-control" id="edit-school-lat" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Longitude *</label>
+                        <input type="number" step="any" class="form-control" id="edit-school-lng" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Max Students & Teachers</label>
+                    <input type="number" class="form-control" id="edit-school-max-users" required>
+                </div>
+                <div class="form-group">
+                    <label class="toggle-switch" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="edit-school-status">
+                        <span class="toggle-slider"></span>
+                        <span>School is Active</span>
+                    </label>
+                </div>
+                <div class="flex gap-2" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" id="edit-school-submit-btn">
+                        Save Changes
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="SuperAdmin.closeEditSchoolModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create User Modal -->
+    <div id="modal-create-user" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:500px; max-width:95vw; padding:2rem;">
+            <div class="flex justify-between items-center mb-4">
+                <h3><i class="fas fa-user-plus"></i> Create Platform User</h3>
+                <button class="btn btn-ghost" onclick="SuperAdmin.closeCreateUserModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="create-user-form">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" class="form-control" id="create-user-name" placeholder="e.g. Tarun Sidd" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" class="form-control" id="create-user-email" placeholder="user@domain.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" class="form-control" id="create-user-password" placeholder="Default: Password@123">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select class="form-control" id="create-user-role" onchange="SuperAdmin.onRoleChange('create')">
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="school_admin">School Admin</option>
+                        <option value="super_admin">Super Admin</option>
+                    </select>
+                </div>
+                <div class="form-group" id="create-user-school-group">
+                    <label>Institution/School</label>
+                    <select class="form-control" id="create-user-school">
+                        <!-- Dynamic options loaded from backend -->
+                    </select>
+                </div>
+                <div class="form-group" id="create-user-class-group">
+                    <label>Class/Grade Tag (for Students)</label>
+                    <input type="text" class="form-control" id="create-user-classtag" placeholder="e.g. 10th Grade">
+                </div>
+                <div class="form-group" id="create-user-division-group">
+                    <label>Division</label>
+                    <select class="form-control" id="create-user-division">
+                        <option value="">None</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="toggle-switch" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="create-user-status" checked>
+                        <span class="toggle-slider"></span>
+                        <span>Account Active</span>
+                    </label>
+                </div>
+                <div class="flex gap-2" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" id="create-user-submit-btn">
+                        Create User
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="SuperAdmin.closeCreateUserModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="modal-edit-user" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:500px; max-width:95vw; padding:2rem;">
+            <div class="flex justify-between items-center mb-4">
+                <h3><i class="fas fa-user-edit"></i> Edit Platform User</h3>
+                <button class="btn btn-ghost" onclick="SuperAdmin.closeEditUserModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="edit-user-form">
+                <input type="hidden" id="edit-user-id">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" class="form-control" id="edit-user-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" class="form-control" id="edit-user-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password (leave blank to keep unchanged)</label>
+                    <input type="password" class="form-control" id="edit-user-password" placeholder="New Password">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select class="form-control" id="edit-user-role" onchange="SuperAdmin.onRoleChange('edit')">
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="school_admin">School Admin</option>
+                        <option value="super_admin">Super Admin</option>
+                    </select>
+                </div>
+                <div class="form-group" id="edit-user-school-group">
+                    <label>Institution/School</label>
+                    <select class="form-control" id="edit-user-school">
+                        <!-- Dynamic options loaded from backend -->
+                    </select>
+                </div>
+                <div class="form-group" id="edit-user-class-group">
+                    <label>Class/Grade Tag (for Students)</label>
+                    <input type="text" class="form-control" id="edit-user-classtag">
+                </div>
+                <div class="form-group" id="edit-user-division-group">
+                    <label>Division</label>
+                    <select class="form-control" id="edit-user-division">
+                        <option value="">None</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="toggle-switch" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="edit-user-status">
+                        <span class="toggle-slider"></span>
+                        <span>Account Active</span>
+                    </label>
+                </div>
+                <div class="flex gap-2" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" id="edit-user-submit-btn">
+                        Save Changes
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="SuperAdmin.closeEditUserModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Plan Modal -->
+    <div id="modal-create-plan" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:500px; max-width:95vw; padding:2rem;">
+            <div class="flex justify-between items-center mb-4">
+                <h3><i class="fas fa-credit-card"></i> Create Subscription Plan</h3>
+                <button class="btn btn-ghost" onclick="SuperAdmin.closeCreatePlanModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="create-plan-form">
+                <div class="form-group">
+                    <label>Plan Name *</label>
+                    <input type="text" class="form-control" id="create-plan-name" placeholder="e.g. Standard, Premium Plus" required>
+                </div>
+                <div class="form-group">
+                    <label>Price (INR/USD) *</label>
+                    <input type="number" class="form-control" id="create-plan-price" placeholder="e.g. 4999" required>
+                </div>
+                <div class="form-group">
+                    <label>Duration (Days) *</label>
+                    <input type="number" class="form-control" id="create-plan-duration" placeholder="e.g. 30" value="30" required>
+                </div>
+                <div class="form-group">
+                    <label>Features (one per line) *</label>
+                    <textarea class="form-control" id="create-plan-features" rows="4" placeholder="e.g.&#10;Up to 500 Students&#10;Analytics Dashboard&#10;Custom Certificates" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="toggle-switch" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="create-plan-status" checked>
+                        <span class="toggle-slider"></span>
+                        <span>Plan is Active</span>
+                    </label>
+                </div>
+                <div class="flex gap-2" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" id="create-plan-submit-btn">
+                        Create Plan
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="SuperAdmin.closeCreatePlanModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Plan Modal -->
+    <div id="modal-edit-plan" style="display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="width:500px; max-width:95vw; padding:2rem;">
+            <div class="flex justify-between items-center mb-4">
+                <h3><i class="fas fa-edit"></i> Edit Subscription Plan</h3>
+                <button class="btn btn-ghost" onclick="SuperAdmin.closeEditPlanModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="edit-plan-form">
+                <input type="hidden" id="edit-plan-id">
+                <div class="form-group">
+                    <label>Plan Name *</label>
+                    <input type="text" class="form-control" id="edit-plan-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Price (INR/USD) *</label>
+                    <input type="number" class="form-control" id="edit-plan-price" required>
+                </div>
+                <div class="form-group">
+                    <label>Duration (Days) *</label>
+                    <input type="number" class="form-control" id="edit-plan-duration" required>
+                </div>
+                <div class="form-group">
+                    <label>Features (one per line) *</label>
+                    <textarea class="form-control" id="edit-plan-features" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="toggle-switch" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="edit-plan-status">
+                        <span class="toggle-slider"></span>
+                        <span>Plan is Active</span>
+                    </label>
+                </div>
+                <div class="flex gap-2" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;" id="edit-plan-submit-btn">
+                        Save Changes
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="SuperAdmin.closeEditPlanModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/shared/api.js"></script>
+    <script src="/js/shared/auth.js"></script>
+    <script src="/js/shared/utils.js"></script>
+    <script src="/js/shared/notifications.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="/js/admin/super-admin.js"></script>
+</body>
+</html>

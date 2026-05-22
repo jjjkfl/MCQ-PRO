@@ -269,6 +269,7 @@ exports.getBlockchainStats = async () => {
       latestBlock: block,
       networkName: net.name,
       chainId: net.chainId.toString(),
+      contractAddress: process.env.CONTRACT_ADDRESS || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
     };
   } catch (err) {
     logger.error(`getBlockchainStats error: ${err.message}`);
