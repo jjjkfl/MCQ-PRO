@@ -75,7 +75,7 @@ const auth = {
     } else if (role === 'student') {
       window.location.href = '/login/student';
     } else {
-      window.location.href = '/login.html';
+      window.location.href = '/login/student';
     }
   },
 
@@ -108,7 +108,7 @@ const auth = {
       } else if (path.includes('student') || path.includes('index.html') || path === '/' || path.includes('exam')) {
         window.location.href = '/login/student';
       } else {
-        window.location.href = '/login.html';
+        window.location.href = '/login/student';
       }
       return false;
     }

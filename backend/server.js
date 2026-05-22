@@ -39,7 +39,7 @@ const startServer = async () => {
   });
 
   // SPA Fallbacks
-  app.get('/', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'login.html')));
+  app.get('/', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'index.html')));
   app.get('/login/super', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'login-super.html')));
   app.get('/login/school', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'login-school.html')));
   app.get('/login/teacher', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'login-teacher.html')));
