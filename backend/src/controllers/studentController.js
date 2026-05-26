@@ -161,12 +161,35 @@ exports.getCourses = async (req, res) => {
 
 exports.getAvailableExams = async (req, res) => {
   try {
-    const query = {};
-    if (req.user.courseId) {
-      query.courseId = req.user.courseId;
+    if (!req.user.courseId || !req.user.schoolId) {
+      return res.json({ success: true, data: [] });
     }
-    const exams = await Session.find(query).select('-questions.correctAnswer');
-    res.json({ success: true, data: exams });
+
+    const query = {
+      schoolId: req.user.schoolId,
+      courseId: req.user.courseId,
+      status: { $in: ['active', 'pending'] }
+    };
+    
+    if (req.user.division) {
+      query.division = req.user.division;
+    }
+
+    const exams = await Session.find(query).lean();
+    
+    const processed = exams.map(exam => {
+      if (exam.questions && Array.isArray(exam.questions)) {
+        exam.questions = exam.questions.map(q => {
+          const ans = q.correctAnswer || '';
+          q.isMultiSelect = ans.includes(',') || ans.includes('&') || ans.trim().length > 1;
+          delete q.correctAnswer;
+          return q;
+        });
+      }
+      return exam;
+    });
+
+    res.json({ success: true, data: processed });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -174,15 +197,33 @@ exports.getAvailableExams = async (req, res) => {
 
 exports.getExamQuestions = async (req, res) => {
   try {
-    const query = {
-      _id: req.params.sessionId
-    };
-    if (req.user.courseId) {
-      query.courseId = req.user.courseId;
+    if (!req.user.courseId || !req.user.schoolId) {
+      return res.status(403).json({ success: false, message: 'Access denied: Profile incomplete' });
     }
-    const exam = await Session.findOne(query).select('-questions.correctAnswer');
+
+    const query = {
+      _id: req.params.sessionId,
+      schoolId: req.user.schoolId,
+      courseId: req.user.courseId
+    };
+
+    if (req.user.division) {
+      query.division = req.user.division;
+    }
+
+    const exam = await Session.findOne(query).lean();
 
     if (!exam) return res.status(404).json({ success: false, message: 'Exam not found or access denied' });
+
+    if (exam.questions && Array.isArray(exam.questions)) {
+      exam.questions = exam.questions.map(q => {
+        const ans = q.correctAnswer || '';
+        q.isMultiSelect = ans.includes(',') || ans.includes('&') || ans.trim().length > 1;
+        delete q.correctAnswer;
+        return q;
+      });
+    }
+
     res.json({ success: true, data: exam });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -195,18 +236,28 @@ exports.submitExam = async (req, res) => {
     const session = await Session.findById(sessionId);
     if (!session) return res.status(404).json({ message: 'Exam not found' });
 
-    if (!req.user.courseId || String(session.courseId) !== String(req.user.courseId)) {
+    if (!req.user.courseId || String(session.courseId) !== String(req.user.courseId) ||
+        !req.user.schoolId || String(session.schoolId) !== String(req.user.schoolId)) {
       return res.status(403).json({ success: false, message: 'Not allowed' });
     }
 
     let correct = 0;
     const totalQuestions = session.questions.length;
 
+    const normalizeAnswer = (ans) => {
+      if (!ans) return '';
+      return ans.split(/[\s,&]+/)
+                .map(s => s.trim().toUpperCase())
+                .filter(s => ['A', 'B', 'C', 'D'].includes(s))
+                .sort()
+                .join(',');
+    };
+
     // Build per-question answer breakdown
     const answerBreakdown = session.questions.map((q) => {
       const userAns = answers.find(a => String(a.questionId) === String(q._id));
       const selectedOption = userAns ? userAns.selectedOption : null;
-      const isCorrect = selectedOption === q.correctAnswer;
+      const isCorrect = normalizeAnswer(selectedOption) === normalizeAnswer(q.correctAnswer);
       if (isCorrect) correct++;
 
       return {

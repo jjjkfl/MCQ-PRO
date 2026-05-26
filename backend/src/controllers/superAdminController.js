@@ -168,22 +168,7 @@ exports.getSchoolExams = async (req, res) => {
   }
 };// Global Live Monitoring
 exports.getGlobalLiveExams = async (req, res) => {
-  try {
-    const Session = require('../models/Session');
-    // Fetch both active (live) and pending (scheduled) sessions
-    const sessions = await Session.find({ 
-      status: { $in: ['active', 'pending'] } 
-    })
-      .populate('schoolId', 'name')
-      .populate('courseId', 'courseName')
-      .populate('teacherId', 'name')
-      .sort({ startTime: 1 }) // Show soonest first
-      .limit(20);
-      
-    res.json(sessions);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+  return res.status(403).json({ message: 'Access denied. Live monitor is restricted to school administrators and teachers.' });
 };
 
 // Update School details

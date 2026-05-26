@@ -188,12 +188,14 @@ const ExamEngine = {
     const q = this.questions[this.currentIdx];
     const container = document.getElementById('question-area');
     const selectedAnswer = this.answers[q._id];
+    const selectedOptions = selectedAnswer ? selectedAnswer.split(',').map(s => s.trim()) : [];
 
     container.innerHTML = `
       <div class="animate-fade-in">
         <div class="exam-q-header">
           <p class="p-dim" style="font-size: 13px;">Question ${this.currentIdx + 1} of ${this.questions.length}</p>
           <div class="exam-q-badges">
+            ${q.isMultiSelect ? `<span class="q-marks-badge" style="background:#fffbeb; color:#d97706; border:1px solid #fde68a;">Multiple Answers</span>` : ''}
             ${q.marks ? `<span class="q-marks-badge">${q.marks} Mark${q.marks > 1 ? 's' : ''}</span>` : ''}
           </div>
         </div>
@@ -213,22 +215,25 @@ const ExamEngine = {
           </div>` : ''}
 
         <div class="options-list">
-          ${q.options.map(opt => `
-            <div class="option-item ${selectedAnswer === opt.label ? 'selected' : ''}" 
-                 onclick="ExamEngine.selectOption('${q._id}', '${opt.label}')">
-              <div class="option-label">${opt.label}</div>
-              <div class="option-content-wrapper">
-                <div class="option-text">${this._escapeHtml(opt.text)}</div>
-                ${opt.image ? `
-                  <div class="option-image-container">
-                    <img src="${window.SERVER_URL}${opt.image}" alt="Option Image" class="exam-option-image"
-                         onclick="event.stopPropagation(); ExamEngine._zoomImage(this.src)"
-                         onerror="this.src='/img/placeholder.png'; this.style.opacity='0.5';">
-                  </div>
-                ` : ''}
+          ${q.options.map(opt => {
+            const isSelected = selectedOptions.includes(opt.label);
+            return `
+              <div class="option-item ${isSelected ? 'selected' : ''}" 
+                   onclick="ExamEngine.selectOption('${q._id}', '${opt.label}')">
+                <div class="option-label" style="${q.isMultiSelect ? 'border-radius: 6px;' : ''}">${opt.label}</div>
+                <div class="option-content-wrapper">
+                  <div class="option-text">${this._escapeHtml(opt.text)}</div>
+                  ${opt.image ? `
+                    <div class="option-image-container">
+                      <img src="${window.SERVER_URL}${opt.image}" alt="Option Image" class="exam-option-image"
+                           onclick="event.stopPropagation(); ExamEngine._zoomImage(this.src)"
+                           onerror="this.src='/img/placeholder.png'; this.style.opacity='0.5';">
+                    </div>
+                  ` : ''}
+                </div>
               </div>
-            </div>
-          `).join('')}
+            `;
+          }).join('')}
         </div>
 
         ${selectedAnswer ? `
@@ -247,9 +252,25 @@ const ExamEngine = {
   },
 
   selectOption(qId, label) {
-    this.answers[qId] = label;
+    const q = this.questions[this.currentIdx];
+    if (q.isMultiSelect) {
+      let current = this.answers[qId] ? this.answers[qId].split(',').map(s => s.trim()) : [];
+      if (current.includes(label)) {
+        current = current.filter(l => l !== label);
+      } else {
+        current.push(label);
+      }
+      current.sort();
+      if (current.length > 0) {
+        this.answers[qId] = current.join(', ');
+      } else {
+        delete this.answers[qId];
+      }
+    } else {
+      this.answers[qId] = label;
+    }
     this.renderQuestion();
-    ExamSocket.sendAnswer(this.currentIdx, label);
+    ExamSocket.sendAnswer(this.currentIdx, this.answers[qId] || null);
   },
 
   clearAnswer(qId) {

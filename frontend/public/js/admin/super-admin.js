@@ -247,8 +247,12 @@ const SuperAdmin = {
         if (!container) return;
         container.innerHTML = '<div style="text-align:center;padding:3rem;color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading school directory...</div>';
         try {
-            const schools = await api.get('/admin/super/schools');
+            const [schools, users] = await Promise.all([
+                api.get('/admin/super/schools'),
+                api.get('/admin/super/users')
+            ]);
             this._allSchools = schools || [];
+            this._allUsers = users || [];
             
             // Update total badge
             const badge = document.getElementById('school-total-count-badge');
@@ -312,18 +316,38 @@ const SuperAdmin = {
             style.id = 'tree-view-custom-styles';
             style.innerHTML = `
                 details.state-node summary::-webkit-details-marker,
-                details.district-node summary::-webkit-details-marker {
+                details.district-node summary::-webkit-details-marker,
+                details.school-node-details summary::-webkit-details-marker,
+                details.school-nested-folder summary::-webkit-details-marker {
                     display: none;
                 }
                 details.state-node[open] > summary i.fa-chevron-down,
                 details.district-node[open] > summary i.fa-chevron-down {
                     transform: rotate(180deg);
                 }
+                details.school-node-details[open] > summary i.chevron-icon {
+                    transform: rotate(90deg);
+                }
+                details.school-node-details[open] > summary i.folder-icon {
+                    color: #dca368 !important;
+                }
+                details.school-nested-folder[open] > summary i.nested-chevron-icon {
+                    transform: rotate(90deg);
+                }
+                details.school-nested-folder[open] > summary i.folder-sub-icon {
+                    color: #dca368 !important;
+                }
                 details.state-node summary,
-                details.district-node summary {
+                details.district-node summary,
+                details.school-node-details summary,
+                details.school-nested-folder summary {
                     outline: none;
                 }
-                .school-node:hover {
+                .school-node-details {
+                    box-shadow: none;
+                    transition: all 0.2s;
+                }
+                .school-node-details:hover {
                     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                     transform: translateY(-1px);
                 }
@@ -419,30 +443,154 @@ const SuperAdmin = {
                 let schoolsHTML = '';
                 
                 sortedSchools.forEach(s => {
+                    const schoolUsers = (this._allUsers || []).filter(u => {
+                        const sId = u.schoolId ? (typeof u.schoolId === 'object' ? u.schoolId._id : u.schoolId) : null;
+                        return String(sId) === String(s._id);
+                    });
+                    const admins = schoolUsers.filter(u => u.role === 'school_admin' || u.role === 'admin');
+                    const teachers = schoolUsers.filter(u => u.role === 'teacher');
+                    const students = schoolUsers.filter(u => u.role === 'student');
+
                     schoolsHTML += `
-                        <div class="school-node" onclick="SuperAdmin.focusSchool('${s._id}', ${s.latitude}, ${s.longitude})" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: 6px; background: rgba(255,255,255,0.03); cursor: pointer; transition: all 0.2s; margin-bottom: 0.25rem;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-                            <div style="display: flex; flex-direction: column; flex: 1; overflow: hidden; margin-right: 8px;">
-                                <div style="font-size: 13px; font-weight: 600; color: #fff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${s.name}</div>
-                                <div style="font-size: 11px; color: #8e8e93;">${s.board_type || 'CBSE'} Board</div>
-                            </div>
-                            <div style="display: flex; gap: 6px; align-items: center;" onclick="event.stopPropagation()">
-                                <span style="background: rgba(175, 82, 222, 0.15); color: #7a82ab; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-right: 4px;">${s.subscription_plan}</span>
-                                <span style="width: 6px; height: 6px; border-radius: 50%; background: ${s.is_active ? '#6ba87a' : '#d97a7e'}; margin-right: 8px;"></span>
+                        <details class="school-node-details" style="margin-bottom: 0.5rem; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
+                            <summary onclick="SuperAdmin.focusSchool('${s._id}', ${s.latitude}, ${s.longitude})" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; cursor: pointer; list-style: none; user-select: none;">
+                                <div style="display: flex; align-items: center; gap: 8px; flex: 1; overflow: hidden; margin-right: 8px;">
+                                    <i class="fas fa-chevron-right chevron-icon" style="font-size: 10px; transition: transform 0.2s; color: #8e8e93;"></i>
+                                    <i class="fas fa-folder folder-icon" style="color: #e5c07b; font-size: 14px;"></i>
+                                    <div style="display: flex; flex-direction: column; overflow: hidden;">
+                                        <div style="font-size: 13px; font-weight: 600; color: #fff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${s.name}</div>
+                                        <div style="font-size: 11px; color: #8e8e93;">${s.board_type || 'CBSE'} Board</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 6px; align-items: center;" onclick="event.stopPropagation(); event.preventDefault();">
+                                    <span style="background: rgba(175, 82, 222, 0.15); color: #7a82ab; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-right: 4px;">${s.subscription_plan}</span>
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: ${s.is_active ? '#6ba87a' : '#d97a7e'}; margin-right: 8px;"></span>
+                                    
+                                    <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Deep Dive" onclick="SuperAdmin.viewSchoolDetails('${s._id}')">
+                                        <i class="fas fa-eye" style="color:#6ba87a; font-size: 11px;"></i>
+                                    </button>
+                                    <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="${s.is_active ? 'Suspend' : 'Approve'}" onclick="SuperAdmin.toggleSchool('${s._id}', ${s.is_active})">
+                                        <i class="fas ${s.is_active ? 'fa-ban' : 'fa-check-circle'}" style="color:${s.is_active ? '#d97a7e' : '#6ba87a'}; font-size: 11px;"></i>
+                                    </button>
+                                    <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Edit School" onclick="SuperAdmin.showEditSchoolModal('${s._id}')">
+                                        <i class="fas fa-edit" style="color:#5c8d89; font-size: 11px;"></i>
+                                    </button>
+                                    <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Delete School" onclick="SuperAdmin.deleteSchool('${s._id}')">
+                                        <i class="fas fa-trash-alt" style="color:#d97a7e; font-size: 11px;"></i>
+                                    </button>
+                                </div>
+                            </summary>
+                            <div class="school-folders-content" style="padding: 0.5rem 1rem 0.75rem 2.25rem; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.15); border-top: 1px solid rgba(255,255,255,0.03);">
                                 
-                                <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Deep Dive" onclick="SuperAdmin.viewSchoolDetails('${s._id}')">
-                                    <i class="fas fa-eye" style="color:#6ba87a; font-size: 11px;"></i>
-                                </button>
-                                <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="${s.is_active ? 'Suspend' : 'Approve'}" onclick="SuperAdmin.toggleSchool('${s._id}', ${s.is_active})">
-                                    <i class="fas ${s.is_active ? 'fa-ban' : 'fa-check-circle'}" style="color:${s.is_active ? '#d97a7e' : '#6ba87a'}; font-size: 11px;"></i>
-                                </button>
-                                <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Edit School" onclick="SuperAdmin.showEditSchoolModal('${s._id}')">
-                                    <i class="fas fa-edit" style="color:#5c8d89; font-size: 11px;"></i>
-                                </button>
-                                <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Delete School" onclick="SuperAdmin.deleteSchool('${s._id}')">
-                                    <i class="fas fa-trash-alt" style="color:#d97a7e; font-size: 11px;"></i>
-                                </button>
+                                <!-- School Admins Folder -->
+                                <details class="school-nested-folder" style="overflow: hidden;">
+                                    <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #8e8e93;"></i>
+                                            <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                                            <span>School Admin (${admins.length})</span>
+                                        </div>
+                                        <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 10px; min-width: unset; height: unset;" onclick="event.stopPropagation(); event.preventDefault(); SuperAdmin.quickCreateUser('${s._id}', 'school_admin')" title="Add School Admin">
+                                            <i class="fas fa-plus" style="font-size: 9px; color: #6ba87a;"></i>
+                                        </button>
+                                    </summary>
+                                    <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
+                                        ${admins.length > 0 ? admins.map(u => `
+                                            <div style="font-size: 12px; color: #e5e5ea; padding: 2px 0; display: flex; align-items: center; gap: 6px;">
+                                                <i class="fas fa-user-shield" style="color: #6ba87a; font-size: 10px;"></i>
+                                                <span><strong>${u.name}</strong> <span style="color:#8e8e93; font-size:11px;">(${u.email})</span></span>
+                                            </div>
+                                        `).join('') : `
+                                            <div style="font-size: 11px; color: #8e8e93; font-style: italic; padding: 2px 0;">No school admins assigned</div>
+                                        `}
+                                    </div>
+                                </details>
+ 
+                                <!-- Teachers Folder -->
+                                <details class="school-nested-folder" style="overflow: hidden;">
+                                    <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #8e8e93;"></i>
+                                            <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                                            <span>Teacher (${teachers.length})</span>
+                                        </div>
+                                        <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 10px; min-width: unset; height: unset;" onclick="event.stopPropagation(); event.preventDefault(); SuperAdmin.quickCreateUser('${s._id}', 'teacher')" title="Add Teacher">
+                                            <i class="fas fa-plus" style="font-size: 9px; color: #6ba87a;"></i>
+                                        </button>
+                                    </summary>
+                                    <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
+                                        ${teachers.length > 0 ? teachers.map(u => `
+                                            <div style="font-size: 12px; color: #e5e5ea; padding: 2px 0; display: flex; align-items: center; gap: 6px;">
+                                                <i class="fas fa-user-tie" style="color: #5c8d89; font-size: 10px;"></i>
+                                                <span><strong>${u.name}</strong> <span style="color:#8e8e93; font-size:11px;">(${u.email})</span></span>
+                                            </div>
+                                        `).join('') : `
+                                            <div style="font-size: 11px; color: #8e8e93; font-style: italic; padding: 2px 0;">No teachers assigned</div>
+                                        `}
+                                    </div>
+                                </details>
+ 
+                                <!-- Students by Division Folders -->
+                                ${(() => {
+                                    if (students.length === 0) {
+                                        return `
+                                        <details class="school-nested-folder" style="overflow: hidden;">
+                                            <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);">
+                                                <div style="display: flex; align-items: center; gap: 6px;">
+                                                    <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                                                    <span>Students (0)</span>
+                                                </div>
+                                                <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 10px; min-width: unset; height: unset;" onclick="event.stopPropagation(); event.preventDefault(); SuperAdmin.quickCreateUser('${s._id}', 'student')" title="Add Student">
+                                                    <i class="fas fa-plus" style="font-size: 9px; color: #6ba87a;"></i>
+                                                </button>
+                                            </summary>
+                                            <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; font-size: 11px; color: #8e8e93; font-style: italic;">No students assigned</div>
+                                        </details>
+                                        `;
+                                    }
+ 
+                                    const divisionGroups = {};
+                                    students.forEach(st => {
+                                        const div = st.division || 'Unassigned';
+                                        if (!divisionGroups[div]) divisionGroups[div] = [];
+                                        divisionGroups[div].push(st);
+                                    });
+ 
+                                    const sortedDivisions = Object.keys(divisionGroups).sort((a, b) => {
+                                        if (a === 'Unassigned') return 1;
+                                        if (b === 'Unassigned') return -1;
+                                        return a.localeCompare(b);
+                                    });
+ 
+                                    return sortedDivisions.map(divKey => {
+                                        const divStudents = divisionGroups[divKey];
+                                        const title = divKey === 'Unassigned' ? 'Unassigned Division Students' : `Division ${divKey} Students`;
+                                        return `
+                                        <details class="school-nested-folder" style="overflow: hidden; margin-bottom: 0.25rem;">
+                                            <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                                                <div style="display: flex; align-items: center; gap: 6px;">
+                                                    <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #8e8e93;"></i>
+                                                    <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                                                    <span>${title} (${divStudents.length})</span>
+                                                </div>
+                                                <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 10px; min-width: unset; height: unset;" onclick="event.stopPropagation(); event.preventDefault(); SuperAdmin.quickCreateUser('${s._id}', 'student', '${divKey}')" title="Add Student (Division ${divKey})">
+                                                    <i class="fas fa-plus" style="font-size: 9px; color: #6ba87a;"></i>
+                                                </button>
+                                            </summary>
+                                            <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
+                                                ${divStudents.map(u => `
+                                                    <div style="font-size: 12px; color: #e5e5ea; padding: 2px 0; display: flex; align-items: center; gap: 6px;">
+                                                        <i class="fas fa-user-graduate" style="color: #8e8e93; font-size: 10px;"></i>
+                                                        <span><strong>${u.name}</strong> <span style="color:#8e8e93; font-size:11px;">(${u.email})</span></span>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        </details>
+                                        `;
+                                    }).join('');
+                                })()}
                             </div>
-                        </div>
+                        </details>
                     `;
                 });
                 
@@ -585,37 +733,198 @@ const SuperAdmin = {
 
     _renderUsers(users) {
         const container = document.getElementById('users-list');
+        if (!container) return;
         if (!users || users.length === 0) {
-            container.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:4rem;color:#8e8e93;"><i class="fas fa-users" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:1rem;"></i>No matching users found.</td></tr>';
+            container.innerHTML = '<div style="text-align:center;padding:4rem;color:#8e8e93;"><i class="fas fa-users" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:1rem;"></i>No matching users found.</div>';
             return;
         }
-        container.innerHTML = users.map(u => `
-            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                <td style="padding:1.2rem 1rem;">
-                    <div style="font-weight:700;">${u.name}</div>
-                    <div style="font-size:12px;color:#8e8e93;">${u.email}</div>
-                </td>
-                <td style="padding:1.2rem 1rem;"><span style="text-transform:capitalize;font-weight:600;font-size:13px;color:#5c8d89;">${u.role?.replace('_', ' ')}</span></td>
-                <td style="padding:1.2rem 1rem;">${u.schoolId?.name || '<span style="color:#8e8e93;font-style:italic;">Platform Admin</span>'}</td>
-                <td style="padding:1.2rem 1rem;font-size:13px;color:#8e8e93;">${u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : 'Never'}</td>
-                <td style="padding:1.2rem 1rem;">
-                    <span style="display:inline-flex;align-items:center;gap:6px;background:${u.isActive ? 'rgba(107,168,122,0.1)' : 'rgba(217,122,126,0.1)'};color:${u.isActive ? '#6ba87a' : '#d97a7e'};padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">
-                        ${u.isActive ? 'Active' : 'Blocked'}
-                    </span>
-                </td>
-                <td style="padding:1.2rem 1rem;">
-                    <button class="btn btn-ghost" title="Edit User" onclick="SuperAdmin.showEditUserModal('${u._id}')">
-                        <i class="fas fa-edit" style="color:#5c8d89; font-size:1.1rem;"></i>
-                    </button>
-                    <button class="btn btn-ghost" title="${u.isActive ? 'Block' : 'Unblock'}" onclick="SuperAdmin.toggleUser('${u._id}', ${u.isActive})">
-                        <i class="fas ${u.isActive ? 'fa-user-slash' : 'fa-user-check'}" style="color:${u.isActive ? '#d97a7e' : '#6ba87a'}; font-size:1.1rem;"></i>
-                    </button>
-                    <button class="btn btn-ghost" title="Delete User" onclick="SuperAdmin.deleteUser('${u._id}')">
-                        <i class="fas fa-trash-alt" style="color:#d97a7e; font-size:1.1rem;"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+
+        const renderUserItem = (u) => {
+            const roleIcon = u.role === 'super_admin' 
+                ? 'fa-user-shield' 
+                : u.role === 'school_admin' || u.role === 'admin' 
+                    ? 'fa-user-shield' 
+                    : u.role === 'teacher' 
+                        ? 'fa-user-tie' 
+                        : 'fa-user-graduate';
+                        
+            const roleColor = u.role === 'super_admin' 
+                ? '#d97a7e' 
+                : u.role === 'school_admin' || u.role === 'admin' 
+                    ? '#6ba87a' 
+                    : u.role === 'teacher' 
+                        ? '#5c8d89' 
+                        : '#8e8e93';
+
+            return `
+                <div class="user-row-item" style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.8rem; border-radius: 6px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); margin-bottom: 0.25rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">
+                    <div style="display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden; margin-right: 12px;">
+                        <i class="fas ${roleIcon}" style="color: ${roleColor}; font-size: 14px; width: 16px; text-align: center;"></i>
+                        <div style="display: flex; flex-direction: column; overflow: hidden;">
+                            <div style="font-size: 13px; font-weight: 700; color: #fff;">${u.name}</div>
+                            <div style="font-size: 11px; color: #8e8e93; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${u.email}</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;" onclick="event.stopPropagation()">
+                        <span style="font-size: 11px; color: #8e8e93; font-weight: 500;">
+                            Login: ${u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : 'Never'}
+                        </span>
+                        <span style="display:inline-flex; align-items:center; gap:4px; background:${u.isActive ? 'rgba(107,168,122,0.1)' : 'rgba(217,122,126,0.1)'}; color:${u.isActive ? '#6ba87a' : '#d97a7e'}; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:600;">
+                            ${u.isActive ? 'Active' : 'Blocked'}
+                        </span>
+                        <div style="display: flex; gap: 4px;">
+                            <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Edit User" onclick="SuperAdmin.showEditUserModal('${u._id}')">
+                                <i class="fas fa-edit" style="color:#5c8d89; font-size: 11px;"></i>
+                            </button>
+                            <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="${u.isActive ? 'Block' : 'Unblock'}" onclick="SuperAdmin.toggleUser('${u._id}', ${u.isActive})">
+                                <i class="fas ${u.isActive ? 'fa-user-slash' : 'fa-user-check'}" style="color:${u.isActive ? '#d97a7e' : '#6ba87a'}; font-size: 11px;"></i>
+                            </button>
+                            <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Delete User" onclick="SuperAdmin.deleteUser('${u._id}')">
+                                <i class="fas fa-trash-alt" style="color:#d97a7e; font-size: 11px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const platformAdmins = [];
+        const schoolsMap = {}; // schoolId -> { name, admins: [], teachers: [], studentsByDivision: {} }
+
+        users.forEach(u => {
+            if (u.role === 'super_admin' || !u.schoolId) {
+                platformAdmins.push(u);
+            } else {
+                const sId = u.schoolId._id || u.schoolId;
+                const sName = typeof u.schoolId === 'object' ? u.schoolId.name : 'Unknown Institution';
+                if (!schoolsMap[sId]) {
+                    schoolsMap[sId] = {
+                        name: sName,
+                        admins: [],
+                        teachers: [],
+                        studentsByDivision: {}
+                    };
+                }
+                const school = schoolsMap[sId];
+                if (u.role === 'school_admin' || u.role === 'admin') {
+                    school.admins.push(u);
+                } else if (u.role === 'teacher') {
+                    school.teachers.push(u);
+                } else if (u.role === 'student') {
+                    const div = u.division || 'Unassigned';
+                    if (!school.studentsByDivision[div]) {
+                        school.studentsByDivision[div] = [];
+                    }
+                    school.studentsByDivision[div].push(u);
+                }
+            }
+        });
+
+        let html = '';
+        if (platformAdmins.length > 0) {
+            html += `
+                <details class="school-node-details" open style="margin-bottom: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
+                    <summary style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.8rem; cursor: pointer; list-style: none; user-select: none; background: rgba(255,255,255,0.03);">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-chevron-right chevron-icon" style="font-size: 10px; transition: transform 0.2s; color: #8e8e93;"></i>
+                            <i class="fas fa-shield-halved folder-icon" style="color: #d97a7e; font-size: 14px;"></i>
+                            <span style="font-size: 13px; font-weight: 700; color: #fff;">Platform / Super Admins</span>
+                        </div>
+                        <span style="font-size: 10px; background: rgba(255,255,255,0.06); color: #8e8e93; padding: 2px 6px; border-radius: 10px; font-weight: 600;">${platformAdmins.length} User${platformAdmins.length !== 1 ? 's' : ''}</span>
+                    </summary>
+                    <div style="padding: 0.5rem 0.7rem 0.7rem 1.8rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                        ${platformAdmins.map(u => renderUserItem(u)).join('')}
+                    </div>
+                </details>
+            `;
+        }
+
+        Object.keys(schoolsMap).forEach(sId => {
+            const school = schoolsMap[sId];
+            const totalCount = school.admins.length + school.teachers.length + 
+                               Object.values(school.studentsByDivision).reduce((acc, curr) => acc + curr.length, 0);
+
+            let divisionFoldersHTML = '';
+            const sortedDivs = Object.keys(school.studentsByDivision).sort((a,b) => {
+                if (a === 'Unassigned') return 1;
+                if (b === 'Unassigned') return -1;
+                return a.localeCompare(b);
+            });
+
+            sortedDivs.forEach(div => {
+                const list = school.studentsByDivision[div];
+                if (list.length > 0) {
+                    divisionFoldersHTML += `
+                        <details class="school-nested-folder" style="overflow: hidden; margin-bottom: 0.25rem;">
+                            <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                                <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #8e8e93;"></i>
+                                <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                                <span>Division ${div} Students (${list.length})</span>
+                            </summary>
+                            <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
+                                ${list.map(u => renderUserItem(u)).join('')}
+                            </div>
+                        </details>
+                    `;
+                }
+            });
+
+            html += `
+                <details class="school-node-details" style="margin-bottom: 0.5rem; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
+                    <summary style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; cursor: pointer; list-style: none; user-select: none; background: rgba(255,255,255,0.03);">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-chevron-right chevron-icon" style="font-size: 10px; transition: transform 0.2s; color: #8e8e93;"></i>
+                            <i class="fas fa-folder folder-icon" style="color: #e5c07b; font-size: 14px;"></i>
+                            <span style="font-size: 13px; font-weight: 700; color: #fff;">${school.name}</span>
+                        </div>
+                        <span style="font-size: 10px; background: rgba(255,255,255,0.06); color: #8e8e93; padding: 2px 6px; border-radius: 10px; font-weight: 600;">${totalCount} User${totalCount !== 1 ? 's' : ''}</span>
+                    </summary>
+                    <div class="school-folders-content" style="padding: 0.5rem 1rem 0.75rem 2.25rem; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.15); border-top: 1px solid rgba(255,255,255,0.03);">
+                        
+                        <!-- School Admins Folder -->
+                        <details class="school-nested-folder" style="overflow: hidden;">
+                            <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                                <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #8e8e93;"></i>
+                                <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                                <span>School Admin (${school.admins.length})</span>
+                            </summary>
+                            <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
+                                ${school.admins.length > 0 ? school.admins.map(u => renderUserItem(u)).join('') : `
+                                    <div style="font-size: 11px; color: #8e8e93; font-style: italic; padding: 2px 0;">No school admins assigned</div>
+                                `}
+                            </div>
+                        </details>
+
+                        <!-- Teachers Folder -->
+                        <details class="school-nested-folder" style="overflow: hidden;">
+                            <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                                <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #8e8e93;"></i>
+                                <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                                <span>Teacher (${school.teachers.length})</span>
+                            </summary>
+                            <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
+                                ${school.teachers.length > 0 ? school.teachers.map(u => renderUserItem(u)).join('') : `
+                                    <div style="font-size: 11px; color: #8e8e93; font-style: italic; padding: 2px 0;">No teachers assigned</div>
+                                `}
+                            </div>
+                        </details>
+
+                        <!-- Student Division Folders -->
+                        ${divisionFoldersHTML || `
+                            <details class="school-nested-folder" style="overflow: hidden;">
+                                <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);">
+                                    <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                                    <span>Students (0)</span>
+                                </summary>
+                                <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; font-size: 11px; color: #8e8e93; font-style: italic;">No students assigned</div>
+                            </details>
+                        `}
+                    </div>
+                </details>
+            `;
+        });
+
+        container.innerHTML = html;
     },
 
     _billingPlans: [],
@@ -1294,6 +1603,24 @@ const SuperAdmin = {
         document.getElementById('create-user-form').onsubmit = (e) => this.submitCreateUser(e);
     },
 
+    quickCreateUser(schoolId, role, division = '') {
+        document.getElementById('modal-create-user').style.display = 'flex';
+        document.getElementById('create-user-form').reset();
+        this.loadSchoolOptions().then(() => {
+            document.getElementById('create-user-school').value = schoolId;
+            document.getElementById('create-user-role').value = role;
+            this.onRoleChange('create');
+            
+            const divInput = document.getElementById('create-user-division');
+            if (divInput) {
+                divInput.value = (division === 'Unassigned') ? '' : division;
+            }
+            
+            document.getElementById('create-user-name').focus();
+        });
+        document.getElementById('create-user-form').onsubmit = (e) => this.submitCreateUser(e);
+    },
+
     closeCreateUserModal() {
         document.getElementById('modal-create-user').style.display = 'none';
     },
@@ -1553,11 +1880,6 @@ const SuperAdmin = {
             btn.disabled = false;
             btn.innerHTML = 'Send Broadcast';
         }
-    },
-
-    closeSchoolDetails() {
-        const modal = document.getElementById('modal-school-details');
-        if (modal) modal.style.display = 'none';
     }
 };
 

@@ -418,11 +418,13 @@
           </div>
 
           ${answers.map((a, i) => {
-        const status = !a.selectedAnswer ? 'unanswered' : a.isCorrect ? 'correct' : 'wrong';
-        const badgeClass = status === 'correct' ? 'badge-correct' : status === 'wrong' ? 'badge-wrong' : 'badge-unanswered';
-        const badgeText = status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '— Skipped';
+            const status = !a.selectedAnswer ? 'unanswered' : a.isCorrect ? 'correct' : 'wrong';
+            const badgeClass = status === 'correct' ? 'badge-correct' : status === 'wrong' ? 'badge-wrong' : 'badge-unanswered';
+            const badgeText = status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '— Skipped';
+            const correctLabels = (a.correctAnswer || '').split(/[\s,&]+/).map(s => s.trim().toUpperCase());
+            const selectedLabels = (a.selectedAnswer || '').split(/[\s,&]+/).map(s => s.trim().toUpperCase());
 
-        return `
+            return `
               <div class="answer-card ${status}">
                 <div class="answer-q-header">
                   <span class="answer-q-num">Q${i + 1}</span>
@@ -432,8 +434,8 @@
                 ${a.image ? `<img src="${a.image}" class="answer-q-image" onerror="this.style.display='none'">` : ''}
                 <div class="answer-options">
                   ${(a.options || []).map(opt => {
-          const isCorrectOpt = opt.label === a.correctAnswer;
-          const isSelectedWrong = opt.label === a.selectedAnswer && !a.isCorrect;
+          const isCorrectOpt = correctLabels.includes(opt.label);
+          const isSelectedWrong = selectedLabels.includes(opt.label) && !isCorrectOpt;
           let cls = '';
           if (isCorrectOpt) cls = 'is-correct';
           else if (isSelectedWrong) cls = 'is-selected-wrong';
@@ -446,7 +448,7 @@
                 </div>
                 ${status === 'wrong' ? `
                   <div class="your-answer-note">
-                    Your answer: <strong style="color:#dc2626;">${a.selectedAnswer}</strong> · 
+                    Your answer: <strong style="color:#dc2626;">${a.selectedAnswer || '—'}</strong> · 
                     Correct: <strong style="color:#16a34a;">${a.correctAnswer}</strong>
                   </div>` : ''}
               </div>`;

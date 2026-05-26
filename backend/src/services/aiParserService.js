@@ -17,17 +17,42 @@ const { execSync, execFileSync } = require('child_process');
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const Anthropic = require('@anthropic-ai/sdk');
+const { OpenAI } = require('openai');
 const logger = require('../utils/logger');
+
+/* ─── API Key Validators ────────────────────────────────────────── */
+const hasOpenAI = () => {
+  const k = process.env.OPENAI_API_KEY;
+  return k && !k.includes('your_openai_api_key') && k.trim() !== '';
+};
+
+const hasAnthropic = () => {
+  const k = process.env.ANTHROPIC_API_KEY;
+  return k && !k.includes('your_anthropic_api_key') && k.trim() !== '';
+};
 
 /* ─── Anthropic client (lazy) ───────────────────────────────────── */
 let _anthropic = null;
 const getAnthropic = () => {
   if (!_anthropic) {
-    if (!process.env.ANTHROPIC_API_KEY)
-      throw new Error('ANTHROPIC_API_KEY is not set');
-    _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const apiKey = (process.env.ANTHROPIC_API_KEY || '').trim();
+    if (!apiKey || apiKey.includes('your_'))
+      throw new Error('ANTHROPIC_API_KEY is not set or invalid');
+    _anthropic = new Anthropic({ apiKey });
   }
   return _anthropic;
+};
+
+/* ─── OpenAI client (lazy) ──────────────────────────────────────── */
+let _openai = null;
+const getOpenAI = () => {
+  if (!_openai) {
+    const apiKey = (process.env.OPENAI_API_KEY || '').trim();
+    if (!apiKey || apiKey.includes('your_'))
+      throw new Error('OPENAI_API_KEY is not set or invalid');
+    _openai = new OpenAI({ apiKey });
+  }
+  return _openai;
 };
 
 /* ─── Upload directory ──────────────────────────────────────────── */
@@ -165,24 +190,76 @@ const extractPdfImages = (pdfPath) => {
 };
 
 /* ══════════════════════════════════════════════════════════════════
-   SECTION 4  —  CLAUDE VISION  (for image-bearing questions)
+   SECTION 4  —  AI MCQ EXTRACTION & DYNAMIC ROUTING
 ══════════════════════════════════════════════════════════════════ */
 
 /**
- * Ask Claude to parse MCQs from a page image or diagram.
- * Used when text parsing yields no question or when an image is present.
- *
- * @param {string[]} imagePaths  — local file paths of images to include
- * @param {string}   contextText — surrounding text as hint
- * @param {number}   targetCount
+ * Helper to extract all correct answer letters (A, B, C, D) from text
+ */
+const extractCorrectAnswers = (text) => {
+  if (!text) return null;
+  
+  // Look for lines containing answer indicators
+  const lines = text.split(/\r?\n/);
+  for (const line of lines) {
+    const ansM = line.match(/(?:Answer|Ans|Correct|Key|Choice|Response)\s*[\:\-\s]*(.*)/i);
+    if (ansM) {
+      const content = ansM[1];
+      const matches = [];
+      
+      // Find all isolated letters (a, b, c, d)
+      const charRx = /\b([a-d])\b/gi;
+      let m;
+      while ((m = charRx.exec(content)) !== null) {
+        matches.push(m[1].toUpperCase());
+      }
+      
+      // Find all letters in parentheses (a), (b), (c), (d)
+      const parenRx = /\(([a-d])\)/gi;
+      parenRx.lastIndex = 0;
+      while ((m = parenRx.exec(content)) !== null) {
+        matches.push(m[1].toUpperCase());
+      }
+
+      if (matches.length > 0) {
+        const unique = [...new Set(matches)].sort();
+        return unique.join(', ');
+      }
+    }
+  }
+
+  // General block search if no line-by-line matched
+  const ansM = text.match(/(?:Answer|Ans|Correct|Key|Choice|Response)\s*[\:\-\s]*(.*)/i);
+  if (!ansM) return null;
+  const content = ansM[1];
+  
+  const matches = [];
+  const charRx = /\b([a-d])\b/gi;
+  let m;
+  while ((m = charRx.exec(content)) !== null) {
+    matches.push(m[1].toUpperCase());
+  }
+  const parenRx = /\(([a-d])\)/gi;
+  parenRx.lastIndex = 0;
+  while ((m = parenRx.exec(content)) !== null) {
+    matches.push(m[1].toUpperCase());
+  }
+
+  if (matches.length > 0) {
+    const unique = [...new Set(matches)].sort();
+    return unique.join(', ');
+  }
+  return null;
+};
+
+/**
+ * Ask Claude to parse MCQs from page images.
  */
 const claudeVisionExtract = async (imagePaths, contextText = '', targetCount = 10) => {
   const anthropic = getAnthropic();
-
-  // Build multi-image content array
   const contentBlocks = [];
 
-  for (const imgPath of imagePaths.slice(0, 10)) {   // cap at 10 images per call
+  for (const imgPath of imagePaths.slice(0, 10)) {
     if (!fs.existsSync(imgPath)) continue;
     const ext = path.extname(imgPath).toLowerCase();
     const mime = mimeFromExt(ext);
@@ -222,6 +299,7 @@ Rules:
 - If a diagram/figure is the question itself, set questionText to a description and "image": "EMBEDDED"
 - Extract up to ${targetCount} questions
 - If an option contains an image rather than text, set its "text" to "[Image option]" and "image": "EMBEDDED"
+- If a question has multiple correct answers, set correctAnswer to a comma-separated list of the correct letters (e.g. "A, B" or "B, D")
 - If you cannot determine the correct answer from the image, set correctAnswer to the most likely letter
 - Return [] if no MCQs are found in the image`
   });
@@ -242,7 +320,7 @@ Rules:
 };
 
 /**
- * Ask Claude to extract MCQs from plain text (no vision needed).
+ * Ask Claude to extract MCQs from plain text.
  */
 const claudeTextExtract = async (text, subject = 'General', targetCount = 20) => {
   const anthropic = getAnthropic();
@@ -257,9 +335,10 @@ const claudeTextExtract = async (text, subject = 'General', targetCount = 20) =>
 Extract exactly ${targetCount} MCQ questions from the text below.
 
 Rules:
-1. Each question must have exactly 4 options (A, B, C, D) with ONE correct answer.
-2. If the correct answer is not stated, infer it from context.
-3. Return ONLY a valid JSON array — no markdown fences, no commentary.
+1. Each question must have exactly 4 options (A, B, C, D) with one or more correct answers.
+2. If a question has multiple correct answers, set correctAnswer to a comma-separated list of the correct letters (e.g., "A, B" or "B, D").
+3. If the correct answer is not stated, infer it from context.
+4. Return ONLY a valid JSON array — no markdown fences, no commentary.
 
 Subject hint: ${subject}
 
@@ -276,6 +355,163 @@ JSON format:
   } catch (err) {
     logger.error(`[Claude Text] API error: ${err.message}`);
     return [];
+  }
+};
+
+/**
+ * Ask OpenAI to parse MCQs from page images (Vision Model).
+ */
+const openAIVisionExtract = async (imagePaths, contextText = '', targetCount = 10) => {
+  const openai = getOpenAI();
+  const contentBlocks = [];
+
+  for (const imgPath of imagePaths.slice(0, 10)) {
+    if (!fs.existsSync(imgPath)) continue;
+    const ext = path.extname(imgPath).toLowerCase();
+    const mime = mimeFromExt(ext);
+    contentBlocks.push({
+      type: 'image_url',
+      image_url: {
+        url: `data:${mime};base64,${toBase64(imgPath)}`
+      }
+    });
+  }
+
+  if (contentBlocks.length === 0) return [];
+
+  const promptText = `${contextText ? `Surrounding document text for context:\n${contextText}\n\n` : ''}
+You are an expert MCQ extractor. Analyze the image(s) above and extract every MCQ question you can identify.
+
+Return ONLY a valid JSON array wrapped in a root object with key "questions" (no markdown, no explanation) matching this schema:
+{
+  "questions": [
+    {
+      "questionText": "Full question text here (include any equation/formula)",
+      "image": "EMBEDDED",
+      "options": [
+        { "label": "A", "text": "Option A text", "image": "" },
+        { "label": "B", "text": "Option B text", "image": "" },
+        { "label": "C", "text": "Option C text", "image": "" },
+        { "label": "D", "text": "Option D text", "image": "" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Brief rationale",
+      "difficulty": "medium",
+      "topic": "inferred topic",
+      "marks": 1
+    }
+  ]
+}
+
+Rules:
+- If a diagram/figure is the question itself, set questionText to a description and "image": "EMBEDDED"
+- Extract up to ${targetCount} questions
+- If an option contains an image rather than text, set its "text" to "[Image option]" and "image": "EMBEDDED"
+- If a question has multiple correct answers, set correctAnswer to a comma-separated list of the correct letters (e.g. "A, B" or "B, D")
+- If you cannot determine the correct answer from the image, set correctAnswer to the most likely letter
+- Return {"questions": []} if no MCQs are found in the image`;
+
+  contentBlocks.unshift({
+    type: 'text',
+    text: promptText
+  });
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      max_tokens: 4096,
+      response_format: { type: 'json_object' },
+      messages: [{ role: 'user', content: contentBlocks }],
+    });
+
+    const raw = response.choices[0].message.content;
+    return parseJSONSafe(raw);
+  } catch (err) {
+    logger.error(`[OpenAI Vision] API error: ${err.message}`);
+    return [];
+  }
+};
+
+/**
+ * Ask OpenAI to extract MCQs from text.
+ */
+const openAITextExtract = async (text, subject = 'General', targetCount = 20) => {
+  const openai = getOpenAI();
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      max_tokens: 4096,
+      response_format: { type: 'json_object' },
+      messages: [{
+        role: 'user',
+        content: `You are an expert MCQ extractor for the MCQ Pro platform.
+
+Extract exactly ${targetCount} MCQ questions from the text below.
+
+Rules:
+1. Each question must have exactly 4 options (A, B, C, D) with one or more correct answers.
+2. If a question has multiple correct answers, set correctAnswer to a comma-separated list of the correct letters (e.g., "A, B" or "B, D").
+3. If the correct answer is not stated, infer it from context.
+4. Return ONLY a JSON object with a "questions" key containing the array of questions.
+
+Subject hint: ${subject}
+
+TEXT:
+${text.substring(0, 12000)}
+
+JSON format:
+{
+  "questions": [
+    {
+      "questionText": "...",
+      "image": "",
+      "options": [{"label":"A","text":"...","image":""}, {"label":"B","text":"...","image":""}, {"label":"C","text":"...","image":""}, {"label":"D","text":"...","image":""}],
+      "correctAnswer": "B",
+      "explanation": "...",
+      "difficulty": "medium",
+      "topic": "...",
+      "marks": 1
+    }
+  ]
+}`
+      }],
+    });
+
+    const raw = response.choices[0].message.content;
+    return parseJSONSafe(raw);
+  } catch (err) {
+    logger.error(`[OpenAI Text] API error: ${err.message}`);
+    return [];
+  }
+};
+
+/**
+ * Wrapper function for Vision Extraction. Dynamically routes to Claude or OpenAI.
+ */
+const aiVisionExtract = async (imagePaths, contextText = '', targetCount = 10) => {
+  if (hasAnthropic()) {
+    logger.info('[AI Vision] Routing to Claude');
+    return claudeVisionExtract(imagePaths, contextText, targetCount);
+  } else if (hasOpenAI()) {
+    logger.info('[AI Vision] Routing to OpenAI (gpt-4o)');
+    return openAIVisionExtract(imagePaths, contextText, targetCount);
+  } else {
+    throw new Error('No Vision API Key configured (neither ANTHROPIC_API_KEY nor OPENAI_API_KEY)');
+  }
+};
+
+/**
+ * Wrapper function for Text Extraction. Dynamically routes to Claude or OpenAI.
+ */
+const aiTextExtract = async (text, subject = 'General', targetCount = 20) => {
+  if (hasAnthropic()) {
+    logger.info('[AI Text] Routing to Claude');
+    return claudeTextExtract(text, subject, targetCount);
+  } else if (hasOpenAI()) {
+    logger.info('[AI Text] Routing to OpenAI (gpt-4o)');
+    return openAITextExtract(text, subject, targetCount);
+  } else {
+    throw new Error('No Text API Key configured (neither ANTHROPIC_API_KEY nor OPENAI_API_KEY)');
   }
 };
 
@@ -314,7 +550,7 @@ const parseHtmlToMCQs = (html, imageList = []) => {
 /* ─── Adda247 / "QUESTION N" format ───────────────────────────── */
 const parseAdda247Format = (blocks) => {
   const questions = [];
-  let state = 'idle', currentQ = null, lastOptLabel = null;
+  let state = 'idle', currentQ = null, lastOptLabel = null, lastAddedOptionLabel = null;
 
   const HEADER_RX = [
     /SECTION\s*-\s*[A-Z]/i, /APTITUDE\s*-TEST/i, /WRITTEN\s*TEST/i,
@@ -328,7 +564,7 @@ const parseAdda247Format = (blocks) => {
       const isHeader = HEADER_RX.some(r => r.test(currentQ.questionText) && currentQ.questionText.length < 100);
       if (!isHeader) questions.push(finalizeMCQ(currentQ));
     }
-    currentQ = null; lastOptLabel = null; state = 'idle';
+    currentQ = null; lastOptLabel = null; lastAddedOptionLabel = null; state = 'idle';
   };
 
   for (const { text, imgSrc } of blocks) {
@@ -340,6 +576,7 @@ const parseAdda247Format = (blocks) => {
       save();
       currentQ = { questionText: '', image: '', options: [], correctAnswer: '' };
       state = 'in_answer';
+      lastAddedOptionLabel = null;
       const clean = text.replace(/^(?:QUESTION\s+(?:NO\.?\s*)?\d+[\.\:\s]*|Q\.?\s*\d+[\.\:\)\-]\s*|\d+[\.\)\:\-]\s*)/i, '').trim();
       if (clean) { currentQ.questionText = clean; state = 'in_question'; }
       continue;
@@ -347,18 +584,23 @@ const parseAdda247Format = (blocks) => {
     if (!currentQ) continue;
 
     // Correct answer line
-    const ansM = text.match(/^Correct\s*:\s*([A-Da-d])/i) || text.match(/(?:Answer|Ans|Correct|Key)\s*[\:\-\s]*([A-Da-d])\b/i);
-    if (ansM && !currentQ.correctAnswer) {
-      currentQ.correctAnswer = ansM[1].toUpperCase(); state = 'in_question'; continue;
+    const correct = extractCorrectAnswers(text);
+    if (correct && !currentQ.correctAnswer) {
+      currentQ.correctAnswer = correct; state = 'in_question'; lastAddedOptionLabel = null; continue;
     }
 
-    // Image attachment — IMPROVED: attach to current question
+    // Image attachment — IMPROVED: attach to lastAddedOptionLabel if present
     if (imgSrc) {
-      if (!currentQ.image) {
+      if (lastAddedOptionLabel) {
+        const opt = currentQ.options.find(o => o.label === lastAddedOptionLabel);
+        if (opt && !opt.image) {
+          opt.image = imgSrc;
+          logger.info(`[Parser] Option ${lastAddedOptionLabel} image attached: ${imgSrc}`);
+        }
+      } else if (!currentQ.image) {
         currentQ.image = imgSrc;
         logger.info(`[Parser] Attached image to question: ${imgSrc}`);
       } else {
-        // Secondary image might belong to an option
         if (lastOptLabel) {
           const opt = currentQ.options.find(o => o.label === lastOptLabel);
           if (opt) opt.image = imgSrc;
@@ -376,8 +618,10 @@ const parseAdda247Format = (blocks) => {
       const label = optM[1].toUpperCase();
       const optText = (optM[2] || '').trim();
       if (optText) {
-        if (!currentQ.options.find(o => o.label === label))
+        if (!currentQ.options.find(o => o.label === label)) {
           currentQ.options.push({ label, text: optText, image: imgSrc || '' });
+          lastAddedOptionLabel = label;
+        }
         lastOptLabel = null;
       } else {
         lastOptLabel = label;
@@ -387,8 +631,10 @@ const parseAdda247Format = (blocks) => {
 
     if (state === 'in_options' && lastOptLabel) {
       const lbl = lastOptLabel;
-      if (!currentQ.options.find(o => o.label === lbl))
+      if (!currentQ.options.find(o => o.label === lbl)) {
         currentQ.options.push({ label: lbl, text: text, image: imgSrc || '' });
+        lastAddedOptionLabel = lbl;
+      }
       lastOptLabel = null; continue;
     }
 
@@ -408,7 +654,7 @@ const parseAdda247Format = (blocks) => {
 /* ─── Generic "1." / "Q1." format ─────────────────────────────── */
 const parseGenericFormat = (blocks) => {
   const questions = [];
-  let currentQ = null, pendingImage = null, lastOptLabel = null;
+  let currentQ = null, pendingImage = null, lastOptLabel = null, lastAddedOptionLabel = null;
 
   const expanded = [];
   for (const block of blocks) {
@@ -428,12 +674,16 @@ const parseGenericFormat = (blocks) => {
     // Image block handling — improved context awareness
     if (imgSrc) {
       if (currentQ) {
-        if (!currentQ.image && currentQ.options.length === 0) {
-          // Image appears right after question text but before options → question image
+        if (lastAddedOptionLabel) {
+          const opt = currentQ.options.find(o => o.label === lastAddedOptionLabel);
+          if (opt && !opt.image) {
+            opt.image = imgSrc;
+            logger.info(`[Parser] Option ${lastAddedOptionLabel} image attached: ${imgSrc}`);
+          }
+        } else if (!currentQ.image && currentQ.options.length === 0) {
           currentQ.image = imgSrc;
           logger.info(`[Parser] Question image attached: ${imgSrc}`);
         } else if (currentQ.options.length > 0 && lastOptLabel) {
-          // Image appears after an option label → option image
           const opt = currentQ.options.find(o => o.label === lastOptLabel);
           if (opt) { opt.image = imgSrc; logger.info(`[Parser] Option ${lastOptLabel} image: ${imgSrc}`); }
         } else if (!currentQ.image) {
@@ -478,7 +728,7 @@ const parseGenericFormat = (blocks) => {
       }
 
       currentQ = { questionText: qText || '[See image below]', image: imgSrc || pendingImage || '', options: extractedOpts, correctAnswer: '' };
-      pendingImage = null; lastOptLabel = null;
+      pendingImage = null; lastOptLabel = null; lastAddedOptionLabel = null;
       continue;
     }
 
@@ -490,8 +740,10 @@ const parseGenericFormat = (blocks) => {
     }
 
     if (lastOptLabel) {
-      if (!currentQ.options.find(o => o.label === lastOptLabel))
+      if (!currentQ.options.find(o => o.label === lastOptLabel)) {
         currentQ.options.push({ label: lastOptLabel, text: text || `Option ${lastOptLabel}`, image: imgSrc || '' });
+        lastAddedOptionLabel = lastOptLabel;
+      }
       lastOptLabel = null; continue;
     }
 
@@ -500,20 +752,24 @@ const parseGenericFormat = (blocks) => {
     let m, foundOpt = false;
     while ((m = optRx.exec(text)) !== null) {
       const lbl = m[1].toUpperCase();
-      const optText = decodeHtmlEntities(m[2].trim()).replace(/\s*Q\.?\d+[\.\:\)\-].*$/i, '').trim();
+      const optText = decodeHtmlEntities(m[2].trim()).replace(/\s*Q\.?\d+[\.\wp\wp\-].*$/i, '').trim();
       if (!currentQ.options.find(o => o.label === lbl)) {
         currentQ.options.push({ label: lbl, text: optText || `Option ${lbl}`, image: imgSrc || '' });
+        lastAddedOptionLabel = lbl;
         foundOpt = true;
       }
     }
     if (foundOpt) continue;
 
     // Answer line
-    const ansM = text.match(/(?:Answer|Ans|Correct|Key)\s*[\:\-\s]*([A-Da-d])\b/i);
-    if (ansM) { currentQ.correctAnswer = ansM[1].toUpperCase(); continue; }
+    const correct = extractCorrectAnswers(text);
+    if (correct) { currentQ.correctAnswer = correct; lastAddedOptionLabel = null; continue; }
 
     // Continuation of question text
-    if (currentQ.options.length === 0) currentQ.questionText += ' ' + text;
+    if (currentQ.options.length === 0) {
+      currentQ.questionText += ' ' + text;
+      lastAddedOptionLabel = null;
+    }
   }
 
   if (currentQ) questions.push(finalizeMCQ(currentQ));
@@ -553,7 +809,7 @@ exports.regexExtractFromText = (text) => {
     }
 
     const ansM = block.match(/(?:Answer|Ans|Correct|Key|Choice|Response)\s*[\:\-\s]*([A-Da-d])\b/i);
-    const correct = ansM ? ansM[1].toUpperCase() : (options.length > 0 ? options[0].label : 'A');
+    const correct = extractCorrectAnswers(block) || (ansM ? ansM[1].toUpperCase() : (options.length > 0 ? options[0].label : 'A'));
     const imgM = block.match(/\[IMAGE:([^\]]+)\]/) || block.match(/<img[^>]+src=["']([^"']+)["']/i);
 
     if (options.length >= 1 && questionText.length > 5) {
@@ -582,11 +838,15 @@ const finalizeMCQ = (q) => {
     const txt = ex ? (ex.text || '').trim() : '';
     return { label: l, text: txt || `Option ${l}`, image: (ex && ex.image) || '' };
   });
+
+  const correctLabels = (q.correctAnswer || 'A').split(/[\s,&]+/).map(s => s.trim().toUpperCase()).filter(Boolean);
+  const cleanCorrect = correctLabels.length > 0 ? correctLabels.sort().join(', ') : 'A';
+
   return {
     questionText: (q.questionText || 'Untitled Question').trim().substring(0, 5000),
     image: q.image || '',
     options: finalOptions,
-    correctAnswer: q.correctAnswer || 'A',
+    correctAnswer: cleanCorrect,
     marks: typeof q.marks === 'number' ? q.marks : 1,
     explanation: q.explanation || '',
   };
@@ -595,24 +855,36 @@ const finalizeMCQ = (q) => {
 const isValidMCQ = (q) => {
   if (!q?.questionText || typeof q.questionText !== 'string') return false;
   if (!Array.isArray(q.options) || q.options.length !== 4) return false;
-  if (!['A', 'B', 'C', 'D'].includes(q.correctAnswer)) return false;
+  if (!q.correctAnswer || typeof q.correctAnswer !== 'string') return false;
+  
+  const correctLabels = q.correctAnswer.split(/[\s,&]+/).map(s => s.trim().toUpperCase()).filter(Boolean);
+  if (correctLabels.length === 0) return false;
+  
+  const allValid = correctLabels.every(l => ['A', 'B', 'C', 'D'].includes(l));
+  if (!allValid) return false;
+
   return ['A', 'B', 'C', 'D'].every(l => q.options.find(o => o.label === l));
 };
 
-const sanitizeMCQ = (q, i) => ({
-  questionText: String(q.questionText).trim().substring(0, 1000),
-  image: q.image || '',
-  options: ['A', 'B', 'C', 'D'].map(label => {
-    const opt = q.options.find(o => o.label === label) || { label, text: `Option ${label}` };
-    return { label, text: (String(opt.text || '')).trim() || `Option ${label}`, image: opt.image || '' };
-  }),
-  correctAnswer: q.correctAnswer,
-  explanation: q.explanation ? String(q.explanation).trim().substring(0, 500) : '',
-  difficulty: ['easy', 'medium', 'hard'].includes(q.difficulty) ? q.difficulty : 'medium',
-  topic: q.topic ? String(q.topic).trim().substring(0, 100) : '',
-  marks: typeof q.marks === 'number' && q.marks > 0 ? Math.min(q.marks, 10) : 1,
-  negativeMark: typeof q.negativeMark === 'number' ? Math.max(0, q.negativeMark) : 0,
-});
+const sanitizeMCQ = (q, i) => {
+  const correctLabels = (q.correctAnswer || 'A').split(/[\s,&]+/).map(s => s.trim().toUpperCase()).filter(Boolean);
+  const cleanCorrect = correctLabels.length > 0 ? correctLabels.sort().join(', ') : 'A';
+
+  return {
+    questionText: String(q.questionText).trim().substring(0, 1000),
+    image: q.image || '',
+    options: ['A', 'B', 'C', 'D'].map(label => {
+      const opt = q.options.find(o => o.label === label) || { label, text: `Option ${label}` };
+      return { label, text: (String(opt.text || '')).trim() || `Option ${label}`, image: opt.image || '' };
+    }),
+    correctAnswer: cleanCorrect,
+    explanation: q.explanation ? String(q.explanation).trim().substring(0, 500) : '',
+    difficulty: ['easy', 'medium', 'hard'].includes(q.difficulty) ? q.difficulty : 'medium',
+    topic: q.topic ? String(q.topic).trim().substring(0, 100) : '',
+    marks: typeof q.marks === 'number' && q.marks > 0 ? Math.min(q.marks, 10) : 1,
+    negativeMark: typeof q.negativeMark === 'number' ? Math.max(0, q.negativeMark) : 0,
+  };
+};
 
 const parseJSONSafe = (raw) => {
   try {
@@ -691,7 +963,7 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
       if (questions.length >= 1) {
         // Identify questions with embedded images that need Vision enrichment
         const needsVision = questions.filter(q => q.image === '' && imageList.length > 0);
-        if (needsVision.length > 0 && process.env.ANTHROPIC_API_KEY) {
+        if (needsVision.length > 0 && (hasAnthropic() || hasOpenAI())) {
           logger.info(`[DOCX] ${needsVision.length} questions lack images — running Vision pass on orphaned images`);
           const orphanedImgPaths = imageList
             .filter(img => !questions.some(q => q.image === img.publicPath))
@@ -699,7 +971,7 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
 
           if (orphanedImgPaths.length > 0) {
             const rawText = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-            const visionQs = await claudeVisionExtract(orphanedImgPaths, rawText.substring(0, 2000), needsVision.length);
+            const visionQs = await aiVisionExtract(orphanedImgPaths, rawText.substring(0, 2000), needsVision.length);
             const validVision = visionQs.filter(isValidMCQ).map(sanitizeMCQ);
 
             // Merge: attach EMBEDDED image flag to questions that Vision identified
@@ -721,11 +993,11 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
       if (regexQs.length >= 1)
         return { questions: regexQs.slice(0, count), meta: { model: 'regex-engine' } };
 
-      // Stage 3: Claude Vision on all DOCX images
-      if (imageList.length > 0 && process.env.ANTHROPIC_API_KEY) {
-        logger.info(`[DOCX] Attempting Claude Vision on ${imageList.length} images...`);
+      // Stage 3: AI Vision on all DOCX images
+      if (imageList.length > 0 && (hasAnthropic() || hasOpenAI())) {
+        logger.info(`[DOCX] Attempting AI Vision on ${imageList.length} images...`);
         const imgPaths = imageList.map(i => path.join(UPLOAD_DIR, i.filename));
-        const visionQs = await claudeVisionExtract(imgPaths, rawText.substring(0, 2000), count);
+        const visionQs = await aiVisionExtract(imgPaths, rawText.substring(0, 2000), count);
         const validated = visionQs.filter(isValidMCQ).map(sanitizeMCQ);
 
         // Replace EMBEDDED placeholder with actual image path
@@ -734,14 +1006,14 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
         });
 
         if (validated.length > 0)
-          return { questions: validated.slice(0, count), meta: { model: 'claude-vision-docx' } };
+          return { questions: validated.slice(0, count), meta: { model: 'ai-vision-docx' } };
       }
 
-      // Stage 4: Claude Text
-      if (process.env.ANTHROPIC_API_KEY) {
-        logger.info(`[DOCX] Attempting Claude Text extraction...`);
-        const aiQs = (await claudeTextExtract(rawText, subject, count)).filter(isValidMCQ).map(sanitizeMCQ);
-        if (aiQs.length > 0) return { questions: aiQs.slice(0, count), meta: { model: 'claude-text-docx' } };
+      // Stage 4: AI Text
+      if (hasAnthropic() || hasOpenAI()) {
+        logger.info(`[DOCX] Attempting AI Text extraction...`);
+        const aiQs = (await aiTextExtract(rawText, subject, count)).filter(isValidMCQ).map(sanitizeMCQ);
+        if (aiQs.length > 0) return { questions: aiQs.slice(0, count), meta: { model: 'ai-text-docx' } };
       }
     }
 
@@ -768,16 +1040,16 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
         }
       }
 
-      // Stage 2: Claude Vision on PDF images
-      if (pdfImages.length > 0 && process.env.ANTHROPIC_API_KEY) {
-        logger.info(`[PDF] Running Claude Vision on ${pdfImages.length} PDF images...`);
+      // Stage 2: AI Vision on PDF images
+      if (pdfImages.length > 0 && (hasAnthropic() || hasOpenAI())) {
+        logger.info(`[PDF] Running AI Vision on ${pdfImages.length} PDF images...`);
         // Process images in batches of 5 (Vision API limit)
         const BATCH = 5;
         const allVisionQs = [];
         for (let b = 0; b < pdfImages.length; b += BATCH) {
           const batch = pdfImages.slice(b, b + BATCH);
           const imgPaths = batch.map(i => i.localPath);
-          const batchQs = await claudeVisionExtract(imgPaths, text.substring(0, 1500), Math.ceil(count / Math.ceil(pdfImages.length / BATCH)));
+          const batchQs = await aiVisionExtract(imgPaths, text.substring(0, 1500), Math.ceil(count / Math.ceil(pdfImages.length / BATCH)));
           // Replace EMBEDDED placeholder with actual image path
           batchQs.forEach((q, idx) => {
             if (q.image === 'EMBEDDED' && batch[idx]) q.image = batch[idx].publicPath;
@@ -788,15 +1060,15 @@ exports.extractMCQsFromDocument = async (filePath, subject = 'General', count = 
 
         const validated = allVisionQs.filter(isValidMCQ).map(sanitizeMCQ);
         if (validated.length > 0)
-          return { questions: validated.slice(0, count), meta: { model: 'claude-vision-pdf', pages: pdfData.numpages } };
+          return { questions: validated.slice(0, count), meta: { model: 'ai-vision-pdf', pages: pdfData.numpages } };
       }
 
-      // Stage 3: Claude Text (for scanned PDFs that have legible text layer)
-      if (text.length > 50 && process.env.ANTHROPIC_API_KEY) {
-        logger.info(`[PDF] Attempting Claude Text extraction...`);
-        let aiQs = (await claudeTextExtract(text, subject, count)).filter(isValidMCQ).map(sanitizeMCQ);
+      // Stage 3: AI Text (for scanned PDFs that have legible text layer)
+      if (text.length > 50 && (hasAnthropic() || hasOpenAI())) {
+        logger.info(`[PDF] Attempting AI Text extraction...`);
+        let aiQs = (await aiTextExtract(text, subject, count)).filter(isValidMCQ).map(sanitizeMCQ);
         aiQs = associatePdfImages(aiQs, pdfImages);
-        if (aiQs.length > 0) return { questions: aiQs.slice(0, count), meta: { model: 'claude-text-pdf' } };
+        if (aiQs.length > 0) return { questions: aiQs.slice(0, count), meta: { model: 'ai-text-pdf' } };
       }
 
       if (text.length < 50 && pdfImages.length === 0) {

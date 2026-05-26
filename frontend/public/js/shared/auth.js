@@ -7,11 +7,14 @@ const auth = {
   /**
    * Login user and save token
    */
-  async login(email, password, requiredRole) {
+  async login(email, password, requiredRole, schoolId) {
     try {
       const payload = { email, password };
       if (requiredRole) {
         payload.requiredRole = requiredRole;
+      }
+      if (schoolId) {
+        payload.schoolId = schoolId;
       }
       const result = await api.post('/auth/login', payload);
       this.setSession(result.accessToken, result.user);

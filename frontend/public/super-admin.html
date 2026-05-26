@@ -23,6 +23,8 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
+                <!-- Live Monitor removed as per requirement that only school admin and teacher can see live exams -->
+                <!--
                 <li class="nav-item">
                     <a href="#" class="nav-link" data-tab="live">
                         <i class="fas fa-broadcast-tower"></i>
@@ -30,6 +32,7 @@
                         <span class="badge-pill" id="live-exam-count-badge" style="background:#d97a7e; color:#fff; display:none; padding:2px 6px; font-size:10px; border-radius:10px; margin-left:5px;">0</span>
                     </a>
                 </li>
+                -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" data-tab="schools">
                         <i class="fas fa-school"></i>
@@ -195,7 +198,8 @@
 
             </div>
 
-            <!-- Live Monitoring Tab -->
+            <!-- Live Monitoring Tab Removed as per requirement -->
+            <!--
             <div id="tab-live" class="tab-content animate-slide-up" style="display: none;">
                 <div class="glass-card" style="border: 1px solid rgba(217,122,126,0.2); background: linear-gradient(135deg, rgba(217,122,126,0.05), rgba(0,0,0,0));">
                     <div class="flex justify-between items-center mb-4">
@@ -212,7 +216,6 @@
                     </div>
                     
                     <div id="live-exams-container" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1.25rem;">
-                        <!-- Live Exam Cards -->
                         <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#8e8e93;">
                             <i class="fas fa-ghost" style="font-size:3rem; opacity:0.2; display:block; margin-bottom:1rem;"></i>
                             No live exams at this moment.
@@ -220,6 +223,7 @@
                     </div>
                 </div>
             </div>
+            -->
 
             <!-- Schools Tab -->
             <div id="tab-schools" class="tab-content animate-slide-up" style="display: none;">
@@ -269,22 +273,8 @@
                             <button class="btn btn-primary" onclick="SuperAdmin.showCreateUserModal()">+ Create User</button>
                         </div>
                     </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Role</th>
-                                    <th>Institution</th>
-                                    <th>Last Login</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="users-list">
-                                <!-- Dynamic users -->
-                            </tbody>
-                        </table>
+                    <div id="users-list" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 600px; overflow-y: auto; padding-right: 0.5rem; margin-top: 1rem;">
+                        <!-- Hierarchical users list -->
                     </div>
                 </div>
             </div>

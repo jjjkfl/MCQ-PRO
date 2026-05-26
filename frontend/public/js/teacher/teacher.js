@@ -407,42 +407,46 @@ const TeacherDashboard = {
               ` : ''}
 
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                ${(q.options || []).map((opt) => `
-                  <div style="
-                    display: flex; 
-                    align-items: flex-start; 
-                    gap: 16px; 
-                    padding: 18px; 
-                    background: ${opt.label === q.correctAnswer ? 'var(--success-soft)' : '#f8fafc'}; 
-                    border: 1px solid ${opt.label === q.correctAnswer ? 'rgba(16, 185, 129, 0.3)' : '#f1f5f9'}; 
-                    border-radius: 14px;
-                  ">
-                    <span style="
-                      width: 32px; 
-                      height: 32px; 
-                      background: ${opt.label === q.correctAnswer ? 'var(--success)' : '#fff'}; 
-                      color: ${opt.label === q.correctAnswer ? '#fff' : '#64748b'}; 
+                ${(q.options || []).map((opt) => {
+                  const correctLabels = (q.correctAnswer || '').split(/[\s,&]+/).map(s => s.trim().toUpperCase());
+                  const isCorrect = correctLabels.includes(opt.label);
+                  return `
+                    <div style="
                       display: flex; 
-                      align-items: center; 
-                      justify-content: center; 
-                      border-radius: 10px; 
-                      font-weight: 800; 
-                      font-size: 14px; 
-                      flex-shrink: 0;
-                      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-                    ">${opt.label}</span>
-                    <div style="flex: 1;">
-                      <div style="font-size: 15px; font-weight: 500; color: ${opt.label === q.correctAnswer ? '#065f46' : '#334155'}; line-height: 1.5; word-break: break-word;">
-                        ${opt.text}
-                      </div>
-                      ${opt.image ? `
-                        <div style="margin-top: 12px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); max-width: 200px;">
-                          <img src="${window.SERVER_URL}${opt.image}" style="width: 100%; display: block;" onerror="this.src='/img/placeholder.png'">
+                      align-items: flex-start; 
+                      gap: 16px; 
+                      padding: 18px; 
+                      background: ${isCorrect ? 'var(--success-soft)' : '#f8fafc'}; 
+                      border: 1px solid ${isCorrect ? 'rgba(16, 185, 129, 0.3)' : '#f1f5f9'}; 
+                      border-radius: 14px;
+                    ">
+                      <span style="
+                        width: 32px; 
+                        height: 32px; 
+                        background: ${isCorrect ? 'var(--success)' : '#fff'}; 
+                        color: ${isCorrect ? '#fff' : '#64748b'}; 
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: center; 
+                        border-radius: 10px; 
+                        font-weight: 800; 
+                        font-size: 14px; 
+                        flex-shrink: 0;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+                      ">${opt.label}</span>
+                      <div style="flex: 1;">
+                        <div style="font-size: 15px; font-weight: 500; color: ${isCorrect ? '#065f46' : '#334155'}; line-height: 1.5; word-break: break-word;">
+                          ${opt.text}
                         </div>
-                      ` : ''}
+                        ${opt.image ? `
+                          <div style="margin-top: 12px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); max-width: 200px;">
+                            <img src="${window.SERVER_URL}${opt.image}" style="width: 100%; display: block;" onerror="this.src='/img/placeholder.png'">
+                          </div>
+                        ` : ''}
+                      </div>
                     </div>
-                  </div>
-                `).join('')}
+                  `;
+                }).join('')}
               </div>
             </div>
           `).join('') || '<p class="p-dim">No questions found.</p>'}

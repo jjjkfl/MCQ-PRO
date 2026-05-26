@@ -43,9 +43,10 @@ const runAuditPulse = async () => {
 
         if (lastAudit && lastAudit.merkleRoot === currentRoot) {
             logger.info('AuditPulse: State unchanged. Verification successful.');
-            lastAudit.verifiedAt = new Date();
-            lastAudit.status = 'verified';
-            await lastAudit.save();
+            await AuditLog.updateOne(
+                { _id: lastAudit._id },
+                { $set: { verifiedAt: new Date(), status: 'verified' } }
+            );
             // Clear any existing tamper alert
             latestTamperAlert = null;
             return;
@@ -56,8 +57,10 @@ const runAuditPulse = async () => {
             logger.warn(`🚨 AuditPulse: TAMPER DETECTED! Previous root=${lastAudit.merkleRoot} | New root=${currentRoot}`);
 
             // Mark the last clean audit as compromised
-            lastAudit.status = 'tamper_detected';
-            await lastAudit.save();
+            await AuditLog.updateOne(
+                { _id: lastAudit._id },
+                { $set: { status: 'tamper_detected' } }
+            );
 
             // Set the global tamper alert
             latestTamperAlert = {
