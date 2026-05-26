@@ -8,8 +8,8 @@
 
 .teacher-sidebar {
   width: 260px;
-  background: var(--bg-card);
-  border-right: 1px solid var(--border);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
   padding: 1.5rem;
   position: sticky;
   top: 0;

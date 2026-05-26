@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,11 +86,8 @@
                     <p class="text-secondary">Global metrics and institutional performance tracking.</p>
                 </div>
                 <div class="flex gap-2" style="align-items:center;">
-                    <button id="theme-toggle" onclick="SuperAdmin.toggleTheme()" title="Toggle Theme"
-                        style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#f5f5f7;padding:8px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all 0.3s;">
-                        <i class="fas fa-sun"></i> Light Mode
-                    </button>
-                    <div id="connection-status" class="integrity-anchored" style="background: rgba(255,255,255,0.05); color: #8e8e93;">
+
+                    <div id="connection-status" class="integrity-anchored" style="background: rgba(255,255,255,0.05); color: #64748b;">
                         <i class="fas fa-circle-notch fa-spin"></i> Connecting...
                     </div>
                 </div>
@@ -105,37 +102,37 @@
                     <!-- Total Schools -->
                     <div class="glass-card" style="padding:1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span style="font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:0.8px;">Total Schools</span>
-                            <div style="width:38px;height:38px;background:rgba(92,141,137,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                                <i class="fas fa-school" style="color:#5c8d89;font-size:15px;"></i>
+                            <span style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;">Total Schools</span>
+                            <div style="width:38px;height:38px;background:rgba(139,92,246,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-school" style="color:#8b5cf6;font-size:15px;"></i>
                             </div>
                         </div>
                         <div id="stat-schools" style="font-size:2.5rem;font-weight:800;line-height:1;">--</div>
-                        <span style="font-size:12px;color:#6ba87a;"><i class="fas fa-arrow-up"></i> 12% vs last month</span>
+                        <span style="font-size:12px;color:#a78bfa;"><i class="fas fa-arrow-up"></i> 12% vs last month</span>
                     </div>
 
                     <!-- Active Users -->
                     <div class="glass-card" style="padding:1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span style="font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:0.8px;">Active Users</span>
-                            <div style="width:38px;height:38px;background:rgba(107,168,122,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                                <i class="fas fa-users" style="color:#6ba87a;font-size:15px;"></i>
+                            <span style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;">Active Users</span>
+                            <div style="width:38px;height:38px;background:rgba(167,139,250,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-users" style="color:#a78bfa;font-size:15px;"></i>
                             </div>
                         </div>
                         <div id="stat-users" style="font-size:2.5rem;font-weight:800;line-height:1;">--</div>
-                        <span style="font-size:12px;color:#6ba87a;"><i class="fas fa-arrow-up"></i> 5% vs last month</span>
+                        <span style="font-size:12px;color:#a78bfa;"><i class="fas fa-arrow-up"></i> 5% vs last month</span>
                     </div>
 
                     <!-- System Health -->
                     <div class="glass-card" style="padding:1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span style="font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:0.8px;">System Health</span>
-                            <div style="width:38px;height:38px;background:rgba(107,168,122,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                                <i class="fas fa-heartbeat" style="color:#6ba87a;font-size:15px;"></i>
+                            <span style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;">System Health</span>
+                            <div style="width:38px;height:38px;background:rgba(167,139,250,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-heartbeat" style="color:#a78bfa;font-size:15px;"></i>
                             </div>
                         </div>
-                        <div id="stat-health" style="font-size:2.5rem;font-weight:800;line-height:1;color:#6ba87a;">100%</div>
-                        <span style="font-size:12px;color:#6ba87a;"><i class="fas fa-check-circle"></i> All systems operational</span>
+                        <div id="stat-health" style="font-size:2.5rem;font-weight:800;line-height:1;color:#a78bfa;">100%</div>
+                        <span style="font-size:12px;color:#a78bfa;"><i class="fas fa-check-circle"></i> All systems operational</span>
                     </div>
 
                 </div>
@@ -161,18 +158,18 @@
                     <div class="glass-card" style="padding:1.5rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                             <h3 style="font-size:15px;font-weight:700;">Recently Registered Schools</h3>
-                            <a href="#" onclick="event.preventDefault();SuperAdmin.switchTab('schools')" style="color:#5c8d89;font-size:13px;text-decoration:none;font-weight:600;">View All →</a>
+                            <a href="#" onclick="event.preventDefault();SuperAdmin.switchTab('schools')" style="color:#8b5cf6;font-size:13px;text-decoration:none;font-weight:600;">View All →</a>
                         </div>
                         <table style="width:100%;border-collapse:collapse;">
                             <thead>
                                 <tr style="border-bottom:1px solid rgba(255,255,255,0.08);">
-                                    <th style="text-align:left;padding:0.5rem 0.75rem;font-size:11px;color:#8e8e93;font-weight:700;text-transform:uppercase;">School</th>
-                                    <th style="text-align:left;padding:0.5rem 0.75rem;font-size:11px;color:#8e8e93;font-weight:700;text-transform:uppercase;">Plan</th>
-                                    <th style="text-align:left;padding:0.5rem 0.75rem;font-size:11px;color:#8e8e93;font-weight:700;text-transform:uppercase;">Status</th>
+                                    <th style="text-align:left;padding:0.5rem 0.75rem;font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;">School</th>
+                                    <th style="text-align:left;padding:0.5rem 0.75rem;font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;">Plan</th>
+                                    <th style="text-align:left;padding:0.5rem 0.75rem;font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="recent-schools-list">
-                                <tr><td colspan="3" style="text-align:center;color:#8e8e93;padding:2rem;font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                                <tr><td colspan="3" style="text-align:center;color:#64748b;padding:2rem;font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -180,11 +177,11 @@
                     <div class="glass-card" style="padding:1.5rem;">
                         <h3 style="font-size:15px;font-weight:700;margin-bottom:1rem;">Quick Actions</h3>
                         <div style="display:flex;flex-direction:column;gap:0.6rem;">
-                            <button onclick="SuperAdmin.showAddSchoolModal()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(135deg,#5c8d89,#005bb5);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;width:100%;">
+                            <button onclick="SuperAdmin.showAddSchoolModal()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(135deg,#8b5cf6,#005bb5);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;width:100%;">
                                 <i class="fas fa-plus-circle"></i> Register New School
                             </button>
                             <button onclick="SuperAdmin.switchTab('users')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.05);color:inherit;border:1px solid rgba(255,255,255,0.1);border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;width:100%;">
-                                <i class="fas fa-users-cog" style="color:#5c8d89;"></i> Manage Users
+                                <i class="fas fa-users-cog" style="color:#8b5cf6;"></i> Manage Users
                             </button>
                             <button onclick="SuperAdmin.switchTab('permissions')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.05);color:inherit;border:1px solid rgba(255,255,255,0.1);border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;width:100%;">
                                 <i class="fas fa-user-shield" style="color:#7a82ab;"></i> Edit Permissions
@@ -216,7 +213,7 @@
                     </div>
                     
                     <div id="live-exams-container" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1.25rem;">
-                        <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#8e8e93;">
+                        <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#64748b;">
                             <i class="fas fa-ghost" style="font-size:3rem; opacity:0.2; display:block; margin-bottom:1rem;"></i>
                             No live exams at this moment.
                         </div>
@@ -252,11 +249,11 @@
                         <!-- Right Side: Hierarchical Directory Accordion -->
                         <div style="display: flex; flex-direction: column; max-height: 480px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 1rem;">
-                                <span style="font-size: 13px; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.8px;">Geographic Directory</span>
-                                <span id="school-total-count-badge" class="badge-pill" style="background: rgba(92, 141, 137, 0.15); color: #5c8d89; font-size: 11px; padding: 2px 8px; border-radius: 10px;">0 Schools</span>
+                                <span style="font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px;">Geographic Directory</span>
+                                <span id="school-total-count-badge" class="badge-pill" style="background: rgba(92, 141, 137, 0.15); color: #8b5cf6; font-size: 11px; padding: 2px 8px; border-radius: 10px;">0 Schools</span>
                             </div>
                             <div id="schools-hierarchy-container" style="flex: 1; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                                <div style="text-align: center; color: #8e8e93; padding: 3rem;"><i class="fas fa-spinner fa-spin"></i> Loading tree view...</div>
+                                <div style="text-align: center; color: #64748b; padding: 3rem;"><i class="fas fa-spinner fa-spin"></i> Loading tree view...</div>
                             </div>
                         </div>
                     </div>
@@ -351,7 +348,7 @@
                 <div class="glass-card mb-4" style="padding:1.5rem;">
                     <div class="flex justify-between items-center">
                         <div>
-                            <h3><i class="fas fa-user-shield" style="color:#5c8d89;margin-right:8px;"></i>Role Permissions Matrix</h3>
+                            <h3><i class="fas fa-user-shield" style="color:#8b5cf6;margin-right:8px;"></i>Role Permissions Matrix</h3>
                             <p class="text-secondary" style="font-size:13px;margin-top:4px;">Configure what each role can access and perform. Changes are saved to the database instantly.</p>
                         </div>
                         <div class="flex gap-2">
@@ -362,7 +359,7 @@
                 </div>
 
                 <div id="permissions-matrix-container">
-                    <div class="glass-card" style="text-align:center;padding:3rem;color:#8e8e93;">
+                    <div class="glass-card" style="text-align:center;padding:3rem;color:#64748b;">
                         <i class="fas fa-spinner fa-spin" style="font-size:24px;"></i>
                         <p style="margin-top:1rem;">Loading permissions...</p>
                     </div>
@@ -377,7 +374,7 @@
             <div style="padding:1.5rem 2rem; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02);">
                 <div>
                     <h2 id="sd-school-name" style="margin:0; font-size:20px;">School Details</h2>
-                    <p id="sd-school-admin" style="margin:4px 0 0; font-size:13px; color:#8e8e93;">Admin: Loading...</p>
+                    <p id="sd-school-admin" style="margin:4px 0 0; font-size:13px; color:#64748b;">Admin: Loading...</p>
                 </div>
                 <button class="btn btn-ghost" onclick="SuperAdmin.closeSchoolDetails()"><i class="fas fa-times" style="font-size:1.2rem;"></i></button>
             </div>
@@ -387,18 +384,18 @@
                     <!-- Teachers List -->
                     <div>
                         <h3 style="font-size:16px; margin-bottom:1rem; display:flex; align-items:center; gap:8px;">
-                            <i class="fas fa-chalkboard-teacher" style="color:#5c8d89;"></i> Teachers
+                            <i class="fas fa-chalkboard-teacher" style="color:#8b5cf6;"></i> Teachers
                         </h3>
                         <div class="table-container" style="max-height:400px; overflow-y:auto;">
                             <table style="width:100%; border-collapse:collapse;">
                                 <thead style="position:sticky; top:0; background:var(--glass-bg); z-index:10;">
                                     <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
-                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#8e8e93;">Name</th>
-                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#8e8e93;">Status</th>
+                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#64748b;">Name</th>
+                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#64748b;">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="sd-teachers-list">
-                                    <tr><td colspan="2" style="text-align:center; padding:2rem; color:#8e8e93;">Loading teachers...</td></tr>
+                                    <tr><td colspan="2" style="text-align:center; padding:2rem; color:#64748b;">Loading teachers...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -413,12 +410,12 @@
                             <table style="width:100%; border-collapse:collapse;">
                                 <thead style="position:sticky; top:0; background:var(--glass-bg); z-index:10;">
                                     <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
-                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#8e8e93;">Exam Title</th>
-                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#8e8e93;">Creator</th>
+                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#64748b;">Exam Title</th>
+                                        <th style="text-align:left; padding:0.75rem; font-size:12px; color:#64748b;">Creator</th>
                                     </tr>
                                 </thead>
                                 <tbody id="sd-exams-list">
-                                    <tr><td colspan="2" style="text-align:center; padding:2rem; color:#8e8e93;">Loading exams...</td></tr>
+                                    <tr><td colspan="2" style="text-align:center; padding:2rem; color:#64748b;">Loading exams...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -480,7 +477,7 @@
                     </div>
                 </div>
                 <hr style="border-color:rgba(255,255,255,0.1); margin:1rem 0;">
-                <p style="color:#8e8e93; font-size:13px; margin-bottom:1rem;">School Admin Account</p>
+                <p style="color:#64748b; font-size:13px; margin-bottom:1rem;">School Admin Account</p>
                 <div class="form-group">
                     <label>Admin Full Name *</label>
                     <input type="text" class="form-control" id="reg-admin-name" placeholder="e.g. John Smith" required>

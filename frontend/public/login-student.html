@@ -7,209 +7,7 @@
   <title>Student Login | MCQ Pro</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/css/common.css">
-  <link rel="stylesheet" href="/css/auth.css">
-  <style>
-    :root {
-      --primary: #10b981;
-      --primary-soft: #d1fae5;
-      --primary-glow: rgba(16, 185, 129, 0.15);
-      --gradient-primary: linear-gradient(135deg, #059669 0%, #10b981 100%);
-      --gradient-warm: linear-gradient(135deg, #05120e 0%, #111827 100%);
-      --bg-card: rgba(17, 24, 39, 0.8);
-      --border: rgba(16, 185, 129, 0.2);
-      --text-main: #f3f4f6;
-      --text-secondary: #9ca3af;
-      --text-muted: #6b7280;
-    }
-
-    body {
-      overflow-y: auto !important;
-    }
-
-    /* Split-screen Page Container */
-    .auth-page-container {
-      display: flex;
-      width: 100%;
-      max-width: 1000px;
-      min-height: 620px;
-      margin: auto;
-      background: rgba(17, 24, 39, 0.45);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: var(--radius-xl);
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 40px var(--primary-glow);
-      z-index: 5;
-      position: relative;
-      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* Left Side: Rich Graphic Display */
-    .auth-graphic-side {
-      flex: 1.1;
-      position: relative;
-      background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(11, 15, 25, 0.95) 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 3.5rem;
-      overflow: hidden;
-      border-right: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .auth-graphic-side::before {
-      content: '';
-      position: absolute;
-      width: 320px;
-      height: 320px;
-      background: var(--primary);
-      opacity: 0.12;
-      filter: blur(70px);
-      top: -50px;
-      left: -50px;
-      border-radius: 50%;
-    }
-
-    .auth-graphic-content {
-      position: relative;
-      z-index: 2;
-    }
-
-    .auth-graphic-logo {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 0.5rem;
-    }
-
-    .auth-graphic-logo span {
-      color: var(--primary);
-    }
-
-    .role-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      padding: 0.25rem 0.75rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #10b981;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: var(--radius-full);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .auth-graphic-title {
-      font-size: 2rem;
-      font-weight: 800;
-      line-height: 1.25;
-      margin-top: 1.5rem;
-      color: #ffffff;
-      letter-spacing: -0.02em;
-    }
-
-    .auth-graphic-desc {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-top: 0.75rem;
-    }
-
-    .auth-graphic-image-container {
-      position: relative;
-      flex-grow: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 1.5rem 0;
-      min-height: 250px;
-    }
-
-    .auth-graphic-image {
-      max-width: 80%;
-      max-height: 240px;
-      object-fit: contain;
-      border-radius: 16px;
-      filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.5));
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .auth-graphic-footer {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    /* Right Side: Interactive Login Form */
-    .auth-form-side {
-      flex: 0.9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3.5rem;
-      background: rgba(17, 24, 39, 0.2);
-    }
-
-    .auth-form-card {
-      width: 100%;
-      max-width: 360px;
-    }
-
-    .back-btn {
-      position: absolute;
-      top: 1.5rem;
-      left: 1.5rem;
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: var(--transition-fast);
-      z-index: 10;
-    }
-
-    .back-btn:hover {
-      color: var(--primary);
-      transform: translateX(-2px);
-    }
-
-    .auth-tab-btn.active {
-      color: var(--primary) !important;
-    }
-
-    /* Responsive alignment */
-    @media (max-width: 850px) {
-      .auth-page-container {
-        flex-direction: column;
-        max-width: 480px;
-        min-height: auto;
-        margin: 2rem auto;
-      }
-
-      .auth-graphic-side {
-        padding: 3rem 2rem 1.5rem 2rem;
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      }
-
-      .auth-graphic-image-container {
-        display: none;
-      }
-
-      .auth-form-side {
-        padding: 3rem 2rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/css/auth.css?v=3">
 </head>
 
 <body class="auth-body">
@@ -223,71 +21,98 @@
     <!-- Graphic Illustration Panel -->
     <div class="auth-graphic-side">
       <div class="auth-graphic-content">
-        <div class="auth-graphic-logo">MCQ<span>PRO</span></div>
+        <div class="auth-graphic-logo"><i class="fas fa-graduation-cap" style="color:white;"></i> MCQ<span>PRO</span></div>
         <div>
-          <span class="role-badge"><i class="fas fa-user-graduate"></i> Student Portal</span>
+          <span class="role-badge"><i class="fas fa-user-graduate"></i> STUDENT PORTAL</span>
         </div>
         <h2 class="auth-graphic-title">Academic Portal</h2>
-        <p class="auth-graphic-desc">Take secure exam modules, check academic reports, and inspect personalized study metrics trees.</p>
+        <p class="auth-graphic-desc">Access exam modules, reports and personalized study insights securely.</p>
       </div>
-
       <div class="auth-graphic-image-container">
         <img src="/images/login-student.png" alt="Student Illustration" class="auth-graphic-image">
-      </div>
-
-      <div class="auth-graphic-footer">
-        <i class="fas fa-user-shield"></i> SafeExam Engine Active
       </div>
     </div>
 
     <!-- Interactive Login Panel -->
     <div class="auth-form-side">
       <div class="auth-form-card">
-        <div class="auth-tabs" style="margin-bottom: 2rem;">
-          <button onclick="toggleTab('login')" id="login-tab" class="auth-tab-btn active">
-            <i class="fas fa-sign-in-alt"></i> Login
-          </button>
-          <button onclick="toggleTab('register')" id="register-tab" class="auth-tab-btn">
-            <i class="fas fa-user-plus"></i> Register
-          </button>
+        <div class="auth-form-card-inner">
+          <div class="auth-tabs">
+            <button onclick="toggleTab('login')" id="login-tab" class="auth-tab-btn active">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <button onclick="toggleTab('register')" id="register-tab" class="auth-tab-btn">
+              <i class="fas fa-user-plus"></i> Register
+            </button>
+          </div>
+
+          <!-- Login Form -->
+          <form id="login-form" onsubmit="handleLogin(event)">
+            <div class="auth-input-group">
+              <label><i class="far fa-envelope"></i> Email Address</label>
+              <div class="auth-control-wrap">
+                <input type="email" name="student_email" id="student_email" class="auth-control" placeholder="Enter your email" required autocomplete="username">
+              </div>
+            </div>
+            <div class="auth-input-group">
+              <label><i class="fas fa-lock"></i> Password</label>
+              <div class="auth-control-wrap">
+                <input type="password" name="student_password" id="student_password" class="auth-control" placeholder="Enter your password" required autocomplete="current-password">
+                <i class="fas fa-eye" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:#94a3b8; cursor:pointer;" onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'"></i>
+              </div>
+            </div>
+            
+            <div class="remember-forgot">
+              <label><input type="checkbox" id="remember"> Remember me</label>
+              <a href="#">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="auth-submit" id="login-btn">
+              <span id="btn-text">Sign In to Exam Portal</span>
+            </button>
+
+
+          </form>
+
+          <!-- Register Form -->
+          <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
+            <input type="hidden" name="role" value="student">
+            <div class="auth-input-group">
+              <label><i class="far fa-user"></i> Full Name</label>
+              <div class="auth-control-wrap">
+                <input type="text" name="name" class="auth-control" placeholder="Enter your full name" required>
+              </div>
+            </div>
+            <div class="auth-input-group">
+              <label><i class="far fa-envelope"></i> Email Address</label>
+              <div class="auth-control-wrap">
+                <input type="email" name="email" class="auth-control" placeholder="Enter your email" required>
+              </div>
+            </div>
+            <div class="auth-input-group">
+              <label><i class="fas fa-lock"></i> Password</label>
+              <div class="auth-control-wrap">
+                <input type="password" name="password" class="auth-control" minlength="8" placeholder="Create a password" required>
+                <i class="fas fa-eye" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:#94a3b8; cursor:pointer;" onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'"></i>
+              </div>
+            </div>
+
+            <button type="submit" class="auth-submit mt-3" id="register-btn" style="margin-top:2rem;">
+              <span id="reg-btn-text">Register Account</span>
+            </button>
+          </form>
         </div>
 
-        <!-- Login Form -->
-        <form id="login-form" onsubmit="handleLogin(event)">
-          <div class="auth-input-group">
-            <label><i class="fas fa-envelope"></i> Email Address</label>
-            <input type="email" name="student_email" id="student_email" class="form-control auth-control" placeholder="student@yourschool.com" required autocomplete="username">
+        <div class="form-footer">
+          <div class="shield-icon">
+            <i class="fas fa-shield-alt"></i> SafeExam Engine Active
           </div>
-          <div class="auth-input-group">
-            <label><i class="fas fa-lock"></i> Password</label>
-            <input type="password" name="student_password" id="student_password" class="form-control auth-control" placeholder="••••••••" required autocomplete="current-password">
-          </div>
-          <button type="submit" class="auth-submit btn-block mt-3" id="login-btn">
-            <span id="btn-text"><i class="fas fa-sign-in-alt"></i> Sign In to Exam Portal</span>
-          </button>
-        </form>
-
-        <!-- Register Form -->
-        <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
-          <input type="hidden" name="role" value="student">
-          <div class="auth-input-group">
-            <label><i class="fas fa-user"></i> Full Name</label>
-            <input type="text" name="name" class="form-control auth-control" placeholder="Jane Doe" required>
-          </div>
-          <div class="auth-input-group">
-            <label><i class="fas fa-envelope"></i> Email Address</label>
-            <input type="email" name="email" class="form-control auth-control" placeholder="jane.doe@yourschool.com" required>
-          </div>
-          <div class="auth-input-group">
-            <label><i class="fas fa-lock"></i> Password</label>
-            <input type="password" name="password" class="form-control auth-control" minlength="8" placeholder="Minimum 8 characters" required>
-          </div>
-          <button type="submit" class="auth-submit btn-block mt-3" id="register-btn">
-            <span id="reg-btn-text"><i class="fas fa-user-plus"></i> Create Student Account</span>
-          </button>
-        </form>
+          <div class="shield-text">Your safety and privacy are our priority.</div>
+        </div>
       </div>
     </div>
+    
+    <div class="absolute-footer">© 2025 MCQPRO. All rights reserved.</div>
   </div>
 
   <!-- Shared JS -->

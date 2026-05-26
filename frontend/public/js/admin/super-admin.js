@@ -112,8 +112,8 @@ const SuperAdmin = {
                 console.log('📡 Connected to Real-time Hub');
                 if (statusEl) {
                     statusEl.innerHTML = '<i class="fas fa-satellite-dish animate-pulse"></i> Real-time Live';
-                    statusEl.style.color = '#6ba87a';
-                    statusEl.style.background = 'rgba(107,168,122,0.1)';
+                    statusEl.style.color = '#f59e0b';
+                    statusEl.style.background = 'rgba(245,158,11,0.1)';
                 }
             });
 
@@ -128,8 +128,8 @@ const SuperAdmin = {
                 console.warn('Socket error:', err.message);
                 if (statusEl) {
                     statusEl.innerHTML = '<i class="fas fa-check-circle"></i> System Secure';
-                    statusEl.style.color = '#5c8d89';
-                    statusEl.style.background = 'rgba(92,141,137,0.1)';
+                    statusEl.style.color = '#7c3aed';
+                    statusEl.style.background = 'rgba(124,58,237,0.1)';
                 }
             });
             
@@ -245,7 +245,7 @@ const SuperAdmin = {
     async loadSchools() {
         const container = document.getElementById('schools-hierarchy-container');
         if (!container) return;
-        container.innerHTML = '<div style="text-align:center;padding:3rem;color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading school directory...</div>';
+        container.innerHTML = '<div style="text-align:center;padding:3rem;color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading school directory...</div>';
         try {
             const [schools, users] = await Promise.all([
                 api.get('/admin/super/schools'),
@@ -365,7 +365,7 @@ const SuperAdmin = {
         this.markers = {};
 
         if (!schools || schools.length === 0) {
-            container.innerHTML = '<div style="text-align:center;padding:4rem;color:#8e8e93;"><i class="fas fa-school" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:1rem;"></i>No matching schools found.</div>';
+            container.innerHTML = '<div style="text-align:center;padding:4rem;color:#64748b;"><i class="fas fa-school" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:1rem;"></i>No matching schools found.</div>';
             return;
         }
 
@@ -381,7 +381,7 @@ const SuperAdmin = {
 
             // Add marker if coordinates are valid
             if (this.map && s.latitude && s.longitude) {
-                const color = s.is_active ? '#5c8d89' : '#d97a7e';
+                const color = s.is_active ? '#7c3aed' : '#d97a7e';
                 const customIcon = L.divIcon({
                     className: 'custom-map-pin',
                     html: `
@@ -389,7 +389,7 @@ const SuperAdmin = {
                             <svg viewBox="0 0 384 512" style="width: 100%; height: 100%; fill: ${color}; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));">
                                 <path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"/>
                             </svg>
-                            <i class="fas fa-school" style="position: absolute; color: #fff; font-size: 14px; margin-top: -8px;"></i>
+                            <i class="fas fa-school" style="position: absolute; color: #1e293b; font-size: 14px; margin-top: -8px;"></i>
                         </div>
                     `,
                     iconSize: [36, 36],
@@ -402,7 +402,7 @@ const SuperAdmin = {
                 const popupContent = `
                     <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#1d1d1f; padding:5px; min-width:180px;">
                         <h4 style="margin:0 0 5px 0; font-size:14px; font-weight:700;">${s.name}</h4>
-                        <div style="font-size:11px; color:#8e8e93; margin-bottom:5px;">${s.board_type || 'CBSE'} Board</div>
+                        <div style="font-size:11px; color:#64748b; margin-bottom:5px;">${s.board_type || 'CBSE'} Board</div>
                         <div style="font-size:11px; margin-bottom:8px;">
                             <span>State: <strong>${s.state}</strong></span><br/>
                             <span>District: <strong>${s.district}</strong></span>
@@ -458,22 +458,22 @@ const SuperAdmin = {
                                     <i class="fas fa-chevron-right chevron-icon" style="font-size: 10px; transition: transform 0.2s; color: #8e8e93;"></i>
                                     <i class="fas fa-folder folder-icon" style="color: #e5c07b; font-size: 14px;"></i>
                                     <div style="display: flex; flex-direction: column; overflow: hidden;">
-                                        <div style="font-size: 13px; font-weight: 600; color: #fff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${s.name}</div>
+                                        <div style="font-size: 13px; font-weight: 600; color: #1e293b; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${s.name}</div>
                                         <div style="font-size: 11px; color: #8e8e93;">${s.board_type || 'CBSE'} Board</div>
                                     </div>
                                 </div>
                                 <div style="display: flex; gap: 6px; align-items: center;" onclick="event.stopPropagation(); event.preventDefault();">
                                     <span style="background: rgba(175, 82, 222, 0.15); color: #7a82ab; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-right: 4px;">${s.subscription_plan}</span>
-                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: ${s.is_active ? '#6ba87a' : '#d97a7e'}; margin-right: 8px;"></span>
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: ${s.is_active ? '#f59e0b' : '#d97a7e'}; margin-right: 8px;"></span>
                                     
                                     <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Deep Dive" onclick="SuperAdmin.viewSchoolDetails('${s._id}')">
-                                        <i class="fas fa-eye" style="color:#6ba87a; font-size: 11px;"></i>
+                                        <i class="fas fa-eye" style="color:#f59e0b; font-size: 11px;"></i>
                                     </button>
                                     <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="${s.is_active ? 'Suspend' : 'Approve'}" onclick="SuperAdmin.toggleSchool('${s._id}', ${s.is_active})">
-                                        <i class="fas ${s.is_active ? 'fa-ban' : 'fa-check-circle'}" style="color:${s.is_active ? '#d97a7e' : '#6ba87a'}; font-size: 11px;"></i>
+                                        <i class="fas ${s.is_active ? 'fa-ban' : 'fa-check-circle'}" style="color:${s.is_active ? '#d97a7e' : '#f59e0b'}; font-size: 11px;"></i>
                                     </button>
                                     <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Edit School" onclick="SuperAdmin.showEditSchoolModal('${s._id}')">
-                                        <i class="fas fa-edit" style="color:#5c8d89; font-size: 11px;"></i>
+                                        <i class="fas fa-edit" style="color:#7c3aed; font-size: 11px;"></i>
                                     </button>
                                     <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Delete School" onclick="SuperAdmin.deleteSchool('${s._id}')">
                                         <i class="fas fa-trash-alt" style="color:#d97a7e; font-size: 11px;"></i>
@@ -491,14 +491,14 @@ const SuperAdmin = {
                                             <span>School Admin (${admins.length})</span>
                                         </div>
                                         <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 10px; min-width: unset; height: unset;" onclick="event.stopPropagation(); event.preventDefault(); SuperAdmin.quickCreateUser('${s._id}', 'school_admin')" title="Add School Admin">
-                                            <i class="fas fa-plus" style="font-size: 9px; color: #6ba87a;"></i>
+                                            <i class="fas fa-plus" style="font-size: 9px; color: #f59e0b;"></i>
                                         </button>
                                     </summary>
                                     <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
                                         ${admins.length > 0 ? admins.map(u => `
-                                            <div style="font-size: 12px; color: #e5e5ea; padding: 2px 0; display: flex; align-items: center; gap: 6px;">
-                                                <i class="fas fa-user-shield" style="color: #6ba87a; font-size: 10px;"></i>
-                                                <span><strong>${u.name}</strong> <span style="color:#8e8e93; font-size:11px;">(${u.email})</span></span>
+                                            <div style="font-size: 12px; color: #475569; padding: 2px 0; display: flex; align-items: center; gap: 6px;">
+                                                <i class="fas fa-user-shield" style="color: #f59e0b; font-size: 10px;"></i>
+                                                <span><strong>${u.name}</strong> <span style="color:#64748b; font-size:11px;">(${u.email})</span></span>
                                             </div>
                                         `).join('') : `
                                             <div style="font-size: 11px; color: #8e8e93; font-style: italic; padding: 2px 0;">No school admins assigned</div>
@@ -515,14 +515,14 @@ const SuperAdmin = {
                                             <span>Teacher (${teachers.length})</span>
                                         </div>
                                         <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 10px; min-width: unset; height: unset;" onclick="event.stopPropagation(); event.preventDefault(); SuperAdmin.quickCreateUser('${s._id}', 'teacher')" title="Add Teacher">
-                                            <i class="fas fa-plus" style="font-size: 9px; color: #6ba87a;"></i>
+                                            <i class="fas fa-plus" style="font-size: 9px; color: #f59e0b;"></i>
                                         </button>
                                     </summary>
                                     <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
                                         ${teachers.length > 0 ? teachers.map(u => `
-                                            <div style="font-size: 12px; color: #e5e5ea; padding: 2px 0; display: flex; align-items: center; gap: 6px;">
-                                                <i class="fas fa-user-tie" style="color: #5c8d89; font-size: 10px;"></i>
-                                                <span><strong>${u.name}</strong> <span style="color:#8e8e93; font-size:11px;">(${u.email})</span></span>
+                                            <div style="font-size: 12px; color: #475569; padding: 2px 0; display: flex; align-items: center; gap: 6px;">
+                                                <i class="fas fa-user-tie" style="color: #7c3aed; font-size: 10px;"></i>
+                                                <span><strong>${u.name}</strong> <span style="color:#64748b; font-size:11px;">(${u.email})</span></span>
                                             </div>
                                         `).join('') : `
                                             <div style="font-size: 11px; color: #8e8e93; font-style: italic; padding: 2px 0;">No teachers assigned</div>
@@ -541,7 +541,7 @@ const SuperAdmin = {
                                                     <span>Students (0)</span>
                                                 </div>
                                                 <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 10px; min-width: unset; height: unset;" onclick="event.stopPropagation(); event.preventDefault(); SuperAdmin.quickCreateUser('${s._id}', 'student')" title="Add Student">
-                                                    <i class="fas fa-plus" style="font-size: 9px; color: #6ba87a;"></i>
+                                                    <i class="fas fa-plus" style="font-size: 9px; color: #f59e0b;"></i>
                                                 </button>
                                             </summary>
                                             <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; font-size: 11px; color: #8e8e93; font-style: italic;">No students assigned</div>
@@ -574,14 +574,14 @@ const SuperAdmin = {
                                                     <span>${title} (${divStudents.length})</span>
                                                 </div>
                                                 <button class="btn btn-ghost" style="padding: 2px 6px; font-size: 10px; min-width: unset; height: unset;" onclick="event.stopPropagation(); event.preventDefault(); SuperAdmin.quickCreateUser('${s._id}', 'student', '${divKey}')" title="Add Student (Division ${divKey})">
-                                                    <i class="fas fa-plus" style="font-size: 9px; color: #6ba87a;"></i>
+                                                    <i class="fas fa-plus" style="font-size: 9px; color: #f59e0b;"></i>
                                                 </button>
                                             </summary>
                                             <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
                                                 ${divStudents.map(u => `
-                                                    <div style="font-size: 12px; color: #e5e5ea; padding: 2px 0; display: flex; align-items: center; gap: 6px;">
+                                                    <div style="font-size: 12px; color: #475569; padding: 2px 0; display: flex; align-items: center; gap: 6px;">
                                                         <i class="fas fa-user-graduate" style="color: #8e8e93; font-size: 10px;"></i>
-                                                        <span><strong>${u.name}</strong> <span style="color:#8e8e93; font-size:11px;">(${u.email})</span></span>
+                                                        <span><strong>${u.name}</strong> <span style="color:#64748b; font-size:11px;">(${u.email})</span></span>
                                                     </div>
                                                 `).join('')}
                                             </div>
@@ -597,7 +597,7 @@ const SuperAdmin = {
                 districtsHTML += `
                     <details class="district-node" open style="background: rgba(255,255,255,0.01); border-left: 2px solid rgba(92, 141, 137, 0.3); border-radius:0 4px 4px 0; margin-bottom: 0.25rem; overflow: hidden;">
                         <summary onclick="SuperAdmin.focusDistrict('${stateName}', '${districtName}')" style="display: flex; align-items: center; padding: 0.5rem 0.75rem; font-size: 13px; font-weight: 600; cursor: pointer; color: #f5f5f7; list-style: none; user-select: none;">
-                            <i class="fas fa-city" style="color: #5c8d89; margin-right: 6px; font-size: 11px;"></i>
+                            <i class="fas fa-city" style="color: #7c3aed; margin-right: 6px; font-size: 11px;"></i>
                             <span style="flex: 1;">${districtName}</span>
                             <span style="font-size: 10px; background:rgba(255,255,255,0.06); color: #8e8e93; padding:1px 5px; border-radius:8px; margin-right: 8px;">${districtSchools.length}</span>
                             <i class="fas fa-chevron-down" style="font-size: 10px; opacity: 0.7; transition: transform 0.2s;"></i>
@@ -611,7 +611,7 @@ const SuperAdmin = {
             
             treeHTML += `
                 <details class="state-node" open style="margin-bottom: 0.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; overflow: hidden; transition: all 0.3s ease;">
-                    <summary onclick="SuperAdmin.focusState('${stateName}')" style="display: flex; align-items: center; padding: 0.75rem 1rem; font-weight: 700; cursor: pointer; color: #fff; background: rgba(255,255,255,0.04); list-style: none; user-select: none;">
+                    <summary onclick="SuperAdmin.focusState('${stateName}')" style="display: flex; align-items: center; padding: 0.75rem 1rem; font-weight: 700; cursor: pointer; color: #1e293b; background: rgba(255,255,255,0.04); list-style: none; user-select: none;">
                         <i class="fas fa-map-marker-alt" style="color: #dca368; margin-right: 8px;"></i>
                         <span style="flex: 1;">${stateName}</span>
                         <span style="font-size: 11px; background: rgba(255,255,255,0.08); color: #8e8e93; padding: 2px 6px; border-radius: 10px; margin-right: 8px;">${stateSchoolCount}</span>
@@ -735,7 +735,7 @@ const SuperAdmin = {
         const container = document.getElementById('users-list');
         if (!container) return;
         if (!users || users.length === 0) {
-            container.innerHTML = '<div style="text-align:center;padding:4rem;color:#8e8e93;"><i class="fas fa-users" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:1rem;"></i>No matching users found.</div>';
+            container.innerHTML = '<div style="text-align:center;padding:4rem;color:#64748b;"><i class="fas fa-users" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:1rem;"></i>No matching users found.</div>';
             return;
         }
 
@@ -751,33 +751,33 @@ const SuperAdmin = {
             const roleColor = u.role === 'super_admin' 
                 ? '#d97a7e' 
                 : u.role === 'school_admin' || u.role === 'admin' 
-                    ? '#6ba87a' 
+                    ? '#f59e0b' 
                     : u.role === 'teacher' 
-                        ? '#5c8d89' 
+                        ? '#7c3aed' 
                         : '#8e8e93';
 
             return `
-                <div class="user-row-item" style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.8rem; border-radius: 6px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); margin-bottom: 0.25rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">
+                <div class="user-row-item" style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.8rem; border-radius: 6px; background: #ffffff; border: 1px solid #e2e8f0; margin-bottom: 0.25rem; transition: background 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#ffffff'">
                     <div style="display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden; margin-right: 12px;">
                         <i class="fas ${roleIcon}" style="color: ${roleColor}; font-size: 14px; width: 16px; text-align: center;"></i>
                         <div style="display: flex; flex-direction: column; overflow: hidden;">
-                            <div style="font-size: 13px; font-weight: 700; color: #fff;">${u.name}</div>
-                            <div style="font-size: 11px; color: #8e8e93; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${u.email}</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #1e293b;">${u.name}</div>
+                            <div style="font-size: 11px; color: #64748b; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${u.email}</div>
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 16px;" onclick="event.stopPropagation()">
-                        <span style="font-size: 11px; color: #8e8e93; font-weight: 500;">
+                        <span style="font-size: 11px; color: #64748b; font-weight: 500;">
                             Login: ${u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : 'Never'}
                         </span>
-                        <span style="display:inline-flex; align-items:center; gap:4px; background:${u.isActive ? 'rgba(107,168,122,0.1)' : 'rgba(217,122,126,0.1)'}; color:${u.isActive ? '#6ba87a' : '#d97a7e'}; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:600;">
+                        <span style="display:inline-flex; align-items:center; gap:4px; background:${u.isActive ? 'rgba(245,158,11,0.1)' : 'rgba(217,122,126,0.1)'}; color:${u.isActive ? '#f59e0b' : '#d97a7e'}; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:600;">
                             ${u.isActive ? 'Active' : 'Blocked'}
                         </span>
                         <div style="display: flex; gap: 4px;">
                             <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Edit User" onclick="SuperAdmin.showEditUserModal('${u._id}')">
-                                <i class="fas fa-edit" style="color:#5c8d89; font-size: 11px;"></i>
+                                <i class="fas fa-edit" style="color:#7c3aed; font-size: 11px;"></i>
                             </button>
                             <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="${u.isActive ? 'Block' : 'Unblock'}" onclick="SuperAdmin.toggleUser('${u._id}', ${u.isActive})">
-                                <i class="fas ${u.isActive ? 'fa-user-slash' : 'fa-user-check'}" style="color:${u.isActive ? '#d97a7e' : '#6ba87a'}; font-size: 11px;"></i>
+                                <i class="fas ${u.isActive ? 'fa-user-slash' : 'fa-user-check'}" style="color:${u.isActive ? '#d97a7e' : '#f59e0b'}; font-size: 11px;"></i>
                             </button>
                             <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="Delete User" onclick="SuperAdmin.deleteUser('${u._id}')">
                                 <i class="fas fa-trash-alt" style="color:#d97a7e; font-size: 11px;"></i>
@@ -823,14 +823,14 @@ const SuperAdmin = {
         let html = '';
         if (platformAdmins.length > 0) {
             html += `
-                <details class="school-node-details" open style="margin-bottom: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
-                    <summary style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.8rem; cursor: pointer; list-style: none; user-select: none; background: rgba(255,255,255,0.03);">
+                <details class="school-node-details" open style="margin-bottom: 0.75rem; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+                    <summary style="display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1rem; cursor: pointer; list-style: none; user-select: none; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-chevron-right chevron-icon" style="font-size: 10px; transition: transform 0.2s; color: #8e8e93;"></i>
-                            <i class="fas fa-shield-halved folder-icon" style="color: #d97a7e; font-size: 14px;"></i>
-                            <span style="font-size: 13px; font-weight: 700; color: #fff;">Platform / Super Admins</span>
+                            <i class="fas fa-chevron-right chevron-icon" style="font-size: 10px; transition: transform 0.2s; color: #64748b;"></i>
+                            <i class="fas fa-shield-halved folder-icon" style="color: #7c3aed; font-size: 14px;"></i>
+                            <span style="font-size: 14px; font-weight: 700; color: #1e293b;">Platform / Super Admins</span>
                         </div>
-                        <span style="font-size: 10px; background: rgba(255,255,255,0.06); color: #8e8e93; padding: 2px 6px; border-radius: 10px; font-weight: 600;">${platformAdmins.length} User${platformAdmins.length !== 1 ? 's' : ''}</span>
+                        <span style="font-size: 11px; background: rgba(124,58,237,0.1); color: #7c3aed; padding: 3px 8px; border-radius: 12px; font-weight: 700;">${platformAdmins.length} User${platformAdmins.length !== 1 ? 's' : ''}</span>
                     </summary>
                     <div style="padding: 0.5rem 0.7rem 0.7rem 1.8rem; display: flex; flex-direction: column; gap: 0.25rem;">
                         ${platformAdmins.map(u => renderUserItem(u)).join('')}
@@ -856,9 +856,9 @@ const SuperAdmin = {
                 if (list.length > 0) {
                     divisionFoldersHTML += `
                         <details class="school-nested-folder" style="overflow: hidden; margin-bottom: 0.25rem;">
-                            <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-                                <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #8e8e93;"></i>
-                                <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                            <summary style="cursor: pointer; list-style: none; font-size: 13px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; background: transparent; transition: background 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                                <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #94a3b8;"></i>
+                                <i class="fas fa-folder folder-sub-icon" style="color: #f59e0b; font-size: 13px;"></i>
                                 <span>Division ${div} Students (${list.length})</span>
                             </summary>
                             <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
@@ -870,22 +870,22 @@ const SuperAdmin = {
             });
 
             html += `
-                <details class="school-node-details" style="margin-bottom: 0.5rem; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
-                    <summary style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; cursor: pointer; list-style: none; user-select: none; background: rgba(255,255,255,0.03);">
+                <details class="school-node-details" style="margin-bottom: 0.75rem; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+                    <summary style="display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1rem; cursor: pointer; list-style: none; user-select: none; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-chevron-right chevron-icon" style="font-size: 10px; transition: transform 0.2s; color: #8e8e93;"></i>
-                            <i class="fas fa-folder folder-icon" style="color: #e5c07b; font-size: 14px;"></i>
-                            <span style="font-size: 13px; font-weight: 700; color: #fff;">${school.name}</span>
+                            <i class="fas fa-chevron-right chevron-icon" style="font-size: 10px; transition: transform 0.2s; color: #64748b;"></i>
+                            <i class="fas fa-building folder-icon" style="color: #7c3aed; font-size: 14px;"></i>
+                            <span style="font-size: 14px; font-weight: 700; color: #1e293b;">${school.name}</span>
                         </div>
-                        <span style="font-size: 10px; background: rgba(255,255,255,0.06); color: #8e8e93; padding: 2px 6px; border-radius: 10px; font-weight: 600;">${totalCount} User${totalCount !== 1 ? 's' : ''}</span>
+                        <span style="font-size: 11px; background: rgba(124,58,237,0.1); color: #7c3aed; padding: 3px 8px; border-radius: 12px; font-weight: 700;">${totalCount} User${totalCount !== 1 ? 's' : ''}</span>
                     </summary>
-                    <div class="school-folders-content" style="padding: 0.5rem 1rem 0.75rem 2.25rem; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.15); border-top: 1px solid rgba(255,255,255,0.03);">
+                    <div class="school-folders-content" style="padding: 1rem 1rem 1rem 2.25rem; display: flex; flex-direction: column; gap: 0.5rem; background: #ffffff;">
                         
                         <!-- School Admins Folder -->
                         <details class="school-nested-folder" style="overflow: hidden;">
-                            <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-                                <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #8e8e93;"></i>
-                                <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                            <summary style="cursor: pointer; list-style: none; font-size: 13px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; background: transparent; transition: background 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                                <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #94a3b8;"></i>
+                                <i class="fas fa-folder folder-sub-icon" style="color: #f59e0b; font-size: 13px;"></i>
                                 <span>School Admin (${school.admins.length})</span>
                             </summary>
                             <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
@@ -897,9 +897,9 @@ const SuperAdmin = {
 
                         <!-- Teachers Folder -->
                         <details class="school-nested-folder" style="overflow: hidden;">
-                            <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
-                                <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #8e8e93;"></i>
-                                <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                            <summary style="cursor: pointer; list-style: none; font-size: 13px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; background: transparent; transition: background 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                                <i class="fas fa-chevron-right nested-chevron-icon" style="font-size: 9px; transition: transform 0.2s; color: #94a3b8;"></i>
+                                <i class="fas fa-folder folder-sub-icon" style="color: #f59e0b; font-size: 13px;"></i>
                                 <span>Teacher (${school.teachers.length})</span>
                             </summary>
                             <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; display: flex; flex-direction: column; gap: 4px;">
@@ -912,8 +912,8 @@ const SuperAdmin = {
                         <!-- Student Division Folders -->
                         ${divisionFoldersHTML || `
                             <details class="school-nested-folder" style="overflow: hidden;">
-                                <summary style="cursor: pointer; list-style: none; font-size: 12px; font-weight: 600; color: #a2a2a7; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);">
-                                    <i class="fas fa-folder folder-sub-icon" style="color: #e5c07b; font-size: 12px;"></i>
+                                <summary style="cursor: pointer; list-style: none; font-size: 13px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; background: transparent;">
+                                    <i class="fas fa-folder folder-sub-icon" style="color: #f59e0b; font-size: 13px;"></i>
                                     <span>Students (0)</span>
                                 </summary>
                                 <div style="padding: 0.25rem 0.5rem 0.25rem 1.5rem; font-size: 11px; color: #8e8e93; font-style: italic;">No students assigned</div>
@@ -945,24 +945,24 @@ const SuperAdmin = {
         const container = document.getElementById('plans-list');
         if (!container) return;
         if (!plans || plans.length === 0) {
-            container.innerHTML = '<div style="text-align:center;color:#8e8e93;padding:2rem;">No subscription plans defined.</div>';
+            container.innerHTML = '<div style="text-align:center;color:#64748b;padding:2rem;">No subscription plans defined.</div>';
             return;
         }
 
         container.innerHTML = plans.map(p => `
-            <div class="glass-card" style="padding:1.25rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid ${p.isActive ? '#5c8d89' : '#d97a7e'};background:rgba(255,255,255,0.02);">
+            <div class="glass-card" style="padding:1.25rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid ${p.isActive ? '#7c3aed' : '#d97a7e'};background:rgba(255,255,255,0.02);">
                 <div>
-                    <h4 style="margin:0;font-size:16px;color:#fff;">${p.name}</h4>
-                    <div style="font-size:13px;color:#8e8e93;margin-top:4px;">
-                        Price: <strong style="color:#6ba87a;">$${p.price}</strong> | Duration: ${p.durationDays} days
+                    <h4 style="margin:0;font-size:16px;color:#1e293b;">${p.name}</h4>
+                    <div style="font-size:13px;color:#64748b;margin-top:4px;">
+                        Price: <strong style="color:#f59e0b;">$${p.price}</strong> | Duration: ${p.durationDays} days
                     </div>
-                    <ul style="margin:8px 0 0;padding-left:1.2rem;font-size:12px;color:#8e8e93;">
+                    <ul style="margin:8px 0 0;padding-left:1.2rem;font-size:12px;color:#64748b;">
                         ${(p.features || []).map(f => `<li>${f}</li>`).join('')}
                     </ul>
                 </div>
                 <div class="flex gap-2">
                     <button class="btn btn-ghost" title="Edit Plan" onclick="SuperAdmin.showEditPlanModal('${p._id}')">
-                        <i class="fas fa-edit" style="color:#5c8d89;"></i>
+                        <i class="fas fa-edit" style="color:#7c3aed;"></i>
                     </button>
                     <button class="btn btn-ghost" title="Delete Plan" onclick="SuperAdmin.deletePlan('${p._id}')">
                         <i class="fas fa-trash-alt" style="color:#d97a7e;"></i>
@@ -1030,19 +1030,19 @@ const SuperAdmin = {
             if (recentList) {
                 const recent = (schools || []).slice(0, 5);
                 if (!recent || recent.length === 0) {
-                    recentList.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#8e8e93;padding:2rem;font-size:13px;"><i class="fas fa-info-circle"></i> No schools registered yet.</td></tr>';
+                    recentList.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#64748b;padding:2rem;font-size:13px;"><i class="fas fa-info-circle"></i> No schools registered yet.</td></tr>';
                 } else {
                     recentList.innerHTML = recent.map(s => `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                         <td style="padding:1rem 0.75rem;">
                             <div style="font-weight:600;font-size:13px;">${s.name}</div>
-                            <div style="font-size:11px;color:#8e8e93;">${s.board_type || 'General'}</div>
+                            <div style="font-size:11px;color:#64748b;">${s.board_type || 'General'}</div>
                         </td>
                         <td style="padding:1rem 0.75rem;">
-                            <span style="background:rgba(92,141,137,0.1);color:#5c8d89;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;">${s.subscription_plan || 'Basic'}</span>
+                            <span style="background:rgba(124,58,237,0.1);color:#7c3aed;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;">${s.subscription_plan || 'Basic'}</span>
                         </td>
                         <td style="padding:1rem 0.75rem;">
-                            <span style="background:${s.is_active ? 'rgba(107,168,122,0.1)' : 'rgba(217,122,126,0.1)'};color:${s.is_active ? '#6ba87a' : '#d97a7e'};padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;">
+                            <span style="background:${s.is_active ? 'rgba(245,158,11,0.1)' : 'rgba(217,122,126,0.1)'};color:${s.is_active ? '#f59e0b' : '#d97a7e'};padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;">
                                 ${s.is_active ? 'Active' : 'Suspended'}
                             </span>
                         </td>
@@ -1051,7 +1051,7 @@ const SuperAdmin = {
             }
         } catch (e) {
             const recentList = document.getElementById('recent-schools-list');
-            if (recentList) recentList.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#8e8e93;padding:2rem;font-size:13px;">Unable to load recent schools.</td></tr>';
+            if (recentList) recentList.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#64748b;padding:2rem;font-size:13px;">Unable to load recent schools.</td></tr>';
         }
         this.renderCharts();
     },
@@ -1076,11 +1076,11 @@ const SuperAdmin = {
                     datasets: [{
                         label: 'Schools',
                         data: [5, 8, 12, 15, 18, 24],
-                        borderColor: '#5c8d89',
-                        backgroundColor: 'rgba(92,141,137,0.12)',
+                        borderColor: '#7c3aed',
+                        backgroundColor: 'rgba(124,58,237,0.12)',
                         tension: 0.4,
                         fill: true,
-                        pointBackgroundColor: '#5c8d89',
+                        pointBackgroundColor: '#7c3aed',
                         pointRadius: 4
                     }]
                 },
@@ -1105,7 +1105,7 @@ const SuperAdmin = {
                     labels: ['Students', 'Teachers', 'School Admins'],
                     datasets: [{
                         data: [850, 240, 80],
-                        backgroundColor: ['#5c8d89', '#6ba87a', '#dca368'],
+                        backgroundColor: ['#7c3aed', '#f59e0b', '#dca368'],
                         borderWidth: 0,
                         hoverOffset: 6
                     }]
@@ -1154,7 +1154,7 @@ const SuperAdmin = {
 
     async loadPermissions() {
         const container = document.getElementById('permissions-matrix-container');
-        container.innerHTML = '<div class="glass-card" style="text-align:center;padding:3rem;color:#8e8e93;"><i class="fas fa-spinner fa-spin" style="font-size:24px;"></i><p style="margin-top:1rem;">Loading permissions...</p></div>';
+        container.innerHTML = '<div class="glass-card" style="text-align:center;padding:3rem;color:#64748b;"><i class="fas fa-spinner fa-spin" style="font-size:24px;"></i><p style="margin-top:1rem;">Loading permissions...</p></div>';
         try {
             const data = await api.get('/admin/permissions');
             this._permissionsData = data;
@@ -1246,7 +1246,7 @@ const SuperAdmin = {
         logsContainer.innerHTML = mockLogs.map(log => `
             <tr>
                 <td>${log.user}</td>
-                <td><span class="badge-pill" style="background: rgba(92,141,137,0.1); color: #5c8d89;">${log.action}</span></td>
+                <td><span class="badge-pill" style="background: rgba(124,58,237,0.1); color: #7c3aed;">${log.action}</span></td>
                 <td class="text-muted">${log.time}</td>
             </tr>
         `).join('');
@@ -1276,7 +1276,7 @@ const SuperAdmin = {
 
             if (!sessions || sessions.length === 0) {
                 container.innerHTML = `
-                    <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#8e8e93;">
+                    <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#64748b;">
                         <i class="fas fa-ghost" style="font-size:3rem; opacity:0.2; display:block; margin-bottom:1rem;"></i>
                         No live exams at this moment.
                     </div>`;
@@ -1290,38 +1290,38 @@ const SuperAdmin = {
                     hour: '2-digit', minute: '2-digit'
                 });
                 return `
-                <div class="glass-card animate-pulse-subtle" style="padding:1.5rem; border-left:4px solid ${isLive ? '#d97a7e' : '#5c8d89'}; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; min-height:280px; transition:transform 0.2s;">
+                <div class="glass-card animate-pulse-subtle" style="padding:1.5rem; border-left:4px solid ${isLive ? '#d97a7e' : '#7c3aed'}; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; min-height:280px; transition:transform 0.2s;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
-                        <span style="font-size:10px; font-weight:800; color:${isLive ? '#d97a7e' : '#5c8d89'}; text-transform:uppercase; letter-spacing:1.5px; display:flex; align-items:center; gap:5px;">
-                            <span style="width:8px; height:8px; border-radius:50%; background:${isLive ? '#d97a7e' : '#5c8d89'}; ${isLive ? 'box-shadow:0 0 8px #d97a7e;' : ''}"></span>
+                        <span style="font-size:10px; font-weight:800; color:${isLive ? '#d97a7e' : '#7c3aed'}; text-transform:uppercase; letter-spacing:1.5px; display:flex; align-items:center; gap:5px;">
+                            <span style="width:8px; height:8px; border-radius:50%; background:${isLive ? '#d97a7e' : '#7c3aed'}; ${isLive ? 'box-shadow:0 0 8px #d97a7e;' : ''}"></span>
                             ${isLive ? 'LIVE NOW' : 'SCHEDULED'}
                         </span>
-                        <span style="font-size:11px; color:#8e8e93; font-weight:600; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:4px;">${s.division} Section</span>
+                        <span style="font-size:11px; color:#64748b; font-weight:600; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:4px;">${s.division} Section</span>
                     </div>
                     
-                    <h3 style="font-size:18px; margin-bottom:0.75rem; color:#fff; font-weight:700;">${s.title}</h3>
+                    <h3 style="font-size:18px; margin-bottom:0.75rem; color:#1e293b; font-weight:700;">${s.title}</h3>
                     
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:0.5rem; color:#5c8d89;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:0.5rem; color:#7c3aed;">
                         <i class="fas fa-university" style="font-size:12px;"></i>
                         <span style="font-size:13px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${s.schoolId?.name || 'Platform School'}</span>
                     </div>
 
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:0.5rem; color:#8e8e93;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:0.5rem; color:#64748b;">
                         <i class="fas fa-chalkboard-teacher" style="font-size:12px;"></i>
                         <span style="font-size:12px; font-weight:500;">${s.teacherId?.name || 'Assigned Faculty'}</span>
                     </div>
                     
-                    <div style="font-size:12px; color:#8e8e93; margin-bottom:1.25rem; display:flex; align-items:center; gap:6px;">
+                    <div style="font-size:12px; color:#64748b; margin-bottom:1.25rem; display:flex; align-items:center; gap:6px;">
                         <i class="far fa-clock"></i> ${startTime}
                     </div>
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:auto; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,0.08);">
                         <div>
-                            <div style="font-size:9px; color:#8e8e93; text-transform:uppercase; font-weight:700; margin-bottom:2px;">Subject</div>
+                            <div style="font-size:9px; color:#64748b; text-transform:uppercase; font-weight:700; margin-bottom:2px;">Subject</div>
                             <div style="font-size:13px; font-weight:500;">${s.subject || 'General'}</div>
                         </div>
                         <div>
-                            <div style="font-size:9px; color:#8e8e93; text-transform:uppercase; font-weight:700; margin-bottom:2px;">Duration</div>
+                            <div style="font-size:9px; color:#64748b; text-transform:uppercase; font-weight:700; margin-bottom:2px;">Duration</div>
                             <div style="font-size:13px; font-weight:500;">${s.duration} Mins</div>
                         </div>
                     </div>
@@ -1404,15 +1404,15 @@ const SuperAdmin = {
             const teachers = await api.get(`/admin/super/schools/${schoolId}/teachers`);
             const teacherList = document.getElementById('sd-teachers-list');
             teacherList.innerHTML = (!teachers || teachers.length === 0) 
-                ? '<tr><td colspan="2" style="text-align:center;padding:2rem;color:#8e8e93;">No teachers found.</td></tr>'
+                ? '<tr><td colspan="2" style="text-align:center;padding:2rem;color:#64748b;">No teachers found.</td></tr>'
                 : teachers.map(t => `
                     <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
                         <td style="padding:0.75rem;">
                             <div style="font-weight:600;">${t.name}</div>
-                            <div style="font-size:11px;color:#8e8e93;">${t.email}</div>
+                            <div style="font-size:11px;color:#64748b;">${t.email}</div>
                         </td>
                         <td style="padding:0.75rem;">
-                            <span style="color:${t.isActive ? '#6ba87a' : '#d97a7e'};font-size:11px;font-weight:700;">${t.isActive ? 'ACTIVE' : 'BLOCKED'}</span>
+                            <span style="color:${t.isActive ? '#f59e0b' : '#d97a7e'};font-size:11px;font-weight:700;">${t.isActive ? 'ACTIVE' : 'BLOCKED'}</span>
                         </td>
                     </tr>
                 `).join('');
@@ -1420,12 +1420,12 @@ const SuperAdmin = {
             const exams = await api.get(`/admin/super/schools/${schoolId}/exams`);
             const examList = document.getElementById('sd-exams-list');
             examList.innerHTML = (!exams || exams.length === 0)
-                ? '<tr><td colspan="2" style="text-align:center;padding:2rem;color:#8e8e93;">No exams found.</td></tr>'
+                ? '<tr><td colspan="2" style="text-align:center;padding:2rem;color:#64748b;">No exams found.</td></tr>'
                 : exams.map(e => `
                     <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
                         <td style="padding:0.75rem;">
                             <div style="font-weight:600;">${e.title}</div>
-                            <div style="font-size:11px;color:#8e8e93;">${e.questions?.length || 0} Questions</div>
+                            <div style="font-size:11px;color:#64748b;">${e.questions?.length || 0} Questions</div>
                         </td>
                         <td style="padding:0.75rem;font-size:12px;">${e.creatorId?.name || 'N/A'}</td>
                     </tr>

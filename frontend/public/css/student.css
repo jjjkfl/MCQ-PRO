@@ -9,8 +9,8 @@
 
 /* ─── Sidebar - Calm Navigation ──────────────────────────── */
 .sidebar {
-  background: var(--bg-card);
-  border-right: 1px solid var(--border);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
   padding: 2rem 1.25rem;
   position: sticky;
   top: 0;
@@ -37,7 +37,7 @@
 .sidebar-header h1 {
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--text-main);
+  color: var(--sidebar-text);
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -54,7 +54,7 @@
   align-items: center;
   gap: 0.75rem;
   text-decoration: none;
-  color: var(--text-main);
+  color: var(--sidebar-text);
 }
 
 .sidebar-logo-icon {
@@ -74,7 +74,7 @@
   font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--sidebar-text);
 }
 
 .sidebar-logo-text span {
@@ -95,7 +95,7 @@
   gap: 0.875rem;
   padding: 0.875rem 1rem;
   border-radius: var(--radius-md);
-  color: var(--text-secondary);
+  color: var(--sidebar-text-muted);
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
@@ -110,15 +110,15 @@
 }
 
 .nav-item:hover {
-  background: var(--bg-subtle);
-  color: var(--primary);
+  background: var(--sidebar-hover);
+  color: var(--sidebar-text);
   padding-left: 1.5rem;
   box-shadow: inset 4px 0 0 var(--primary);
 }
 
 .nav-item.active {
-  background: var(--gradient-primary);
-  color: white;
+  background: var(--sidebar-active);
+  color: var(--sidebar-text);
   box-shadow: 0 4px 12px var(--primary-glow);
 }
 
@@ -130,7 +130,7 @@
 .sidebar-footer {
   margin-top: auto;
   padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--sidebar-border);
 }
 
 .user-profile-mini {
@@ -183,8 +183,8 @@
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
-  background: radial-gradient(circle at top right, rgba(92, 141, 137, 0.03), transparent 400px),
-              radial-gradient(circle at bottom left, rgba(92, 141, 137, 0.02), transparent 400px);
+  background: radial-gradient(circle at top right, rgba(17, 94, 89, 0.03), transparent 400px),
+              radial-gradient(circle at bottom left, rgba(17, 94, 89, 0.02), transparent 400px);
 }
 
 /* ─── Welcome Section ────────────────────────────────────── */

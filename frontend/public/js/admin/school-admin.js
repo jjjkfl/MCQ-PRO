@@ -105,7 +105,7 @@ const SchoolAdmin = {
     },
 
     _avatarColor(name) {
-        const colors = ['#5c8d89','#6ba87a','#dca368','#d97a7e','#7a82ab','#6e9ea3','#7274a1'];
+        const colors = ['#7c3aed','#f59e0b','#dca368','#d97a7e','#7a82ab','#6e9ea3','#7274a1'];
         let hash = 0;
         for (let c of name) hash = c.charCodeAt(0) + ((hash << 5) - hash);
         return colors[Math.abs(hash) % colors.length];
@@ -115,13 +115,13 @@ const SchoolAdmin = {
 
     async loadStudents() {
         const container = document.getElementById('students-list');
-        container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+        container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
         try {
             const students = await api.get('/admin/school/students');
             this._allStudents = students;
             this._renderStudents(students);
         } catch (err) {
-            container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#8e8e93;">No students found.</td></tr>';
+            container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;">No students found.</td></tr>';
         }
     },
 
@@ -136,7 +136,7 @@ const SchoolAdmin = {
     _renderStudents(students) {
         const container = document.getElementById('students-list');
         if (!students.length) {
-            container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#8e8e93;">No students found.</td></tr>';
+            container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;">No students found.</td></tr>';
             return;
         }
         container.innerHTML = students.map(s => {
@@ -146,16 +146,16 @@ const SchoolAdmin = {
             <tr>
                 <td>
                     <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;">${initials}</div>
+                        <div style="width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#1e293b;flex-shrink:0;">${initials}</div>
                         <div>
                             <div style="font-weight:600;">${s.name}</div>
-                            <div style="font-size:12px;color:#8e8e93;">${s.email}</div>
+                            <div style="font-size:12px;color:#64748b;">${s.email}</div>
                         </div>
                     </div>
                 </td>
                 <td>${s.classTag || '—'}</td>
-                <td><span style="background:rgba(92,141,137,0.12);color:#5c8d89;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">${s.division || 'A'}</span></td>
-                <td><span style="background:rgba(107,168,122,0.12);color:#6ba87a;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">Active</span></td>
+                <td><span style="background:rgba(124,58,237,0.12);color:#7c3aed;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">${s.division || 'A'}</span></td>
+                <td><span style="background:rgba(245,158,11,0.12);color:#f59e0b;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">Active</span></td>
                 <td>
                     <button class="btn btn-ghost" title="View"><i class="fas fa-eye"></i></button>
                     <button class="btn btn-ghost" title="Edit" onclick='SchoolAdmin.showEditModal(${JSON.stringify({id:s._id,name:s.name,email:s.email,role:s.role,classTag:s.classTag||"",division:s.division||"A",isActive:s.isActive})})'>
@@ -168,11 +168,11 @@ const SchoolAdmin = {
 
     async loadTeachers() {
         const container = document.getElementById('teachers-list');
-        container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+        container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
         try {
             const teachers = await api.get('/admin/school/teachers');
             if (!teachers.length) {
-                container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#8e8e93;">No teachers found.</td></tr>';
+                container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;">No teachers found.</td></tr>';
                 return;
             }
             container.innerHTML = teachers.map(t => {
@@ -183,16 +183,16 @@ const SchoolAdmin = {
                 <tr>
                     <td>
                         <div style="display:flex; align-items:center; gap:12px;">
-                            <div style="width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;">${initials}</div>
+                            <div style="width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#1e293b;flex-shrink:0;">${initials}</div>
                             <div>
                                 <div style="font-weight:600;">${t.name}</div>
-                                <div style="font-size:12px;color:#8e8e93;">Teacher</div>
+                                <div style="font-size:12px;color:#64748b;">Teacher</div>
                             </div>
                         </div>
                     </td>
-                    <td style="color:#8e8e93;font-size:13px;">${t.email}</td>
-                    <td><span style="background:rgba(107,168,122,0.12);color:#6ba87a;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">${t.isActive ? 'Active' : 'Inactive'}</span></td>
-                    <td style="color:#8e8e93;font-size:13px;">${joined}</td>
+                    <td style="color:#64748b;font-size:13px;">${t.email}</td>
+                    <td><span style="background:rgba(245,158,11,0.12);color:#f59e0b;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">${t.isActive ? 'Active' : 'Inactive'}</span></td>
+                    <td style="color:#64748b;font-size:13px;">${joined}</td>
                     <td>
                         <button class="btn btn-ghost" title="Edit" onclick='SchoolAdmin.showEditModal(${JSON.stringify({id:t._id,name:t.name,email:t.email,role:t.role,isActive:t.isActive})})'>
                             <i class="fas fa-edit"></i>
@@ -201,7 +201,7 @@ const SchoolAdmin = {
                 </tr>`;
             }).join('');
         } catch (err) {
-            container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#8e8e93;">No teachers found.</td></tr>';
+            container.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;">No teachers found.</td></tr>';
         }
     },
 
@@ -210,13 +210,13 @@ const SchoolAdmin = {
         const resultsContainer = document.getElementById('results-summary');
         if (!container || !resultsContainer) return;
 
-        container.innerHTML = '<tr><td colspan="3" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading schedule...</td></tr>';
-        resultsContainer.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading results...</td></tr>';
+        container.innerHTML = '<tr><td colspan="3" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading schedule...</td></tr>';
+        resultsContainer.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading results...</td></tr>';
 
         try {
             const exams = await api.get('/admin/school/exams');
             if (!exams || exams.length === 0) {
-                container.innerHTML = '<tr><td colspan="3" class="text-center" style="color:#8e8e93;">No scheduled exams.</td></tr>';
+                container.innerHTML = '<tr><td colspan="3" class="text-center" style="color:#64748b;">No scheduled exams.</td></tr>';
             } else {
                 container.innerHTML = exams.map(e => `
                     <tr>
@@ -233,7 +233,7 @@ const SchoolAdmin = {
         try {
             const results = await api.get('/admin/school/results');
             if (!results || results.length === 0) {
-                resultsContainer.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#8e8e93;">No performance results found.</td></tr>';
+                resultsContainer.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;">No performance results found.</td></tr>';
             } else {
                 resultsContainer.innerHTML = results.map(r => {
                     const studentName = r.studentId ? r.studentId.name : 'Unknown Student';
@@ -255,10 +255,10 @@ const SchoolAdmin = {
                         <tr>
                             <td>
                                 <div><strong>${studentName}</strong></div>
-                                <div style="font-size:11px; color:#8e8e93;">${studentDiv}</div>
+                                <div style="font-size:11px; color:#64748b;">${studentDiv}</div>
                             </td>
                             <td>${examName}</td>
-                            <td><strong style="color: #5c8d89;">${score}</strong></td>
+                            <td><strong style="color: #7c3aed;">${score}</strong></td>
                             <td>${violationBadge}</td>
                             <td>${timeTaken}</td>
                         </tr>
@@ -315,7 +315,7 @@ const SchoolAdmin = {
                 labels: ['Excellent', 'Good', 'Average', 'Below Average'],
                 datasets: [{
                     data: [35, 45, 15, 5],
-                    backgroundColor: ['#6ba87a', '#5c8d89', '#dca368', '#d97a7e'],
+                    backgroundColor: ['#f59e0b', '#7c3aed', '#dca368', '#d97a7e'],
                     borderWidth: 0
                 }]
             },
@@ -462,7 +462,7 @@ const SchoolAdmin = {
 
             if (!sessions || sessions.length === 0) {
                 container.innerHTML = `
-                    <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#8e8e93;">
+                    <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#64748b;">
                         <i class="fas fa-ghost" style="font-size:3rem; opacity:0.2; display:block; margin-bottom:1rem;"></i>
                         No exams currently in progress at your school.
                     </div>`;
@@ -473,36 +473,36 @@ const SchoolAdmin = {
             container.innerHTML = sessions.map(s => {
                 const isLive = s.status === 'active';
                 return `
-                <div class="glass-card animate-pulse-subtle" style="padding:1.25rem; border-left:4px solid ${isLive ? '#d97a7e' : '#5c8d89'}; background:rgba(255,255,255,0.02);">
+                <div class="glass-card animate-pulse-subtle" style="padding:1.25rem; border-left:4px solid ${isLive ? '#d97a7e' : '#7c3aed'}; background:rgba(255,255,255,0.02);">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
-                        <span style="font-size:11px; font-weight:700; color:${isLive ? '#d97a7e' : '#5c8d89'}; text-transform:uppercase; letter-spacing:1px;">
+                        <span style="font-size:11px; font-weight:700; color:${isLive ? '#d97a7e' : '#7c3aed'}; text-transform:uppercase; letter-spacing:1px;">
                             <i class="fas ${isLive ? 'fa-circle' : 'fa-clock'}" style="font-size:8px; margin-right:4px;"></i> 
                             ${isLive ? 'LIVE NOW' : 'SCHEDULED'}
                         </span>
-                        <span style="font-size:12px; color:#8e8e93;">${s.division} Section</span>
+                        <span style="font-size:12px; color:#64748b;">${s.division} Section</span>
                     </div>
                     <h3 style="font-size:16px; margin-bottom:0.5rem;">${s.title}</h3>
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:0.5rem;">
-                        <i class="fas fa-book-medical" style="color:#5c8d89; font-size:12px;"></i>
+                        <i class="fas fa-book-medical" style="color:#7c3aed; font-size:12px;"></i>
                         <span style="font-size:13px; font-weight:500;">${s.courseId?.courseName || 'General Course'}</span>
                     </div>
 
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:0.5rem; color:#8e8e93;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:0.5rem; color:#64748b;">
                         <i class="fas fa-chalkboard-teacher" style="font-size:12px;"></i>
                         <span style="font-size:12px; font-weight:500;">${s.teacherId?.name || 'Faculty Member'}</span>
                     </div>
                     
-                    <div style="font-size:12px; color:#8e8e93; margin-top:0.5rem;">
+                    <div style="font-size:12px; color:#64748b; margin-top:0.5rem;">
                         <i class="fas fa-calendar-alt"></i> ${new Date(s.startTime).toLocaleString()}
                     </div>
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.05);">
                         <div>
-                            <div style="font-size:10px; color:#8e8e93; text-transform:uppercase;">Subject</div>
+                            <div style="font-size:10px; color:#64748b; text-transform:uppercase;">Subject</div>
                             <div style="font-size:13px;">${s.subject || 'General'}</div>
                         </div>
                         <div>
-                            <div style="font-size:10px; color:#8e8e93; text-transform:uppercase;">Duration</div>
+                            <div style="font-size:10px; color:#64748b; text-transform:uppercase;">Duration</div>
                             <div style="font-size:13px;">${s.duration} Mins</div>
                         </div>
                     </div>
@@ -548,7 +548,7 @@ const SchoolAdmin = {
     async loadMaterials() {
         const container = document.getElementById('materials-list');
         if (!container) return;
-        container.innerHTML = '<tr><td colspan="7" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading academic materials...</td></tr>';
+        container.innerHTML = '<tr><td colspan="7" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading academic materials...</td></tr>';
         
         try {
             const materials = await api.get('/admin/school/materials');
@@ -581,7 +581,7 @@ const SchoolAdmin = {
         if (!container) return;
 
         if (!materials || materials.length === 0) {
-            container.innerHTML = '<tr><td colspan="7" class="text-center" style="color:#8e8e93;">No study materials found.</td></tr>';
+            container.innerHTML = '<tr><td colspan="7" class="text-center" style="color:#64748b;">No study materials found.</td></tr>';
             return;
         }
 
@@ -589,7 +589,7 @@ const SchoolAdmin = {
             const title = m.title || 'Untitled';
             const subject = m.subject || (m.courseId ? m.courseId.courseName : 'General');
             const targetClass = m.targetClass || 'All';
-            const division = m.targetDivision ? `<span style="background:rgba(92,141,137,0.12);color:#5c8d89;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">${m.targetDivision}</span>` : 'All';
+            const division = m.targetDivision ? `<span style="background:rgba(124,58,237,0.12);color:#7c3aed;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">${m.targetDivision}</span>` : 'All';
             const teacherName = m.createdBy ? m.createdBy.name : 'Unknown';
             const uploadDate = new Date(m.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
             
@@ -640,7 +640,7 @@ const SchoolAdmin = {
         const logsTbody = document.getElementById('security-logs-tbody');
 
         if (logsTbody) {
-            logsTbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading secure forensic ledger...</td></tr>';
+            logsTbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading secure forensic ledger...</td></tr>';
         }
 
         try {
@@ -667,7 +667,7 @@ const SchoolAdmin = {
 
                 if (logsTbody) {
                     if (!data.logs || data.logs.length === 0) {
-                        logsTbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:#8e8e93;">No forensic log events recorded.</td></tr>';
+                        logsTbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:#64748b;">No forensic log events recorded.</td></tr>';
                     } else {
                         logsTbody.innerHTML = data.logs.map(log => {
                             const timeStr = new Date(log.timestamp || log.createdAt).toLocaleString();
@@ -686,7 +686,7 @@ const SchoolAdmin = {
 
                             return `
                                 <tr>
-                                    <td style="white-space: nowrap; font-size: 12px; color:#8e8e93;">${timeStr}</td>
+                                    <td style="white-space: nowrap; font-size: 12px; color:#64748b;">${timeStr}</td>
                                     <td><span style="font-weight:600; font-size:12px;">${category}</span></td>
                                     <td><span class="badge-pill" style="background:rgba(255,255,255,0.05); color:${severityColor}; border:1px solid ${severityColor}44; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px;">${severity}</span></td>
                                     <td><strong>${score}</strong></td>

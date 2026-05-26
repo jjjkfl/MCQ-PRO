@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -89,10 +89,7 @@
                     <p class="text-secondary" id="school-subtitle">Manage your institution's academic ecosystem.</p>
                 </div>
                 <div class="flex gap-2" style="align-items:center;">
-                    <button id="sa-theme-toggle" onclick="SchoolAdmin.toggleTheme()" title="Toggle Theme"
-                        style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#f5f5f7;padding:8px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all 0.3s;">
-                        <i class="fas fa-sun"></i> Light Mode
-                    </button>
+
                     <button class="btn btn-primary" id="header-add-student-btn">
                         <i class="fas fa-plus"></i> Add Student
                     </button>
@@ -143,7 +140,7 @@
                     
                     <div id="sa-live-exams-container" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1.25rem;">
                         <!-- Live Exam Cards -->
-                        <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#8e8e93;">
+                        <div class="glass-card" style="text-align:center; padding:4rem; grid-column: 1 / -1; color:#64748b;">
                             <i class="fas fa-ghost" style="font-size:3rem; opacity:0.2; display:block; margin-bottom:1rem;"></i>
                             No exams currently in progress.
                         </div>
@@ -178,7 +175,7 @@
                                 </tr>
                             </thead>
                             <tbody id="students-list">
-                                <tr><td colspan="5" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                                <tr><td colspan="5" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -209,7 +206,7 @@
                                 </tr>
                             </thead>
                             <tbody id="teachers-list">
-                                <tr><td colspan="5" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                                <tr><td colspan="5" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -249,7 +246,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="results-summary">
-                                    <tr><td colspan="5" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading results...</td></tr>
+                                    <tr><td colspan="5" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading results...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -338,7 +335,7 @@
                                 </tr>
                             </thead>
                             <tbody id="materials-list">
-                                <tr><td colspan="7" class="text-center" style="color:#8e8e93;">No study materials found.</td></tr>
+                                <tr><td colspan="7" class="text-center" style="color:#64748b;">No study materials found.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -352,22 +349,22 @@
                     <div class="glass-card stat-card" style="border-left: 4px solid #30d158; padding: 1.25rem;">
                         <span class="stat-label"><i class="fas fa-shield-alt" style="color:#30d158;"></i> Database Risk Status</span>
                         <div class="stat-value text-success" id="security-threat-score" style="color:#30d158; font-size: 1.8rem; margin: 5px 0;">LOW</div>
-                        <span class="stat-trend" style="color:#8e8e93;">Average Risk Score: <strong id="security-avg-risk">12</strong>/100</span>
+                        <span class="stat-trend" style="color:#64748b;">Average Risk Score: <strong id="security-avg-risk">12</strong>/100</span>
                     </div>
                     <div class="glass-card stat-card" style="border-left: 4px solid #0a84ff; padding: 1.25rem;">
                         <span class="stat-label"><i class="fas fa-network-wired" style="color:#0a84ff;"></i> Zero Trust Gateway</span>
                         <div class="stat-value" style="color:#0a84ff; font-size: 1.8rem; margin: 5px 0;">SECURE</div>
-                        <span class="stat-trend" style="color:#8e8e93;">Continuous context assessments active</span>
+                        <span class="stat-trend" style="color:#64748b;">Continuous context assessments active</span>
                     </div>
                     <div class="glass-card stat-card" style="border-left: 4px solid #bf5af2; padding: 1.25rem;">
                         <span class="stat-label"><i class="fas fa-spider" style="color:#bf5af2;"></i> Deception Traps</span>
                         <div class="stat-value" style="color:#bf5af2; font-size: 1.8rem; margin: 5px 0;">2 ACTIVE</div>
-                        <span class="stat-trend" style="color:#8e8e93;">Honeypot ports fully monitored</span>
+                        <span class="stat-trend" style="color:#64748b;">Honeypot ports fully monitored</span>
                     </div>
                     <div class="glass-card stat-card" style="border-left: 4px solid #ff9f0a; padding: 1.25rem;">
                         <span class="stat-label"><i class="fas fa-heartbeat" style="color:#ff9f0a;"></i> Self-Healing Nodes</span>
                         <div class="stat-value" style="color:#ff9f0a; font-size: 1.8rem; margin: 5px 0;">ONLINE</div>
-                        <span class="stat-trend" style="color:#8e8e93;">Guardian scan running every 60s</span>
+                        <span class="stat-trend" style="color:#64748b;">Guardian scan running every 60s</span>
                     </div>
                 </div>
 
@@ -470,7 +467,7 @@
                                 </tr>
                             </thead>
                             <tbody id="security-logs-tbody">
-                                <tr><td colspan="6" class="text-center" style="color:#8e8e93;"><i class="fas fa-spinner fa-spin"></i> Loading secure forensic ledger...</td></tr>
+                                <tr><td colspan="6" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading secure forensic ledger...</td></tr>
                             </tbody>
                         </table>
                     </div>

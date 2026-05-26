@@ -3,58 +3,58 @@
 :root {
   /* ─── Minimalist Apple / Tesla Palette ──────────────────── */
 
-  /* Primary - Clean Apple Blue */
-  --primary: #5c8d89;
-  --primary-soft: #e8f0fe;
-  --primary-glow: rgba(92, 141, 137, 0.15);
+  /* Primary - Vibrant Lavender */
+  --primary: #7c3aed;
+  --primary-soft: #ede9fe;
+  --primary-glow: rgba(124, 58, 237, 0.15);
 
   /* Secondary - Tesla Slate Gray */
-  --secondary: #1d1d1f;
-  --secondary-soft: #f5f5f7;
+  --secondary: #1e293b;
+  --secondary-soft: #f8fafc;
 
   /* Accent - Subtle Coral/Red for errors */
-  --accent: #d97a7e;
+  --accent: #f43f5e;
 
-  /* Success - Apple Green */
-  --success: #6ba87a;
-  --success-soft: #e5f9e7;
+  /* Success - Emerald Green (Kept for status) */
+  --success: #10b981;
+  --success-soft: #d1fae5;
 
   /* Warning - Apple Orange */
-  --warning: #dca368;
-  --warning-soft: #fff4e5;
+  --warning: #f59e0b;
+  --warning-soft: #fef3c7;
 
   /* Danger - Apple Red */
-  --danger: #d97a7e;
-  --danger-soft: #ffeceb;
+  --danger: #ef4444;
+  --danger-soft: #fee2e2;
 
   /* Backgrounds - Sleek Apple Light Gray */
-  --bg-main: #f5f5f7;
+  --bg-main: #f8fafc;
   --bg-card: #ffffff;
   --bg-elevated: #ffffff;
-  --bg-subtle: #f5f5f7;
-  --bg-muted: #e5e5ea;
+  --bg-subtle: #f1f5f9;
+  --bg-muted: #e2e8f0;
 
   /* Text - High Contrast Minimal */
-  --text-main: #1d1d1f;
-  --text-secondary: #86868b;
-  --text-muted: #86868b;
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
 
-  /* Borders - Soft Apple Gray */
-  --border: #d2d2d7;
-  --border-soft: rgba(0, 0, 0, 0.05);
+  /* Borders - Soft Lavender Gray */
+  --border: #e2e8f0;
+  --border-soft: rgba(124, 58, 237, 0.1);
 
   /* Shadows - Extremely subtle, diffuse */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.06);
+  --shadow-xs: 0 1px 2px rgba(124, 58, 237, 0.05);
+  --shadow-sm: 0 2px 8px rgba(124, 58, 237, 0.08);
+  --shadow-md: 0 4px 16px rgba(124, 58, 237, 0.12);
+  --shadow-lg: 0 8px 32px rgba(124, 58, 237, 0.15);
+  --shadow-xl: 0 16px 48px rgba(124, 58, 237, 0.2);
 
   /* Gradients - Flat and Sleek */
-  --gradient-primary: linear-gradient(135deg, #5c8d89 0%, #0077ed 100%);
-  --gradient-soft: linear-gradient(135deg, rgba(92, 141, 137, 0.05) 0%, rgba(29, 29, 31, 0.02) 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
-  --gradient-warm: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
+  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  --gradient-soft: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(248, 250, 252, 0.5) 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
+  --gradient-warm: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
 
   /* Spacing - Modern Academic */
   --radius-xs: 4px;
@@ -78,30 +78,13 @@
   --z-dropdown: 100;
   --z-modal: 200;
   --z-toast: 300;
-}
-
-/* ─── Dark Theme (Soft & Easy on Eyes) ───────────────────── */
-[data-theme="dark"] {
-  --bg-main: #1c2326;
-  --bg-card: #222b2f;
-  --bg-elevated: #283237;
-  --bg-subtle: #283237;
-  --bg-muted: #303c42;
-
-  --text-main: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #64748b;
-
-  --border: #303c42;
-  --border-soft: rgba(255, 255, 255, 0.05);
-
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4);
-
-  --gradient-soft: linear-gradient(135deg, hsl(var(--primary-h), 30%, 15%) 0%, hsl(var(--secondary-h), 30%, 15%) 100%);
+  /* Sidebar Colors */
+  --sidebar-bg: #4c1d95;
+  --sidebar-text: #ffffff;
+  --sidebar-text-muted: #c4b5fd;
+  --sidebar-border: #3b0764;
+  --sidebar-hover: rgba(255, 255, 255, 0.1);
+  --sidebar-active: #6d28d9;
 }
 
 /* ─── Base Styles ─────────────────────────────────────────── */
@@ -1036,4 +1019,29 @@ select option {
 body[data-theme="light"] select option {
     background-color: #ffffff;
     color: #1d1d1f;
+}
+
+/* ─── White Background Text Overrides ──────────────────────── */
+.main-content > header h1,
+.main-content > header h2,
+.main-content > header h3,
+.main-content > header p,
+.main-content > header .h2,
+.main-content > header .p-dim,
+.welcome-title,
+.welcome-subtitle,
+.dashboard-title,
+.dashboard-subtitle,
+.dashboard-header h1,
+.dashboard-header p,
+.dashboard-header .text-secondary {
+    color: #1d1d1f !important;
+}
+
+.main-content > header p,
+.main-content > header .p-dim,
+.welcome-subtitle,
+.dashboard-subtitle,
+.dashboard-header .text-secondary {
+    color: #515154 !important;
 }
