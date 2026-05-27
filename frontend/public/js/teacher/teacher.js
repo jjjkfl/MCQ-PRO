@@ -1067,6 +1067,7 @@ const TeacherDashboard = {
           'overview': 'dashboard',
           'courses': 'materials',
           'students': 'students',
+          'timetable': 'timetable',
           'forum': 'forum',
           'analytics': 'analytics-all'
         };
@@ -1101,61 +1102,261 @@ const TeacherDashboard = {
 
   // ─── Timetable Management ────────────────────────────────────────────────
 
+  toggleTimetableLayout(layout) {
+    const gridBtn = document.getElementById('btn-timetable-grid');
+    const listBtn = document.getElementById('btn-timetable-list');
+    const gridCont = document.getElementById('timetable-grid-container');
+    const listCont = document.getElementById('timetable-list-container');
+    if (!gridBtn || !listBtn || !gridCont || !listCont) return;
+
+    if (layout === 'grid') {
+      gridBtn.className = 'btn btn-primary btn-sm';
+      listBtn.className = 'btn btn-outline btn-sm';
+      gridCont.style.display = 'block';
+      listCont.style.display = 'none';
+    } else {
+      gridBtn.className = 'btn btn-outline btn-sm';
+      listBtn.className = 'btn btn-primary btn-sm';
+      gridCont.style.display = 'none';
+      listCont.style.display = 'block';
+    }
+  },
+
   async loadTimetable() {
     const body = document.getElementById('timetable-list');
-    if (!body) return;
+    const gridContainer = document.getElementById('timetable-grid-container');
+    if (!body || !gridContainer) return;
+    
     Loader.show('timetable-list', 'Syncing timetable...');
+    Loader.show('timetable-grid-container', 'Building timetable grid...');
 
     try {
       const { data } = await api.get('/portal/teacher/timetable');
+      
+      // 1. RENDER FLAT LIST VIEW
       if (!data || data.length === 0) {
         body.innerHTML = '<tr><td colspan="6" class="p-dim" style="text-align:center">No scheduled classes found.</td></tr>';
-        return;
+      } else {
+        body.innerHTML = data.map(entry => `
+          <tr>
+            <td><strong>${entry.day}</strong></td>
+            <td>${entry.time}</td>
+            <td style="color:var(--primary); font-weight:600;">${entry.title}</td>
+            <td><span class="badge" style="background:rgba(79, 70, 229, 0.1); color:var(--primary); font-size:10px;">${entry.targetClass}</span></td>
+            <td><span class="badge" style="background:#f1f5f9; color:#475569; font-size:10px;">Div ${entry.targetDivision}</span></td>
+            <td>
+              <button onclick="TeacherDashboard.deleteTimetableEntry('${entry._id}')" class="btn btn-outline btn-sm" style="color:var(--danger); border-color:rgba(239, 68, 68, 0.2);"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join('');
       }
 
-      body.innerHTML = data.map(entry => `
-        <tr>
-          <td><strong>${entry.day}</strong></td>
-          <td>${entry.time}</td>
-          <td style="color:var(--primary); font-weight:600;">${entry.title}</td>
-          <td><span class="badge" style="background:rgba(79, 70, 229, 0.1); color:var(--primary); font-size:10px;">${entry.targetClass}</span></td>
-          <td><span class="badge" style="background:#f1f5f9; color:#475569; font-size:10px;">Div ${entry.targetDivision}</span></td>
-          <td>
-            <button onclick="TeacherDashboard.deleteTimetableEntry('${entry._id}')" class="btn btn-outline btn-sm" style="color:var(--danger); border-color:rgba(239, 68, 68, 0.2);"><i class="fas fa-trash"></i></button>
-          </td>
-        </tr>
-      `).join('');
+      // 2. RENDER WEEKLY GRID VIEW
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      
+      // Extract unique time slots and sort them chronologically
+      const uniqueTimes = [...new Set((data || []).map(entry => entry.time))];
+      uniqueTimes.sort((a, b) => {
+        const parseTimeToMinutes = (timeStr) => {
+          const startPart = timeStr.split('-')[0].trim().toUpperCase();
+          const match = startPart.match(/(\d+):(\d+)\s*(AM|PM)?/);
+          if (!match) return 0;
+          let hours = parseInt(match[1]);
+          const minutes = parseInt(match[2]);
+          const ampm = match[3];
+          if (ampm === 'PM' && hours < 12) hours += 12;
+          if (ampm === 'AM' && hours === 12) hours = 0;
+          return hours * 60 + minutes;
+        };
+        return parseTimeToMinutes(a) - parseTimeToMinutes(b);
+      });
+
+      if (!data || data.length === 0 || uniqueTimes.length === 0) {
+        gridContainer.innerHTML = `
+          <div class="glass-card" style="text-align:center; padding: 48px; border: 1px dashed var(--border, rgba(255,255,255,0.08)); border-radius: 14px;">
+            <p class="p-dim" style="margin-bottom: 16px;">No schedules created yet. Click "+ Add Schedule" above to build your timetable.</p>
+          </div>
+        `;
+      } else {
+        let gridHtml = `
+          <table style="border-collapse: collapse; width: 100%;">
+            <thead>
+              <tr>
+                <th style="width: 150px; text-align: left; padding: 12px; border-bottom: 2px solid var(--border);">Time Slot</th>
+                ${days.map(d => `<th style="text-align: left; padding: 12px; border-bottom: 2px solid var(--border);">${d}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        for (const timeSlot of uniqueTimes) {
+          const slotEntries = data.filter(e => e.time === timeSlot);
+          
+          // Check if there is a global recess or lunch break in this slot
+          const globalBreak = slotEntries.find(e => 
+            e.targetClass === 'All' && 
+            /recess|break|lunch/i.test(e.title)
+          );
+
+          gridHtml += `<tr style="border-bottom: 1px solid var(--border, rgba(255,255,255,0.05));">`;
+          gridHtml += `<td style="padding: 14px 12px; font-weight: bold; background: rgba(255,255,255,0.01);"><strong>${timeSlot}</strong></td>`;
+
+          if (globalBreak) {
+            const isLunch = /lunch/i.test(globalBreak.title);
+            const icon = isLunch ? '🍔' : '☕';
+            const breakLabel = globalBreak.title.toUpperCase();
+            
+            gridHtml += `
+              <td colspan="${days.length}" style="
+                text-align: center; 
+                background: rgba(245, 158, 11, 0.08); 
+                color: #d97706; 
+                font-weight: 800; 
+                letter-spacing: 2px;
+                font-size: 13px;
+                padding: 14px;
+                vertical-align: middle;
+                border: 1px solid rgba(245, 158, 11, 0.15);
+              ">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                  <span>${icon} ${breakLabel}</span>
+                  <button onclick="TeacherDashboard.deleteTimetableEntry('${globalBreak._id}')" class="btn btn-ghost btn-sm" style="color:var(--danger); padding: 2px 6px; font-size: 11px; cursor: pointer; border: none; background: none;" title="Delete Break">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            `;
+          } else {
+            for (const day of days) {
+              const dayEntry = slotEntries.find(e => e.day === day);
+              if (dayEntry) {
+                const isBreak = /recess|break|lunch/i.test(dayEntry.title);
+                const bg = isBreak ? 'rgba(245, 158, 11, 0.05)' : 'rgba(79, 70, 229, 0.04)';
+                const border = isBreak ? '1px solid rgba(245, 158, 11, 0.12)' : '1px solid rgba(79, 70, 229, 0.1)';
+                const color = isBreak ? '#d97706' : 'var(--primary)';
+
+                gridHtml += `
+                  <td style="background: ${bg}; border: ${border}; position: relative; padding: 12px; min-width: 120px; vertical-align: top;">
+                    <div style="font-weight: 600; color: ${color}; margin-bottom: 6px; font-size: 13px; line-height: 1.3; padding-right: 14px;">
+                      ${dayEntry.title}
+                    </div>
+                    ${!isBreak ? `
+                      <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                        <span class="badge" style="background: rgba(79, 70, 229, 0.08); color: var(--primary); font-size: 9px; padding: 1px 4px;">${dayEntry.targetClass}</span>
+                        <span class="badge" style="background: #f1f5f9; color: #475569; font-size: 9px; padding: 1px 4px;">Div ${dayEntry.targetDivision}</span>
+                      </div>
+                    ` : ''}
+                    <button onclick="TeacherDashboard.deleteTimetableEntry('${dayEntry._id}')" style="
+                      position: absolute; 
+                      top: 4px; 
+                      right: 4px; 
+                      background: none; 
+                      border: none; 
+                      color: #94a3b8; 
+                      cursor: pointer;
+                      font-size: 11px;
+                      opacity: 0;
+                      transition: opacity 0.2s;
+                    " class="cell-delete-btn" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#94a3b8'">
+                      <i class="fas fa-times-circle"></i>
+                    </button>
+                  </td>
+                `;
+              } else {
+                gridHtml += `
+                  <td class="empty-grid-cell" style="text-align: center; vertical-align: middle; height: 50px; position: relative; border: 1px solid var(--border, rgba(255,255,255,0.05));" onclick="TeacherDashboard.showAddTimetableModal('${day}', '${timeSlot}')">
+                    <span class="grid-plus-btn" style="color: #cbd5e1; font-size: 14px; opacity: 0; transition: opacity 0.2s; cursor: pointer;">
+                      <i class="fas fa-plus-circle"></i>
+                    </span>
+                  </td>
+                `;
+              }
+            }
+          }
+          gridHtml += `</tr>`;
+        }
+
+        gridHtml += `
+            </tbody>
+          </table>
+        `;
+        gridContainer.innerHTML = gridHtml;
+
+        // Inject custom hover styles
+        if (!document.getElementById('grid-hover-styles')) {
+          const styles = document.createElement('style');
+          styles.id = 'grid-hover-styles';
+          styles.innerHTML = `
+            td:hover .cell-delete-btn { opacity: 1 !important; }
+            td.empty-grid-cell:hover { background: rgba(79, 70, 229, 0.02) !important; cursor: pointer; }
+            td.empty-grid-cell:hover .grid-plus-btn { opacity: 1 !important; color: var(--primary) !important; }
+          `;
+          document.head.appendChild(styles);
+        }
+      }
     } catch (err) {
       notifications.error('Failed to load timetable');
     }
   },
 
-  showAddTimetableModal() {
+  setTimetablePreset(type) {
+    document.querySelectorAll('.preset-type').forEach(btn => btn.classList.remove('active'));
+    if (event && event.currentTarget) {
+      event.currentTarget.classList.add('active');
+    }
+
+    const titleInput = document.querySelector('#add-timetable-form input[name="title"]');
+    const classSelect = document.querySelector('#add-timetable-form select[name="targetClass"]');
+    const divSelect = document.querySelector('#add-timetable-form select[name="targetDivision"]');
+
+    if (type === 'recess') {
+      if (titleInput) titleInput.value = 'Short Break / Recess';
+      if (classSelect) classSelect.value = 'All';
+      if (divSelect) divSelect.value = 'All';
+    } else if (type === 'lunch') {
+      if (titleInput) titleInput.value = 'Lunch Break';
+      if (classSelect) classSelect.value = 'All';
+      if (divSelect) divSelect.value = 'All';
+    } else {
+      if (titleInput) titleInput.value = '';
+    }
+  },
+
+  showAddTimetableModal(day = 'Monday', time = '') {
     Modal.show('add-timetable', `
-      <form onsubmit="TeacherDashboard.handleCreateTimetable(event)">
+      <form id="add-timetable-form" onsubmit="TeacherDashboard.handleCreateTimetable(event)">
+        <div class="form-group">
+          <label>Schedule Type Preset</label>
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <button type="button" class="btn btn-outline btn-sm preset-type active" onclick="TeacherDashboard.setTimetablePreset('subject')" style="font-size: 11px; padding: 4px 8px;">Subject</button>
+            <button type="button" class="btn btn-outline btn-sm preset-type" onclick="TeacherDashboard.setTimetablePreset('recess')" style="font-size: 11px; padding: 4px 8px;">Short Break / Recess</button>
+            <button type="button" class="btn btn-outline btn-sm preset-type" onclick="TeacherDashboard.setTimetablePreset('lunch')" style="font-size: 11px; padding: 4px 8px;">Lunch Break</button>
+          </div>
+        </div>
         <div class="form-group">
           <label>Day of Week</label>
           <select name="day" class="form-control" required>
-            <option value="Monday">Monday</option>
-            <option value="Tuesday">Tuesday</option>
-            <option value="Wednesday">Wednesday</option>
-            <option value="Thursday">Thursday</option>
-            <option value="Friday">Friday</option>
-            <option value="Saturday">Saturday</option>
+            <option value="Monday" ${day === 'Monday' ? 'selected' : ''}>Monday</option>
+            <option value="Tuesday" ${day === 'Tuesday' ? 'selected' : ''}>Tuesday</option>
+            <option value="Wednesday" ${day === 'Wednesday' ? 'selected' : ''}>Wednesday</option>
+            <option value="Thursday" ${day === 'Thursday' ? 'selected' : ''}>Thursday</option>
+            <option value="Friday" ${day === 'Friday' ? 'selected' : ''}>Friday</option>
+            <option value="Saturday" ${day === 'Saturday' ? 'selected' : ''}>Saturday</option>
+            <option value="Sunday" ${day === 'Sunday' ? 'selected' : ''}>Sunday</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Time (e.g., 09:00 AM - 10:30 AM)</label>
-          <input type="text" name="time" class="form-control" placeholder="09:00 AM" required>
+          <label>Time Slot (e.g., 09:00 AM - 09:45 AM)</label>
+          <input type="text" name="time" class="form-control" placeholder="09:00 AM - 09:45 AM" value="${time}" required>
         </div>
         <div class="form-group">
-          <label>Subject / Class Title</label>
-          <input type="text" name="title" class="form-control" placeholder="e.g. Surgical Rounds" required>
+          <label>Subject / Title</label>
+          <input type="text" name="title" class="form-control" placeholder="e.g. Mathematics" required>
         </div>
         <div class="form-group">
           <label>Target Grade</label>
           <select name="targetClass" class="form-control" required>
-            <option value="All">All Grades</option>
+            <option value="All">All Grades (or Break)</option>
             <option value="Grade 6">Grade 6</option>
             <option value="Grade 7">Grade 7</option>
             <option value="Grade 8">Grade 8</option>
@@ -1166,7 +1367,7 @@ const TeacherDashboard = {
         <div class="form-group">
           <label>Division</label>
           <select name="targetDivision" class="form-control" required>
-            <option value="All">All Divisions</option>
+            <option value="All">All Divisions (or Break)</option>
             <option value="A">Division A</option>
             <option value="B">Division B</option>
             <option value="C">Division C</option>
