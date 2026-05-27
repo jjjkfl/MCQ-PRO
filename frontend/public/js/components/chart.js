@@ -11,6 +11,12 @@ const Charts = {
     const ctx = document.getElementById(canvasId);
     if (!ctx || !window.Chart) return;
 
+    // Destroy existing chart instance to prevent "Canvas is already in use" error
+    const existingChart = Chart.getChart(ctx);
+    if (existingChart) {
+      existingChart.destroy();
+    }
+
     new Chart(ctx, {
       type: 'bar',
       data: {
@@ -51,6 +57,12 @@ const Charts = {
   renderTrend(canvasId, labels, data) {
     const ctx = document.getElementById(canvasId);
     if (!ctx || !window.Chart) return;
+
+    // Destroy existing chart instance to prevent "Canvas is already in use" error
+    const existingChart = Chart.getChart(ctx);
+    if (existingChart) {
+      existingChart.destroy();
+    }
 
     new Chart(ctx, {
       type: 'line',
