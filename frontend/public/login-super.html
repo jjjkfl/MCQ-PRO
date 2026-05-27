@@ -37,11 +37,7 @@
     <div class="auth-form-side">
       <div class="auth-form-card">
         <div class="auth-form-card-inner">
-          <div class="auth-tabs">
-            <button class="auth-tab-btn active" style="pointer-events: none;">
-              <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-          </div>
+          <h2 class="auth-title"><i class="fas fa-sign-in-alt"></i> Login</h2>
 
           <form id="login-form" onsubmit="handleLogin(event)">
             <div class="auth-input-group">
@@ -58,12 +54,7 @@
               </div>
             </div>
             
-            <div class="remember-forgot">
-              <label><input type="checkbox" id="remember"> Remember me</label>
-              <a href="#">Forgot Password?</a>
-            </div>
-
-            <button type="submit" class="auth-submit" id="login-btn">
+            <button type="submit" class="auth-submit" id="login-btn" style="margin-top: 1.5rem;">
               <span id="btn-text">Sign In to Platform</span>
             </button>
           </form>
@@ -119,10 +110,8 @@
         await auth.login(email, password, 'super_admin');
         notifications.success('Welcome back, Administrator!');
       } catch (err) {
-        notifications.error(err.message || 'Login failed');
-        loginBtn.disabled = false;
-        loginBtn.classList.remove('loading');
-        btnText.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In to Platform';
+        alert(err.message || 'Invalid credentials');
+        window.location.reload();
       }
     }
 
