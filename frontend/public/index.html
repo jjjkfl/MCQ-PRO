@@ -123,9 +123,9 @@
 
       <!-- VIEW: My Courses -->
       <main id="view-courses" class="view" style="display: none;">
-        <header>
-          <h1 class="h1">Curriculum & Resources</h1>
-          <p class="p-dim">Access specialized academic course materials and case studies.</p>
+        <header class="welcome-section">
+          <h1 class="welcome-title">Curriculum & Resources</h1>
+          <p class="welcome-subtitle">Access specialized academic course materials and case studies.</p>
         </header>
         <div id="courses-grid"
           style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;"></div>
@@ -153,9 +153,9 @@
 
       <!-- VIEW: Broadcast Messages -->
       <main id="view-messages" class="view" style="display: none;">
-        <header>
-          <h1 class="h1">Teacher Broadcasts</h1>
-          <p class="p-dim">Global announcements and cohort-specific updates from your instructors.</p>
+        <header class="welcome-section">
+          <h1 class="welcome-title">Teacher Broadcasts</h1>
+          <p class="welcome-subtitle">Global announcements and cohort-specific updates from your instructors.</p>
         </header>
         <div class="broadcast-list" id="broadcast-container">
           <!-- Populated by JS -->
@@ -164,9 +164,9 @@
 
       <!-- VIEW: Live Exams -->
       <main id="view-live-exams" class="view" style="display: none;">
-        <header>
-          <h1 class="h1">Examination Hall</h1>
-          <p class="p-dim">Proctored sessions with active monitoring. Full-screen mode required.</p>
+        <header class="welcome-section">
+          <h1 class="welcome-title">Examination Hall</h1>
+          <p class="welcome-subtitle">Proctored sessions with active monitoring. Full-screen mode required.</p>
         </header>
         <div id="live-exams-grid"
           style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 24px;">
@@ -176,9 +176,9 @@
 
       <!-- VIEW: Exam Results -->
       <main id="view-exam-results" class="view" style="display: none;">
-        <header>
-          <h1 class="h1">Academic Transcript</h1>
-          <p class="p-dim">Review your historical performance and verified achievement hashes.</p>
+        <header class="welcome-section">
+          <h1 class="welcome-title">Academic Transcript</h1>
+          <p class="welcome-subtitle">Review your historical performance and verified achievement hashes.</p>
         </header>
         <div id="results-detailed-list">
           <!-- Populated by JS -->
@@ -187,9 +187,9 @@
 
       <!-- VIEW: Internal Marks -->
       <main id="view-internal-marks" class="view" style="display: none;">
-        <header>
-          <h1 class="h1">Internal Assessments</h1>
-          <p class="p-dim">View your ISA 1, ISA 2, and Lab marks provided by teachers.</p>
+        <header class="welcome-section">
+          <h1 class="welcome-title">Internal Assessments</h1>
+          <p class="welcome-subtitle">View your ISA 1, ISA 2, and Lab marks provided by teachers.</p>
         </header>
         <div class="glass-card">
           <div class="table-wrapper">
@@ -211,16 +211,16 @@
 
       <!-- VIEW: Certificates -->
       <main id="view-certificates" class="view" style="display: none;">
-        <header>
-          <h1 class="h1">Verified Credentials</h1>
-          <p class="p-dim">Blockchain-anchored certificates of completion and academic proficiency.</p>
+        <header class="welcome-section">
+          <h1 class="welcome-title">Verified Credentials</h1>
+          <p class="welcome-subtitle">Blockchain-anchored certificates of completion and academic proficiency.</p>
         </header>
         <div id="certificates-list"
           style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;"></div>
         <div id="certificate-viewer"
           style="display: none; padding: 60px; background: #fff; border: 12px double var(--primary); text-align: center;">
           <div id="cert-content"></div>
-          <button onclick="window.print()" class="btn btn-primary" style="margin-top: 48px;">
+          <button onclick="window.print()" class="btn btn-theme" style="margin-top: 48px;">
             <i class="fas fa-print"></i> Save as PDF
           </button>
         </div>

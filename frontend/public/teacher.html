@@ -54,28 +54,27 @@
 
       <!-- VIEW: Dashboard -->
       <main id="view-dashboard" class="view">
-        <header class="dashboard-header animate-fade-in">
+        <header class="animate-fade-in flex-col" style="gap: 1.5rem; margin-bottom: 2.5rem;">
           <div class="monitor-info">
             <div style="display: flex; align-items: center; gap: 12px;">
-              <h1 class="dashboard-title">Welcome Back, <span id="teacher-name">Teacher</span>!</h1>
+              <h1 class="welcome-title">Welcome Back, <span id="teacher-name">Teacher</span>!</h1>
               <div class="welcome-badge" style="margin-top: -8px;">
                 <i class="fas fa-shield-alt"></i> Integrity Anchored
               </div>
             </div>
-            <p class="dashboard-subtitle">Manage examinations, question banks, and monitor live proctored sessions.</p>
+            <p class="welcome-subtitle">Manage examinations, question banks, and monitor live proctored sessions.</p>
           </div>
-          <div class="dashboard-actions">
-            <button onclick="TeacherDashboard.showBroadcastModal()" class="btn btn-secondary">
+          <div class="dashboard-actions flex" style="gap: 12px; flex-wrap: wrap;">
+            <button onclick="TeacherDashboard.showBroadcastModal()" class="btn btn-theme">
               <i class="fas fa-bullhorn"></i> Broadcast
             </button>
-            <button onclick="TeacherDashboard.navigateToView('materials')" class="btn btn-secondary">
+            <button onclick="TeacherDashboard.navigateToView('materials')" class="btn btn-theme">
               <i class="fas fa-book"></i> Curriculum
             </button>
-            <button onclick="TeacherDashboard.showMCQUpload()" class="btn btn-outline"
-              style="border-color:var(--primary); color:var(--primary);">
+            <button onclick="TeacherDashboard.showMCQUpload()" class="btn btn-theme">
               <i class="fas fa-robot"></i> Create Exam
             </button>
-            <button onclick="TeacherDashboard.showUploadMaterial()" class="btn btn-primary">
+            <button onclick="TeacherDashboard.showUploadMaterial()" class="btn btn-theme">
               <i class="fas fa-plus"></i> Upload Document
             </button>
             <input type="file" id="ai-mcq-upload" style="display: none" accept=".pdf,.doc,.docx"
@@ -162,14 +161,14 @@
           <button onclick="window.location.href='/teacher.html'" class="btn btn-outline"
             style="padding: 6px 12px; font-size: 12px; margin-bottom: 16px;">← Back to Dashboard</button>
         </div>
-        <header class="flex-between" style="margin-bottom: 32px;">
+        <header class="animate-fade-in flex-col" style="gap: 1.5rem; margin-bottom: 2.5rem;">
           <div>
-            <h2 class="h2" id="session-title">Monitoring</h2>
-            <p id="student-count" class="p-dim"></p>
+            <h2 class="welcome-title" id="session-title">Monitoring</h2>
+            <p id="student-count" class="welcome-subtitle"></p>
           </div>
           <div class="flex-center" style="gap:12px;">
-            <button onclick="TeacherSocket.pauseExam()" class="btn btn-outline">Pause</button>
-            <button onclick="TeacherSocket.resumeExam()" class="btn btn-primary">Resume</button>
+            <button onclick="TeacherSocket.pauseExam()" class="btn btn-theme">Pause</button>
+            <button onclick="TeacherSocket.resumeExam()" class="btn btn-theme">Resume</button>
             <button onclick="TeacherSocket.forceEnd()" class="btn btn-outline"
               style="color:var(--danger); border-color:var(--danger)">End Exam</button>
           </div>
@@ -207,9 +206,9 @@
 
       <!-- VIEW: All Analytics (Global) -->
       <main id="view-analytics-all" class="view" style="display: none;">
-        <header style="margin-bottom: 48px;">
-          <h2 class="h2">Academic Performance Overview</h2>
-          <p class="p-dim">Aggregated data across all active and completed exam sessions.</p>
+        <header class="animate-fade-in flex-col" style="gap: 1.5rem; margin-bottom: 2.5rem;">
+          <h2 class="welcome-title">Academic Performance Overview</h2>
+          <p class="welcome-subtitle">Aggregated data across all active and completed exam sessions.</p>
         </header>
 
         <div id="global-analytics-stats"></div>
@@ -223,12 +222,12 @@
       </main>
       <!-- VIEW: Timetable Management -->
       <main id="view-timetable" class="view" style="display: none;">
-        <header class="flex-between" style="margin-bottom: 32px;">
+        <header class="animate-fade-in flex-col" style="gap: 1.5rem; margin-bottom: 2.5rem;">
           <div>
-            <h2 class="h2">Class Timetable</h2>
-            <p class="p-dim">Manage your weekly teaching schedule.</p>
+            <h2 class="welcome-title">Class Timetable</h2>
+            <p class="welcome-subtitle">Manage your weekly teaching schedule.</p>
           </div>
-          <button class="btn btn-primary" onclick="TeacherDashboard.showAddTimetableModal()">+ Add Schedule</button>
+          <button class="btn btn-theme" onclick="TeacherDashboard.showAddTimetableModal()">+ Add Schedule</button>
         </header>
 
         <!-- Layout Toggles -->
@@ -270,10 +269,10 @@
 
       <!-- VIEW: Materials Management -->
       <main id="view-materials" class="view" style="display: none;">
-        <header class="flex-between" style="margin-bottom: 32px;">
+        <header class="animate-fade-in flex-col" style="gap: 1.5rem; margin-bottom: 2.5rem;">
           <div>
-            <h2 class="h2">Curriculum & Materials</h2>
-            <p class="p-dim">Manage and audit your division-wise academic resources.</p>
+            <h2 class="welcome-title">Curriculum & Materials</h2>
+            <p class="welcome-subtitle">Manage and audit your division-wise academic resources.</p>
           </div>
           <div style="display:flex; gap:12px;">
             <select id="filter-material-grade" class="input-control" style="padding: 8px 16px;"
@@ -294,7 +293,7 @@
               <option value="D">Div D</option>
               <option value="All">Global (All)</option>
             </select>
-            <button class="btn btn-primary" onclick="TeacherDashboard.showUploadMaterial()">+ Upload Material</button>
+            <button class="btn btn-theme" onclick="TeacherDashboard.showUploadMaterial()">+ Upload Material</button>
           </div>
         </header>
         <div class="table-container">
@@ -315,10 +314,10 @@
 
       <!-- VIEW: Attendance & Analytics -->
       <main id="view-students" class="view" style="display: none;">
-        <header class="flex-between" style="margin-bottom: 32px;">
+        <header class="animate-fade-in flex-col" style="gap: 1.5rem; margin-bottom: 2.5rem;">
           <div>
-            <h2 class="h2">Student Tracking</h2>
-            <p class="p-dim">Monitor attendance and overall performance per session.</p>
+            <h2 class="welcome-title">Student Tracking</h2>
+            <p class="welcome-subtitle">Monitor attendance and overall performance per session.</p>
           </div>
           <div style="display:flex; gap:12px;">
             <select id="attendance-session-select" class="input-control" style="padding: 8px 16px;"

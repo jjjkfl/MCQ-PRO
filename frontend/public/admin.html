@@ -18,17 +18,17 @@
       <header class="dashboard-header animate-fade-in">
         <div class="monitor-info">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <h1 class="dashboard-title">System Admin</h1>
+            <h1 class="welcome-title">System Admin</h1>
             <div class="welcome-badge" style="margin-top: -12px;">
               <i class="fas fa-shield-alt"></i> System Integrity Anchored
             </div>
           </div>
-          <p class="dashboard-subtitle">Manage users, curriculum modules, and oversee academic examination activity.</p>
+          <p class="welcome-subtitle">Manage users, curriculum modules, and oversee academic examination activity.</p>
         </div>
         <div class="dashboard-actions">
-          <button onclick="AdminDashboard.switchTab('overview')" class="btn btn-secondary">Overview</button>
-          <button onclick="AdminDashboard.switchTab('users')" class="btn btn-secondary">Users</button>
-          <button onclick="AdminDashboard.switchTab('courses')" class="btn btn-secondary">Courses</button>
+          <button onclick="AdminDashboard.switchTab('overview')" class="btn btn-theme">Overview</button>
+          <button onclick="AdminDashboard.switchTab('users')" class="btn btn-theme">Users</button>
+          <button onclick="AdminDashboard.switchTab('courses')" class="btn btn-theme">Courses</button>
         </div>
       </header>
 
@@ -88,7 +88,7 @@
         <section>
           <div class="flex-between" style="margin-bottom: 24px;">
             <h3 class="h3">User Management</h3>
-            <button onclick="AdminDashboard.showCreateUserModal()" class="btn btn-primary">+ Add User</button>
+            <button onclick="AdminDashboard.showCreateUserModal()" class="btn btn-theme">+ Add User</button>
           </div>
           <div class="table-container">
             <table>
@@ -116,7 +116,7 @@
         <section>
           <div class="flex-between" style="margin-bottom: 24px;">
             <h3 class="h3">Course Management</h3>
-            <button onclick="AdminDashboard.showCreateCourseModal()" class="btn btn-primary">+ Add Course</button>
+            <button onclick="AdminDashboard.showCreateCourseModal()" class="btn btn-theme">+ Add Course</button>
           </div>
           <div class="table-container">
             <table>

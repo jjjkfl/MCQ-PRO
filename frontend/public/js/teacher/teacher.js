@@ -693,8 +693,8 @@ const TeacherDashboard = {
 
     if (headerDiv && !document.getElementById('btn-manual-att')) {
       headerDiv.insertAdjacentHTML('afterbegin', `
-        <button id="btn-manual-att" class="btn btn-outline" onclick="TeacherDashboard.showManualAttendance()">+ Manual Attendance</button>
-        <button id="btn-add-student" class="btn btn-primary" onclick="TeacherDashboard.showAddStudentModal()">+ Add New Student</button>
+        <button id="btn-manual-att" class="btn btn-theme" onclick="TeacherDashboard.showManualAttendance()">+ Manual Attendance</button>
+        <button id="btn-add-student" class="btn btn-theme" onclick="TeacherDashboard.showAddStudentModal()">+ Add New Student</button>
       `);
     }
 

@@ -85,14 +85,8 @@
         <main class="main-content">
             <header class="dashboard-header animate-fade-in">
                 <div>
-                    <h1 id="welcome-message">School Dashboard</h1>
-                    <p class="text-secondary" id="school-subtitle">Manage your institution's academic ecosystem.</p>
-                </div>
-                <div class="flex gap-2" style="align-items:center;">
-
-                    <button class="btn btn-primary" id="header-add-student-btn">
-                        <i class="fas fa-plus"></i> Add Student
-                    </button>
+                    <h1 class="welcome-title" id="welcome-message">School Dashboard</h1>
+                    <p class="welcome-subtitle" id="school-subtitle">Manage your institution's academic ecosystem.</p>
                 </div>
             </header>
 
@@ -158,7 +152,7 @@
                         </div>
                         <div class="flex gap-2">
                             <input type="text" class="form-control" placeholder="🔍 Search students..." id="student-search" oninput="SchoolAdmin.filterStudents(this.value)" style="width:200px;">
-                            <button class="btn btn-primary" onclick="SchoolAdmin.showAddStudentModal()">
+                            <button class="btn btn-theme" onclick="SchoolAdmin.showAddStudentModal()">
                                 <i class="fas fa-user-plus"></i> Add Student
                             </button>
                         </div>
@@ -190,7 +184,7 @@
                             <h3>Faculty Management</h3>
                             <p class="text-secondary" style="font-size:13px;">All teachers and faculty members</p>
                         </div>
-                        <button class="btn btn-primary" onclick="SchoolAdmin.showAddTeacherModal()">
+                        <button class="btn btn-theme" onclick="SchoolAdmin.showAddTeacherModal()">
                             <i class="fas fa-chalkboard-teacher"></i> Add Teacher
                         </button>
                     </div>
@@ -297,7 +291,7 @@
                                 <input type="color" class="form-control" value="#1d1d1f">
                             </div>
                         </div>
-                        <button class="btn btn-primary">Save Settings</button>
+                        <button class="btn btn-theme">Save Settings</button>
                     </form>
                 </div>
             </div>
@@ -311,7 +305,7 @@
                             <p class="text-secondary" style="font-size:13px;">Manage, review, or delete teaching materials shared by faculty members</p>
                         </div>
                         <div class="flex gap-2">
-                            <select class="form-control" id="materials-filter-division" onchange="SchoolAdmin.filterMaterials()" style="width:160px;">
+                            <select class="input-control" id="materials-filter-division" onchange="SchoolAdmin.filterMaterials()" style="width:160px;">
                                 <option value="">Filter Division (All)</option>
                                 <option value="A">Division A</option>
                                 <option value="B">Division B</option>
@@ -399,7 +393,7 @@
                         </div>
 
                         <div class="flex gap-2">
-                            <button class="btn btn-primary" id="btn-run-audit" onclick="SchoolAdmin.runDatabaseVerification()" style="flex:1;">
+                            <button class="btn btn-theme" id="btn-run-audit" onclick="SchoolAdmin.runDatabaseVerification()" style="flex:1;">
                                 <i class="fas fa-check-double"></i> Run Cryptographic Integrity Check
                             </button>
                         </div>
@@ -499,7 +493,7 @@
                     </div>
                     <div class="form-group">
                         <label>Division</label>
-                        <select class="form-control" id="s-division">
+                        <select class="input-control" id="s-division">
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
@@ -512,7 +506,7 @@
                     <input type="password" class="form-control" id="s-password" placeholder="Default: Student@123">
                 </div>
                 <div class="flex gap-2" style="margin-top:1.5rem;">
-                    <button type="submit" class="btn btn-primary" style="flex:1;" id="add-student-btn">
+                    <button type="submit" class="btn btn-theme" style="flex:1;" id="add-student-btn">
                         <i class="fas fa-plus"></i> Add Student
                     </button>
                     <button type="button" class="btn btn-secondary" onclick="SchoolAdmin.closeModal('modal-add-student')">Cancel</button>
@@ -542,7 +536,7 @@
                     <input type="password" class="form-control" id="t-password" placeholder="Default: Teacher@123">
                 </div>
                 <div class="flex gap-2" style="margin-top:1.5rem;">
-                    <button type="submit" class="btn btn-primary" style="flex:1;" id="add-teacher-btn">
+                    <button type="submit" class="btn btn-theme" style="flex:1;" id="add-teacher-btn">
                         <i class="fas fa-plus"></i> Add Teacher
                     </button>
                     <button type="button" class="btn btn-secondary" onclick="SchoolAdmin.closeModal('modal-add-teacher')">Cancel</button>
@@ -575,7 +569,7 @@
                     </div>
                     <div class="form-group">
                         <label>Division</label>
-                        <select class="form-control" id="edit-division">
+                        <select class="input-control" id="edit-division">
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
@@ -585,13 +579,13 @@
                 </div>
                 <div class="form-group">
                     <label>Status</label>
-                    <select class="form-control" id="edit-active">
+                    <select class="input-control" id="edit-active">
                         <option value="true">Active</option>
                         <option value="false">Inactive</option>
                     </select>
                 </div>
                 <div class="flex gap-2" style="margin-top:1.5rem;">
-                    <button type="submit" class="btn btn-primary" style="flex:1;" id="edit-user-btn">
+                    <button type="submit" class="btn btn-theme" style="flex:1;" id="edit-user-btn">
                         <i class="fas fa-save"></i> Save Changes
                     </button>
                     <button type="button" class="btn btn-secondary" onclick="SchoolAdmin.closeModal('modal-edit-user')">Cancel</button>

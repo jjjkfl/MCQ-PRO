@@ -102,9 +102,9 @@ body {
 }
 
 .nav-link.active {
-    background: var(--sidebar-active);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--warning) 100%);
     color: var(--sidebar-text);
-    box-shadow: 0 4px 15px var(--primary-glow);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
 }
 
 /* ─── Main Content ───────────────────────────────────── */
@@ -119,6 +119,20 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2.5rem;
+}
+
+.dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.dashboard-subtitle {
+    font-size: 0.9375rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    margin-bottom: 0;
 }
 
 /* ─── Glass Cards ────────────────────────────────────── */

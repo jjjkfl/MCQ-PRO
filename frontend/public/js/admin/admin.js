@@ -131,7 +131,7 @@ const AdminDashboard = {
         </div>
         <div class="form-group">
           <label>Role</label>
-          <select name="role" class="form-control" required>
+          <select name="role" class="input-control" required>
             <option value="student">Student</option>
             <option value="teacher">Teacher</option>
           </select>
@@ -172,7 +172,7 @@ const AdminDashboard = {
         </div>
         <div class="form-group">
           <label>Role</label>
-          <select name="role" class="form-control" required>
+          <select name="role" class="input-control" required>
             <option value="student" ${user.role === 'student' ? 'selected' : ''}>Student</option>
             <option value="teacher" ${user.role === 'teacher' ? 'selected' : ''}>Teacher</option>
           </select>
@@ -256,7 +256,7 @@ const AdminDashboard = {
         </div>
         <div class="form-group">
           <label>Assign Teacher</label>
-          <select name="teacherId" class="form-control" required>
+          <select name="teacherId" class="input-control" required>
             ${teacherOptions}
           </select>
         </div>
@@ -298,7 +298,7 @@ const AdminDashboard = {
         </div>
         <div class="form-group">
           <label>Assign Teacher</label>
-          <select name="teacherId" class="form-control" required>
+          <select name="teacherId" class="input-control" required>
             ${teacherOptions}
           </select>
         </div>
