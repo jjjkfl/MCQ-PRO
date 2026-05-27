@@ -38,16 +38,21 @@
       <div class="auth-form-card">
         <div class="auth-form-card-inner">
           <div class="auth-tabs">
-            <button onclick="toggleTab('login')" id="login-tab" class="auth-tab-btn active">
+            <button class="auth-tab-btn active" style="pointer-events: none;">
               <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-            <button onclick="toggleTab('register')" id="register-tab" class="auth-tab-btn">
-              <i class="fas fa-user-plus"></i> Register
             </button>
           </div>
 
           <!-- Login Form -->
           <form id="login-form" onsubmit="handleLogin(event)">
+            <div class="auth-input-group">
+              <label><i class="fas fa-university"></i> Select Your School *</label>
+              <div class="auth-control-wrap">
+                <select name="school_id" id="school_id" class="auth-control" required>
+                  <option value="">Loading schools...</option>
+                </select>
+              </div>
+            </div>
             <div class="auth-input-group">
               <label><i class="far fa-envelope"></i> Email Address</label>
               <div class="auth-control-wrap">
@@ -74,33 +79,6 @@
 
           </form>
 
-          <!-- Register Form -->
-          <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
-            <input type="hidden" name="role" value="student">
-            <div class="auth-input-group">
-              <label><i class="far fa-user"></i> Full Name</label>
-              <div class="auth-control-wrap">
-                <input type="text" name="name" class="auth-control" placeholder="Enter your full name" required>
-              </div>
-            </div>
-            <div class="auth-input-group">
-              <label><i class="far fa-envelope"></i> Email Address</label>
-              <div class="auth-control-wrap">
-                <input type="email" name="email" class="auth-control" placeholder="Enter your email" required>
-              </div>
-            </div>
-            <div class="auth-input-group">
-              <label><i class="fas fa-lock"></i> Password</label>
-              <div class="auth-control-wrap">
-                <input type="password" name="password" class="auth-control" minlength="8" placeholder="Create a password" required>
-                <i class="fas fa-eye" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:#94a3b8; cursor:pointer;" onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'"></i>
-              </div>
-            </div>
-
-            <button type="submit" class="auth-submit mt-3" id="register-btn" style="margin-top:2rem;">
-              <span id="reg-btn-text">Register Account</span>
-            </button>
-          </form>
         </div>
 
         <div class="form-footer">
@@ -138,22 +116,19 @@
       }
     }
 
-    function toggleTab(type) {
-      const loginForm = document.getElementById('login-form');
-      const regForm = document.getElementById('register-form');
-      const loginTab = document.getElementById('login-tab');
-      const regTab = document.getElementById('register-tab');
-
-      if (type === 'login') {
-        loginForm.style.display = 'block';
-        regForm.style.display = 'none';
-        loginTab.classList.add('active');
-        regTab.classList.remove('active');
-      } else {
-        loginForm.style.display = 'none';
-        regForm.style.display = 'block';
-        loginTab.classList.remove('active');
-        regTab.classList.add('active');
+    async function loadActiveSchools() {
+      const select = document.getElementById('school_id');
+      try {
+        const schools = await api.get('/auth/active-schools');
+        if (!schools || schools.length === 0) {
+          select.innerHTML = '<option value="">No Active Schools Available</option>';
+          return;
+        }
+        select.innerHTML = '<option value="">-- Select Your School --</option>' + 
+          schools.map(s => `<option value="${s._id}">${s.name}</option>`).join('');
+      } catch (err) {
+        console.error('Failed to load active schools:', err);
+        select.innerHTML = '<option value="">Error loading schools</option>';
       }
     }
 
@@ -168,9 +143,10 @@
 
       const email = e.target.querySelector('input[type="email"]').value;
       const password = e.target.querySelector('input[type="password"]').value;
+      const schoolId = document.getElementById('school_id').value;
 
       try {
-        await auth.login(email, password, 'student');
+        await auth.login(email, password, 'student', schoolId);
         notifications.success('Welcome back, Student!');
       } catch (err) {
         notifications.error(err.message || 'Login failed');
@@ -180,33 +156,10 @@
       }
     }
 
-    async function handleRegister(e) {
-      e.preventDefault();
-      const registerBtn = document.getElementById('register-btn');
-      const regBtnText = document.getElementById('reg-btn-text');
-      
-      registerBtn.disabled = true;
-      registerBtn.classList.add('loading');
-      regBtnText.innerHTML = '<div class="auth-spinner"></div> Registering...';
-
-      const formData = new FormData(e.target);
-      const userData = Object.fromEntries(formData);
-
-      try {
-        await auth.register(userData);
-        notifications.success('Student account created successfully!');
-        toggleTab('login');
-      } catch (err) {
-        notifications.error(err.message || 'Registration failed');
-      } finally {
-        registerBtn.disabled = false;
-        registerBtn.classList.remove('loading');
-        regBtnText.innerHTML = '<i class="fas fa-user-plus"></i> Create Student Account';
-      }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
       createFloatingIcons();
+      loadActiveSchools();
+
       if (auth.isAuthenticated()) {
         const user = auth.getUser();
         if (user && user.role === 'student') {

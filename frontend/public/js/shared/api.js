@@ -30,8 +30,8 @@ const api = {
       const result = await response.json();
 
       if (!response.ok) {
-        // Handle token expiration
-        if (response.status === 401) {
+        // Handle token expiration (skip for auth routes so errors can be shown)
+        if (response.status === 401 && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/register')) {
           auth.logout();
         }
         throw new Error(result.message || 'Something went wrong');
