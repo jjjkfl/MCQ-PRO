@@ -160,8 +160,8 @@
           auth.redirectByRole('school_admin');
         } else {
           // Clear mismatched session silently to prevent session bleed
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('user');
         }
       }
     });

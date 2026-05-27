@@ -117,17 +117,20 @@ const AdminDashboard = {
   showCreateUserModal() {
     Modal.show('create-user', `
       <form onsubmit="AdminDashboard.handleCreateUser(event)">
+        <!-- Fake inputs to prevent autofill -->
+        <input type="text" name="fake_email" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="new-password" />
+        <input type="password" name="fake_password" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="new-password" />
         <div class="form-group">
           <label>Name</label>
           <input type="text" name="name" class="form-control" required>
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" class="form-control" required>
+          <input type="email" name="email" class="form-control" required autocomplete="new-username">
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" name="password" class="form-control" required>
+          <input type="password" name="password" class="form-control" required autocomplete="new-password">
         </div>
         <div class="form-group">
           <label>Role</label>
@@ -162,13 +165,16 @@ const AdminDashboard = {
 
     Modal.show('edit-user', `
       <form onsubmit="AdminDashboard.handleEditUser(event, '${id}')">
+        <!-- Fake inputs to prevent autofill -->
+        <input type="text" name="fake_email" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="new-password" />
+        <input type="password" name="fake_password" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="new-password" />
         <div class="form-group">
           <label>Name</label>
           <input type="text" name="name" class="form-control" value="${user.name}" required>
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" class="form-control" value="${user.email}" required>
+          <input type="email" name="email" class="form-control" value="${user.email}" required autocomplete="new-username">
         </div>
         <div class="form-group">
           <label>Role</label>

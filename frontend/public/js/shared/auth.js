@@ -38,17 +38,17 @@ const auth = {
   },
 
   setSession(token, user) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('user', JSON.stringify(user));
   },
 
   getUser() {
-    const user = localStorage.getItem('user');
+    const user = sessionStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   },
 
   getToken() {
-    return localStorage.getItem('token');
+    return sessionStorage.getItem('token');
   },
 
   isAuthenticated() {
@@ -66,8 +66,8 @@ const auth = {
       else if (path.includes('student') || path.includes('index.html') || path === '/' || path.includes('exam')) role = 'student';
     }
 
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
 
     if (role === 'super_admin') {
       window.location.href = '/login/super';
@@ -153,3 +153,5 @@ const auth = {
 };
 
 window.auth = auth;
+
+// Session sync listener removed to allow independent tabs and role testing

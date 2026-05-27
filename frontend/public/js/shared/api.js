@@ -11,7 +11,7 @@ const api = {
    * Core request wrapper
    */
   async request(endpoint, options = {}) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     const headers = {
       'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const api = {
    * Specialized for file uploads (FormData)
    */
   async upload(endpoint, formData) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',

@@ -17,7 +17,7 @@ const SchoolAdmin = {
 
     initSocket() {
         if (typeof io !== 'undefined') {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             this.socket = io(SERVER_URL, {
                 auth: { token },
                 transports: ['websocket', 'polling'],

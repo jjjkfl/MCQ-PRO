@@ -749,17 +749,20 @@ const TeacherDashboard = {
 
     Modal.show('add-student', `
       <form onsubmit="TeacherDashboard.handleAddStudent(event)">
+        <!-- Fake inputs to prevent autofill -->
+        <input type="text" name="fake_email" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="new-password" />
+        <input type="password" name="fake_password" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="new-password" />
         <div class="form-group">
           <label>Full Name</label>
           <input type="text" name="name" class="form-control" placeholder="e.g. John Doe" required>
         </div>
         <div class="form-group">
           <label>Email Address</label>
-          <input type="email" name="email" class="form-control" placeholder="student@example.com" required>
+          <input type="email" name="email" class="form-control" placeholder="student@example.com" required autocomplete="new-username">
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" name="password" class="form-control" placeholder="Minimal 6 characters" required minlength="6">
+          <input type="password" name="password" class="form-control" placeholder="Minimal 6 characters" required minlength="6" autocomplete="new-password">
         </div>
         <div class="form-group">
           <label>Assign to Course</label>
@@ -816,13 +819,16 @@ const TeacherDashboard = {
 
       Modal.show('edit-student', `
         <form onsubmit="TeacherDashboard.handleEditStudent(event, '${id}')">
+          <!-- Fake inputs to prevent autofill -->
+          <input type="text" name="fake_email" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="new-password" />
+          <input type="password" name="fake_password" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="new-password" />
           <div class="form-group">
             <label>Full Name</label>
             <input type="text" name="name" class="form-control" value="${s.name}" required>
           </div>
           <div class="form-group">
             <label>Email Address</label>
-            <input type="email" name="email" class="form-control" value="${s.email}" required>
+            <input type="email" name="email" class="form-control" value="${s.email}" required autocomplete="new-username">
           </div>
           <div class="form-group">
             <label>Assign to Course</label>
