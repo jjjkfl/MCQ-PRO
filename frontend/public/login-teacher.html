@@ -45,6 +45,14 @@
 
           <form id="login-form" onsubmit="handleLogin(event)">
             <div class="auth-input-group">
+              <label><i class="fas fa-university"></i> Select Your School *</label>
+              <div class="auth-control-wrap">
+                <select name="school_id" id="school_id" class="auth-control" required>
+                  <option value="">Loading schools...</option>
+                </select>
+              </div>
+            </div>
+            <div class="auth-input-group">
               <label><i class="far fa-envelope"></i> Email Address</label>
               <div class="auth-control-wrap">
                 <input type="email" name="teacher_email" id="teacher_email" class="auth-control" placeholder="Enter your email" required autocomplete="username">
@@ -103,6 +111,22 @@
       }
     }
 
+    async function loadActiveSchools() {
+      const select = document.getElementById('school_id');
+      try {
+        const schools = await api.get('/auth/active-schools');
+        if (!schools || schools.length === 0) {
+          select.innerHTML = '<option value="">No Active Schools Available</option>';
+          return;
+        }
+        select.innerHTML = '<option value="">-- Select Your School --</option>' + 
+          schools.map(s => `<option value="${s._id}">${s.name}</option>`).join('');
+      } catch (err) {
+        console.error('Failed to load active schools:', err);
+        select.innerHTML = '<option value="">Error loading schools</option>';
+      }
+    }
+
     async function handleLogin(e) {
       e.preventDefault();
       const loginBtn = document.getElementById('login-btn');
@@ -114,9 +138,10 @@
 
       const email = e.target.querySelector('input[type="email"]').value;
       const password = e.target.querySelector('input[type="password"]').value;
+      const schoolId = document.getElementById('school_id').value;
 
       try {
-        await auth.login(email, password, 'teacher');
+        await auth.login(email, password, 'teacher', schoolId);
         notifications.success('Welcome back, Educator!');
       } catch (err) {
         notifications.error(err.message || 'Login failed');
@@ -128,6 +153,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       createFloatingIcons();
+      loadActiveSchools();
       if (auth.isAuthenticated()) {
         const user = auth.getUser();
         if (user && user.role === 'teacher') {
