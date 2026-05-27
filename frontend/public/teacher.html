@@ -230,7 +230,24 @@
           </div>
           <button class="btn btn-primary" onclick="TeacherDashboard.showAddTimetableModal()">+ Add Schedule</button>
         </header>
-        <div class="table-container">
+
+        <!-- Layout Toggles -->
+        <div style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid var(--border, rgba(255,255,255,0.08)); padding-bottom: 16px;">
+          <button class="btn btn-primary btn-sm" id="btn-timetable-grid" onclick="TeacherDashboard.toggleTimetableLayout('grid')" style="font-size: 13px; padding: 6px 12px;">
+            <i class="fas fa-th"></i> Weekly Grid
+          </button>
+          <button class="btn btn-outline btn-sm" id="btn-timetable-list" onclick="TeacherDashboard.toggleTimetableLayout('list')" style="font-size: 13px; padding: 6px 12px;">
+            <i class="fas fa-list"></i> List View
+          </button>
+        </div>
+
+        <!-- Weekly Grid Layout -->
+        <div id="timetable-grid-container" class="table-container animate-fade-in">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- List Layout -->
+        <div id="timetable-list-container" class="table-container animate-fade-in" style="display: none;">
           <table>
             <thead>
               <tr>
