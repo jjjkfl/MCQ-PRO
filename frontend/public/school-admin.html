@@ -54,6 +54,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="courses">
+                        <i class="fas fa-book"></i>
+                        <span>Courses</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#" class="nav-link" data-tab="certificates">
                         <i class="fas fa-certificate"></i>
                         <span>Certificates</span>
@@ -430,8 +436,80 @@
                 </div>
             </div>
 
+            <!-- Courses Management Tab -->
+            <div id="tab-courses" class="tab-content animate-slide-up" style="display: none;">
+                <!-- Create Course Form -->
+                <div class="glass-card" style="margin-bottom: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem;"><i class="fas fa-plus-circle" style="color: var(--primary, #7c3aed);"></i> Create New Course</h3>
+                    <form id="create-course-form" onsubmit="SchoolAdmin.handleCreateCourse(event)">
+                        <div class="flex gap-2" style="flex-wrap: wrap;">
+                            <div class="form-group" style="flex: 2; min-width: 180px;">
+                                <label>Course Name <span style="color:#ef4444;">*</span></label>
+                                <input type="text" id="course-name" class="input-control" placeholder="e.g. Mathematics Grade 9" required>
+                            </div>
+                            <div class="form-group" style="flex: 1; min-width: 140px;">
+                                <label>Department</label>
+                                <select id="course-department" class="input-control">
+                                    <option value="General">General</option>
+                                    <option value="Science">Science</option>
+                                    <option value="Commerce">Commerce</option>
+                                    <option value="Arts">Arts</option>
+                                    <option value="Technology">Technology</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 2; min-width: 180px;">
+                                <label>Assign Teacher (optional)</label>
+                                <select id="course-teacher" class="input-control">
+                                    <option value="">— No Teacher Yet —</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 2; min-width: 180px;">
+                                <label>Description</label>
+                                <input type="text" id="course-description" class="input-control" placeholder="Brief description...">
+                            </div>
+                            <div class="form-group" style="display: flex; align-items: flex-end;">
+                                <button type="submit" class="btn btn-theme" id="create-course-btn">
+                                    <i class="fas fa-plus"></i> Create Course
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Courses List -->
+                <div class="glass-card">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3>All Courses</h3>
+                            <p class="text-secondary" style="font-size: 13px;">Manage your school's courses and teacher assignments</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="SchoolAdmin.loadCourses()" style="font-size: 13px; padding: 6px 14px;">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Course Name</th>
+                                    <th>Department</th>
+                                    <th>Description</th>
+                                    <th>Assigned Teachers</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="courses-list">
+                                <tr><td colspan="6" class="text-center" style="color:#64748b;">Loading courses...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Security Intelligence Tab -->
             <div id="tab-security" class="tab-content animate-slide-up" style="display: none;">
+
                 <!-- Security Overview Cards -->
                 <div class="stats-grid mb-4">
                     <div class="glass-card stat-card" style="border-left: 4px solid #30d158; padding: 1.25rem;">

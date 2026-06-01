@@ -5,7 +5,8 @@ const courseSchema = new mongoose.Schema({
   description: { type: String, default: '' },
   department: { type: String, default: 'General' },
   driveLink: { type: String, default: '' },
-  teacherIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  teacherIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  schoolId: { type: mongoose.Schema.Types.ObjectId, ref: 'School', default: null }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Course', courseSchema);

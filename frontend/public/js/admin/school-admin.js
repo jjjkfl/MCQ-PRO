@@ -120,6 +120,7 @@ const SchoolAdmin = {
             case 'exams': this.loadExams(); break;
             case 'certificates': this.loadCertificates(); break;
             case 'materials': this.loadMaterials(); break;
+            case 'courses': this.loadCourses(); break;
             case 'security': this.loadSecurityIntel(); break;
             case 'broadcasts': this.loadBroadcasts(); break;
             case 'settings': this.loadSettings(); break;
@@ -269,7 +270,7 @@ const SchoolAdmin = {
 
         // Fetch courses for dropdown
         try {
-            const courses = await api.get('/portal/student/courses');
+            const courses = await api.get('/admin/school/courses');
             const select = document.getElementById('m-courseId');
             if (select && courses && courses.data) {
                 select.innerHTML = '<option value="">Select Course</option>' +
@@ -278,6 +279,7 @@ const SchoolAdmin = {
         } catch (err) {
             console.error('Failed to load courses for selection:', err);
         }
+
 
         try {
             const exams = await api.get('/admin/school/exams');
@@ -374,7 +376,9 @@ const SchoolAdmin = {
     },
 
     renderCharts() {
-        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const canvas = document.getElementById('performanceChart');
+        if (!canvas) return; // chart canvas not present on this page/tab
+        const ctx = canvas.getContext('2d');
         new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -394,6 +398,7 @@ const SchoolAdmin = {
             }
         });
     },
+
 
     showEditModal(user) {
         document.getElementById('edit-modal-title').innerHTML =
@@ -1179,8 +1184,174 @@ Merkle Root Computed:   ${data.blockchain ? 'VERIFIED' : 'FAILED'}${discrepancyL
                 btn.innerHTML = 'Save Settings';
             }
         }
+    },
+
+
+    // ─── Course Management ────────────────────────────────────────────────────
+
+    _courses: [],
+
+    async loadCourses() {
+        const tbody = document.getElementById('courses-list');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading courses...</td></tr>';
+
+        try {
+            const res = await api.get('/admin/school/courses');
+            this._courses = res.data || [];
+
+            if (this._courses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:#64748b;">No courses yet. Create your first course above.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = this._courses.map(c => {
+                const teachers = (c.teacherIds || []).map(t => t.name).join(', ') || '<span style="color:#94a3b8;">—</span>';
+                const date = c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '—';
+                return `
+                    <tr>
+                        <td><strong>${c.courseName}</strong></td>
+                        <td><span class="badge badge-med" style="background:rgba(124,58,237,0.12); color:#7c3aed;">${c.department || 'General'}</span></td>
+                        <td style="color:#94a3b8; font-size:13px;">${c.description || '—'}</td>
+                        <td style="font-size:13px;">${teachers}</td>
+                        <td style="font-size:13px; color:#94a3b8;">${date}</td>
+                        <td>
+                            <button onclick="SchoolAdmin.showAssignTeacherModal('${c._id}', '${c.courseName.replace(/'/g, "\\'")}')" class="btn btn-secondary btn-sm" style="font-size:12px; padding:4px 10px; margin-right:4px;">
+                                <i class="fas fa-user-plus"></i> Assign
+                            </button>
+                            <button onclick="SchoolAdmin.deleteCourse('${c._id}', '${c.courseName.replace(/'/g, "\\'")}')" class="btn btn-outline btn-sm" style="font-size:12px; padding:4px 10px; color:#ef4444; border-color:rgba(239,68,68,0.3);">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Also populate teacher dropdown in create form
+            await this._populateCourseTeacherDropdown();
+        } catch (err) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:#ef4444;">Failed to load courses.</td></tr>';
+            console.error('loadCourses error:', err);
+        }
+    },
+
+    async _populateCourseTeacherDropdown() {
+        try {
+            const select = document.getElementById('course-teacher');
+            if (!select) return;
+            const teachers = await api.get('/admin/school/teachers');
+            const list = Array.isArray(teachers) ? teachers : (teachers.data || []);
+            select.innerHTML = '<option value="">— No Teacher Yet —</option>' +
+                list.map(t => `<option value="${t._id}">${t.name} (${t.email})</option>`).join('');
+        } catch (err) {
+            console.warn('Could not load teachers for dropdown:', err.message);
+        }
+    },
+
+    async handleCreateCourse(event) {
+        event.preventDefault();
+        const btn = document.getElementById('create-course-btn');
+        const courseName = document.getElementById('course-name')?.value?.trim();
+        const department = document.getElementById('course-department')?.value;
+        const teacherId = document.getElementById('course-teacher')?.value;
+        const description = document.getElementById('course-description')?.value?.trim();
+
+        if (!courseName) return notifications.error('Course name is required.');
+
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...'; }
+
+        try {
+            const res = await api.request('/admin/school/courses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseName, department, description, teacherId: teacherId || undefined })
+            });
+
+            if (res.success) {
+                notifications.success(`Course "${courseName}" created successfully!`);
+                document.getElementById('create-course-form').reset();
+                await this.loadCourses();
+            } else {
+                throw new Error(res.message || 'Failed to create course');
+            }
+        } catch (err) {
+            notifications.error(err.message || 'Failed to create course');
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-plus"></i> Create Course'; }
+        }
+    },
+
+    async deleteCourse(courseId, courseName) {
+        if (!confirm(`Delete course "${courseName}"? This will also remove it from assigned teachers.`)) return;
+        try {
+            const res = await api.request(`/admin/school/courses/${courseId}`, { method: 'DELETE' });
+            if (res.success) {
+                notifications.success(`Course "${courseName}" deleted.`);
+                await this.loadCourses();
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (err) {
+            notifications.error(err.message || 'Failed to delete course');
+        }
+    },
+
+    async showAssignTeacherModal(courseId, courseName) {
+        // Build a simple teacher-select modal using the existing modal overlay if available,
+        // otherwise fall back to a prompt-style select.
+        try {
+            const teacherRes = await api.get('/admin/school/teachers');
+            const teachers = Array.isArray(teacherRes) ? teacherRes : (teacherRes.data || []);
+
+            const modalHtml = `
+                <div id="assign-teacher-modal" style="
+                    position: fixed; inset: 0; z-index: 9999;
+                    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+                    display: flex; align-items: center; justify-content: center;
+                ">
+                    <div style="background: var(--card-bg, #1e1e2e); border-radius: 16px; padding: 2rem; min-width: 340px; box-shadow: 0 24px 80px rgba(0,0,0,0.4);">
+                        <h3 style="margin-bottom: 1rem;"><i class="fas fa-user-plus" style="color:#7c3aed;"></i> Assign Teacher</h3>
+                        <p style="font-size:14px; color:#94a3b8; margin-bottom: 1.5rem;">Assign a teacher to <strong>${courseName}</strong></p>
+                        <select id="modal-teacher-select" class="input-control" style="width: 100%; margin-bottom: 1.5rem;">
+                            <option value="">Select Teacher...</option>
+                            ${teachers.map(t => `<option value="${t._id}">${t.name} (${t.email})</option>`).join('')}
+                        </select>
+                        <div class="flex gap-2">
+                            <button onclick="SchoolAdmin.confirmAssignTeacher('${courseId}')" class="btn btn-theme" style="flex:1;">Assign</button>
+                            <button onclick="document.getElementById('assign-teacher-modal').remove()" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        } catch (err) {
+            notifications.error('Could not load teachers: ' + err.message);
+        }
+    },
+
+    async confirmAssignTeacher(courseId) {
+        const teacherId = document.getElementById('modal-teacher-select')?.value;
+        if (!teacherId) return notifications.error('Please select a teacher.');
+        try {
+            const res = await api.request(`/admin/school/courses/${courseId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ teacherId })
+            });
+            if (res.success) {
+                notifications.success('Teacher assigned to course!');
+                document.getElementById('assign-teacher-modal')?.remove();
+                await this.loadCourses();
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (err) {
+            notifications.error(err.message || 'Failed to assign teacher');
+        }
     }
+
 };
+
 
 // Initialize
 if (document.readyState === 'loading') {

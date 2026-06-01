@@ -60,8 +60,15 @@ router.get('/school/broadcasts', authorize(['school_admin', 'teacher']), schoolA
 // Marks Upload
 router.post('/school/marks/upload-excel', authorize('school_admin'), upload.single('file'), schoolAdminCtrl.uploadMarksExcel);
 
+// Courses (School Admin)
+router.get('/school/courses', authorize('school_admin'), schoolAdminCtrl.getCourses);
+router.post('/school/courses', authorize('school_admin'), schoolAdminCtrl.createCourse);
+router.put('/school/courses/:id', authorize('school_admin'), schoolAdminCtrl.updateCourse);
+router.delete('/school/courses/:id', authorize('school_admin'), schoolAdminCtrl.deleteCourse);
+
 // Settings
 router.get('/school/settings', authorize('school_admin'), schoolAdminCtrl.getSchoolSettings);
 router.put('/school/settings', authorize('school_admin'), upload.single('logo'), schoolAdminCtrl.updateSchoolSettings);
+
 
 module.exports = router;

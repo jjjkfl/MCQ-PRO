@@ -34,10 +34,17 @@ exports.getDashboard = async (req, res) => {
     const teacher = req.user;
     const courseIds = (teacher.courseIds || []).map((id) => id);
 
-    const courses =
+    let courses =
       courseIds.length > 0
         ? await Course.find({ _id: { $in: courseIds } }).select('courseName driveLink')
         : [];
+
+    // Fallback: if the teacher has no assigned courses yet but belongs to a school,
+    // show all courses in their school so they can still use the dropdowns.
+    if (courses.length === 0 && teacher.schoolId) {
+      courses = await Course.find({ schoolId: teacher.schoolId }).select('courseName driveLink');
+    }
+
 
     const [activeSessions, totalSessions, totalStudents, totalMCQBanks, sessions, recentResultDocs] =
       await Promise.all([

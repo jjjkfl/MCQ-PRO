@@ -432,3 +432,81 @@ exports.updateSchoolSettings = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// ─── Course Management ────────────────────────────────────────────────
+
+exports.getCourses = async (req, res) => {
+  try {
+    const courses = await Course.find({ schoolId: req.user.schoolId })
+      .populate('teacherIds', 'name email')
+      .lean();
+    res.json({ success: true, data: courses });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.createCourse = async (req, res) => {
+  try {
+    const { courseName, description, department, teacherId } = req.body;
+    if (!courseName) {
+      return res.status(400).json({ success: false, message: 'Course name is required.' });
+    }
+
+    const course = await Course.create({
+      courseName,
+      description: description || '',
+      department: department || 'General',
+      schoolId: req.user.schoolId,
+      teacherIds: teacherId ? [teacherId] : []
+    });
+
+    // Push this course into the assigned teacher's courseIds
+    if (teacherId) {
+      await User.findByIdAndUpdate(teacherId, { $addToSet: { courseIds: course._id } });
+    }
+
+    res.status(201).json({ success: true, data: course });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.updateCourse = async (req, res) => {
+  try {
+    const { courseName, description, department, teacherId } = req.body;
+    const course = await Course.findOne({ _id: req.params.id, schoolId: req.user.schoolId });
+    if (!course) return res.status(404).json({ success: false, message: 'Course not found.' });
+
+    if (courseName) course.courseName = courseName;
+    if (description !== undefined) course.description = description;
+    if (department) course.department = department;
+
+    if (teacherId && !course.teacherIds.map(id => id.toString()).includes(teacherId)) {
+      course.teacherIds.push(teacherId);
+      await User.findByIdAndUpdate(teacherId, { $addToSet: { courseIds: course._id } });
+    }
+
+    await course.save();
+    res.json({ success: true, data: course });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.deleteCourse = async (req, res) => {
+  try {
+    const course = await Course.findOneAndDelete({ _id: req.params.id, schoolId: req.user.schoolId });
+    if (!course) return res.status(404).json({ success: false, message: 'Course not found.' });
+
+    // Remove this course from all teachers that had it assigned
+    await User.updateMany(
+      { courseIds: course._id },
+      { $pull: { courseIds: course._id } }
+    );
+
+    res.json({ success: true, message: 'Course deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

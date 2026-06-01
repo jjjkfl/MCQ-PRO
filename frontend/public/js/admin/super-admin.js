@@ -1,4 +1,4 @@
-const STATE_DISTRICTS = {
+let STATE_DISTRICTS = {
     "Karnataka": {
         center: [15.3173, 75.7139],
         districts: {
@@ -65,6 +65,87 @@ const SuperAdmin = {
     async init() {
         if (!auth.checkAuth()) return;
         console.log('🚀 SuperAdmin Initializing...');
+        
+        // Load comprehensive states & districts list
+        try {
+            const response = await fetch('/js/shared/states-districts.json');
+            const data = await response.json();
+            
+            const coordsMap = {
+                "Karnataka": { center: [15.3173, 75.7139], districts: { "Bengaluru": [12.9716, 77.5946], "Bengaluru (Bangalore) Urban": [12.9716, 77.5946], "Mysuru": [12.2958, 76.6394], "Mysuru (Mysore)": [12.2958, 76.6394], "Mangaluru": [12.9141, 74.8560], "Hubballi-Dharwad": [15.3647, 75.1240], "Belagavi": [15.8497, 74.4977], "Belagavi (Belgaum)": [15.8497, 74.4977] } },
+                "Maharashtra": { center: [19.7515, 75.7139], districts: { "Mumbai": [19.0760, 72.8777], "Mumbai City": [19.0760, 72.8777], "Mumbai Suburban": [19.0760, 72.8777], "Pune": [18.5204, 73.8567], "Nagpur": [21.1458, 79.0882], "Thane": [19.2183, 72.9781], "Nashik": [19.9975, 73.7898] } },
+                "Delhi": { center: [28.6139, 77.2090], districts: { "New Delhi": [28.6139, 77.2090] } },
+                "Delhi (NCT)": { center: [28.6139, 77.2090], districts: { "New Delhi": [28.6139, 77.2090] } },
+                "Tamil Nadu": { center: [11.1271, 78.6569], districts: { "Chennai": [13.0827, 80.2707], "Coimbatore": [11.0168, 76.9558], "Madurai": [9.9252, 78.1198], "Tiruchirappalli": [10.7905, 78.7047] } },
+                "Telangana": { center: [18.1124, 79.0193], districts: { "Hyderabad": [17.3850, 78.4867], "Warangal": [17.9689, 79.5941], "Nizamabad": [18.6725, 78.0941], "Karimnagar": [18.4386, 79.1288] } },
+                "Gujarat": { center: [22.2587, 71.1924], districts: { "Ahmedabad": [23.0225, 72.5714], "Surat": [21.1702, 72.8311], "Vadodara": [22.3072, 73.1812], "Rajkot": [22.3039, 70.8022] } }
+            };
+
+            const defaultCenters = {
+                "Andhra Pradesh": [15.9129, 79.7400],
+                "Arunachal Pradesh": [28.2180, 94.7278],
+                "Assam": [26.2006, 92.9376],
+                "Bihar": [25.0961, 85.3131],
+                "Chandigarh (UT)": [30.7333, 76.7794],
+                "Chhattisgarh": [21.2787, 81.8661],
+                "Dadra and Nagar Haveli (UT)": [20.2765, 73.0083],
+                "Daman and Diu (UT)": [20.4283, 72.8397],
+                "Delhi (NCT)": [28.6139, 77.2090],
+                "Goa": [15.2993, 74.1240],
+                "Gujarat": [22.2587, 71.1924],
+                "Haryana": [29.0588, 76.0856],
+                "Himachal Pradesh": [31.1048, 77.1734],
+                "Jammu and Kashmir": [33.7780, 76.5762],
+                "Jharkhand": [23.6102, 85.2799],
+                "Karnataka": [15.3173, 75.7139],
+                "Kerala": [10.8505, 76.2711],
+                "Lakshadweep (UT)": [10.5726, 72.6417],
+                "Madhya Pradesh": [22.9734, 78.6569],
+                "Maharashtra": [19.7515, 75.7139],
+                "Manipur": [24.6637, 93.9063],
+                "Meghalaya": [25.4670, 91.3662],
+                "Mizoram": [23.1645, 92.9376],
+                "Nagaland": [26.1584, 94.5624],
+                "Odisha": [20.9517, 85.0985],
+                "Puducherry (UT)": [11.9416, 79.8083],
+                "Punjab": [31.1471, 75.3412],
+                "Rajasthan": [27.0238, 74.2179],
+                "Sikkim": [27.5330, 88.5122],
+                "Tamil Nadu": [11.1271, 78.6569],
+                "Telangana": [18.1124, 79.0193],
+                "Tripura": [23.9408, 91.9882],
+                "Uttar Pradesh": [26.8467, 80.9462],
+                "Uttarakhand": [30.0668, 79.0193],
+                "West Bengal": [22.9868, 87.8550],
+                "Andaman and Nicobar Islands (UT)": [11.7401, 92.6586],
+                "Ladakh (UT)": [34.1526, 77.5771]
+            };
+
+            const newDistrictsData = {};
+            data.states.forEach(item => {
+                const name = item.state;
+                const distList = item.districts;
+                
+                const existing = coordsMap[name] || {};
+                const center = existing.center || defaultCenters[name] || [20.5937, 78.9629];
+                
+                newDistrictsData[name] = {
+                    center: center,
+                    districts: {}
+                };
+                
+                distList.forEach(d => {
+                    const dCoords = (existing.districts && existing.districts[d]) || center;
+                    newDistrictsData[name].districts[d] = dCoords;
+                });
+            });
+            
+            STATE_DISTRICTS = newDistrictsData;
+            console.log('✅ Dynamic states and districts loaded.');
+        } catch (e) {
+            console.error('Error fetching states-districts.json:', e);
+        }
+
         const saved = localStorage.getItem('admin-theme') || 'dark';
         this.applyTheme(saved);
         this.bindEvents();
