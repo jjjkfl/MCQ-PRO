@@ -872,12 +872,17 @@ const SuperAdmin = {
             html += `
                 <details class="school-node-details" style="margin-bottom: 0.75rem; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
                     <summary style="display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1rem; cursor: pointer; list-style: none; user-select: none; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex: 1; overflow: hidden; margin-right: 8px;">
                             <i class="fas fa-chevron-right chevron-icon" style="font-size: 10px; transition: transform 0.2s; color: #64748b;"></i>
-                            <i class="fas fa-building folder-icon" style="color: #7c3aed; font-size: 14px;"></i>
-                            <span style="font-size: 14px; font-weight: 700; color: #1e293b;">${school.name}</span>
+                            <i class="fas fa-building folder-icon" style="color: #7c3aed; font-size: 14px; flex-shrink: 0;"></i>
+                            <span style="font-size: 14px; font-weight: 700; color: #1e293b; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${school.name}</span>
                         </div>
-                        <span style="font-size: 11px; background: rgba(124,58,237,0.1); color: #7c3aed; padding: 3px 8px; border-radius: 12px; font-weight: 700;">${totalCount} User${totalCount !== 1 ? 's' : ''}</span>
+                        <div style="display: flex; gap: 8px; align-items: center;" onclick="event.stopPropagation();">
+                            <span style="font-size: 11px; background: rgba(124,58,237,0.1); color: #7c3aed; padding: 3px 8px; border-radius: 12px; font-weight: 700;">${totalCount} User${totalCount !== 1 ? 's' : ''}</span>
+                            <button class="btn btn-ghost" style="padding: 2px 4px; min-width:unset; height:unset;" title="View School Details" onclick="SuperAdmin.viewSchoolDetails('${sId}')">
+                                <i class="fas fa-eye" style="color:#f59e0b; font-size: 11px;"></i>
+                            </button>
+                        </div>
                     </summary>
                     <div class="school-folders-content" style="padding: 1rem 1rem 1rem 2.25rem; display: flex; flex-direction: column; gap: 0.5rem; background: #ffffff;">
                         
@@ -1390,50 +1395,132 @@ const SuperAdmin = {
             return;
         }
 
-        const modal = document.getElementById('modal-school-details');
-        if (!modal) return;
-        modal.style.display = 'flex';
+        // Store which tab we came from (Schools or Users)
+        const activeLink = document.querySelector('.sidebar .nav-link.active');
+        this._schoolDetailBackTab = activeLink ? activeLink.getAttribute('data-tab') : 'schools';
 
-        document.getElementById('sd-school-name').textContent = school.name;
-        document.getElementById('sd-school-admin').textContent = `Admin: ${school.adminId?.name || 'N/A'} (${school.adminId?.email || 'N/A'})`;
+        // Navigate to the school details tab (page)
+        document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+        const detailTab = document.getElementById('tab-school-detail');
+        if (detailTab) detailTab.style.display = 'block';
 
-        document.getElementById('sd-teachers-list').innerHTML = '<tr><td colspan="2" style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
-        document.getElementById('sd-exams-list').innerHTML = '<tr><td colspan="2" style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+        // Render school header info
+        document.getElementById('sdetail-name').textContent = school.name;
+        document.getElementById('sdetail-meta').textContent = `${school.board_type || 'CBSE'} Board • ${school.district || 'Bengaluru'}, ${school.state || 'Karnataka'}`;
+        document.getElementById('sdetail-plan-badge').textContent = school.subscription_plan || 'Basic';
+        
+        const statusBadge = document.getElementById('sdetail-status-badge');
+        if (statusBadge) {
+            statusBadge.textContent = school.is_active ? 'Active' : 'Suspended';
+            statusBadge.style.background = school.is_active ? 'rgba(48,209,88,0.15)' : 'rgba(217,122,126,0.15)';
+            statusBadge.style.color = school.is_active ? '#30d158' : '#d97a7e';
+        }
+
+        // Setup tables with loading placeholders
+        document.getElementById('sdetail-teachers-table-body').innerHTML = '<tr><td colspan="2" style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin"></i> Loading teachers...</td></tr>';
+        document.getElementById('sdetail-students-table-body').innerHTML = '<tr><td colspan="2" style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin"></i> Loading students...</td></tr>';
+
+        // Set admin details
+        const cardEmpty = document.getElementById('sdetail-admin-card-empty');
+        const cardContent = document.getElementById('sdetail-admin-card-content');
+        const adminNameEl = document.getElementById('sdetail-admin-name');
+        const adminEmailEl = document.getElementById('sdetail-admin-email');
+        const adminAvatarEl = document.getElementById('sdetail-admin-avatar');
+        const adminStatusEl = document.getElementById('sdetail-admin-status');
+
+        if (school.adminId) {
+            const adminName = school.adminId.name || 'N/A';
+            const adminEmail = school.adminId.email || 'N/A';
+            const isActive = school.adminId.isActive !== false;
+            
+            if (adminNameEl) adminNameEl.textContent = adminName;
+            if (adminEmailEl) adminEmailEl.textContent = adminEmail;
+            
+            if (adminAvatarEl) {
+                const initials = adminName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                adminAvatarEl.textContent = initials || 'SA';
+            }
+            
+            if (adminStatusEl) {
+                adminStatusEl.textContent = isActive ? 'Active' : 'Blocked';
+                adminStatusEl.style.background = isActive ? 'rgba(48,209,88,0.15)' : 'rgba(217,122,126,0.15)';
+                adminStatusEl.style.color = isActive ? '#30d158' : '#d97a7e';
+            }
+            
+            if (cardEmpty) cardEmpty.style.display = 'none';
+            if (cardContent) cardContent.style.display = 'flex';
+        } else {
+            if (cardEmpty) cardEmpty.style.display = 'block';
+            if (cardContent) cardContent.style.display = 'none';
+        }
 
         try {
+            // Load teachers
             const teachers = await api.get(`/admin/super/schools/${schoolId}/teachers`);
-            const teacherList = document.getElementById('sd-teachers-list');
+            document.getElementById('sdetail-teachers-count').textContent = teachers.length;
+            const teacherList = document.getElementById('sdetail-teachers-table-body');
             teacherList.innerHTML = (!teachers || teachers.length === 0) 
-                ? '<tr><td colspan="2" style="text-align:center;padding:2rem;color:#64748b;">No teachers found.</td></tr>'
-                : teachers.map(t => `
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                ? '<tr><td colspan="2" style="text-align:center;padding:2rem;color:var(--text-secondary);">No teachers found.</td></tr>'
+                : teachers.map(t => {
+                    const initials = t.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                    const avatar = t.cameraPhoto 
+                        ? `<img src="${t.cameraPhoto}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" onerror="this.outerHTML='<div class=&quot;initial-avatar&quot; style=&quot;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;&quot;>${initials}</div>'">`
+                        : `<div class="initial-avatar" style="width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${initials}</div>`;
+                    return `
+                    <tr style="border-bottom:1px solid var(--glass-border);">
                         <td style="padding:0.75rem;">
-                            <div style="font-weight:600;">${t.name}</div>
-                            <div style="font-size:11px;color:#64748b;">${t.email}</div>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                ${avatar}
+                                <div>
+                                    <div style="font-weight:600; color:var(--text-main);">${t.name}</div>
+                                    <div style="font-size:11px;color:var(--text-secondary);">${t.email}</div>
+                                </div>
+                            </div>
                         </td>
                         <td style="padding:0.75rem;">
-                            <span style="color:${t.isActive ? '#f59e0b' : '#d97a7e'};font-size:11px;font-weight:700;">${t.isActive ? 'ACTIVE' : 'BLOCKED'}</span>
+                            <span style="color:${t.isActive ? '#10b981' : '#ef4444'};font-size:11px;font-weight:700;">${t.isActive ? 'ACTIVE' : 'BLOCKED'}</span>
                         </td>
                     </tr>
-                `).join('');
+                `}).join('');
 
-            const exams = await api.get(`/admin/super/schools/${schoolId}/exams`);
-            const examList = document.getElementById('sd-exams-list');
-            examList.innerHTML = (!exams || exams.length === 0)
-                ? '<tr><td colspan="2" style="text-align:center;padding:2rem;color:#64748b;">No exams found.</td></tr>'
-                : exams.map(e => `
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+            // Load students
+            const students = await api.get(`/admin/super/schools/${schoolId}/students`);
+            document.getElementById('sdetail-students-count').textContent = students.length;
+            const studentList = document.getElementById('sdetail-students-table-body');
+            studentList.innerHTML = (!students || students.length === 0)
+                ? '<tr><td colspan="2" style="text-align:center;padding:2rem;color:var(--text-secondary);">No students found.</td></tr>'
+                : students.map(s => {
+                    const initials = s.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                    const avatar = s.cameraPhoto 
+                        ? `<img src="${s.cameraPhoto}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" onerror="this.outerHTML='<div class=&quot;initial-avatar&quot; style=&quot;width:32px;height:32px;border-radius:50%;background:#10b981;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;&quot;>${initials}</div>'">`
+                        : `<div class="initial-avatar" style="width:32px;height:32px;border-radius:50%;background:#10b981;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${initials}</div>`;
+                    return `
+                    <tr style="border-bottom:1px solid var(--glass-border);">
                         <td style="padding:0.75rem;">
-                            <div style="font-weight:600;">${e.title}</div>
-                            <div style="font-size:11px;color:#64748b;">${e.questions?.length || 0} Questions</div>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                ${avatar}
+                                <div>
+                                    <div style="font-weight:600; color:var(--text-main);">${s.name}</div>
+                                    <div style="font-size:11px;color:var(--text-secondary);">${s.email}</div>
+                                </div>
+                            </div>
                         </td>
-                        <td style="padding:0.75rem;font-size:12px;">${e.creatorId?.name || 'N/A'}</td>
+                        <td style="padding:0.75rem; color:var(--text-main);">
+                            <span style="font-size:12px; font-weight:600;">${s.classTag || '—'}</span> / 
+                            <span style="font-size:12px; font-weight:600; color:#7c3aed;">${s.division || 'A'}</span>
+                        </td>
                     </tr>
-                `).join('');
+                `}).join('');
+
         } catch (err) {
             console.error('Deep dive error:', err);
             notifications.error('Failed to load deep dive data');
         }
+    },
+
+    goBackFromSchoolDetails() {
+        const backTab = this._schoolDetailBackTab || 'schools';
+        this.switchTab(backTab);
     },
 
     closeSchoolDetails() {

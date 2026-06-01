@@ -3,6 +3,7 @@ const Session = require('../models/Session');
 const Result = require('../models/Result');
 const ResultSnapshot = require('../models/ResultSnapshot');
 const Announcement = require('../models/Announcement');
+const Broadcast = require('../models/Broadcast');
 const logger = require('../utils/logger');
 const Course = require('../models/Course');
 const blockchain = require('../services/blockchain/blockchainService');
@@ -355,19 +356,43 @@ exports.getMyResults = async (req, res) => {
 exports.getAnnouncements = async (req, res) => {
   try {
     const courseId = req.user?.courseId;
+    const schoolId = req.user?.schoolId;
 
-    if (!courseId) {
-      logger.info(`Student ${req.user?._id} accessed announcements but has no courseId assigned.`);
-      return res.json({ success: true, data: [] });
+    let announcements = [];
+    if (courseId) {
+      announcements = await Announcement.find({ courseId })
+        .sort({ createdAt: -1 })
+        .populate('authorId', 'name')
+        .lean();
     }
 
-    const announcements = await Announcement.find({ courseId })
-      .sort({ createdAt: -1 })
-      .populate('authorId', 'name')
-      .lean();
+    let broadcasts = [];
+    if (schoolId) {
+      broadcasts = await Broadcast.find({ schoolId, targetAudience: { $in: ['students', 'all'] } })
+        .sort({ createdAt: -1 })
+        .populate('authorId', 'name')
+        .lean();
+    }
 
-    logger.info(`Fetched ${announcements.length} announcements for course ${courseId}`);
-    res.json({ success: true, data: announcements });
+    // Map school broadcasts to announcement format
+    const mappedBroadcasts = broadcasts.map(b => ({
+      _id: b._id,
+      courseId: null,
+      title: b.title,
+      content: b.content,
+      authorId: b.authorId || { name: 'School Administration' },
+      createdAt: b.createdAt,
+      updatedAt: b.updatedAt,
+      isSchoolBroadcast: true
+    }));
+
+    // Combine and sort by date descending
+    const combined = [...announcements, ...mappedBroadcasts].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    logger.info(`Fetched ${announcements.length} announcements and ${broadcasts.length} broadcasts for student ${req.user?._id}`);
+    res.json({ success: true, data: combined });
   } catch (err) {
     logger.error(`Error in getAnnouncements: ${err.message}`);
     res.status(500).json({ success: false, message: 'Server error loading announcements' });

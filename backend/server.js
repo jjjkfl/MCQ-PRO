@@ -19,6 +19,11 @@ const startServer = async () => {
   app.use(cors());
   app.use(express.json());
 
+  app.post('/api/debug-log', (req, res) => {
+    console.warn('🔴 CLIENT-SIDE JS ERROR:', req.body);
+    res.json({ success: true });
+  });
+
   // Static Files
   app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

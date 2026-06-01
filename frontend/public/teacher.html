@@ -41,6 +41,9 @@
       <div class="nav-item" data-action="analytics">
         <i class="fas fa-chart-bar"></i> Global Analytics
       </div>
+      <div class="nav-item" data-action="broadcasts">
+        <i class="fas fa-bullhorn"></i> Admin Broadcasts
+      </div>
 
       <div style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 20px;">
         <div class="nav-item" onclick="auth.logout()">
@@ -65,8 +68,8 @@
             <p class="welcome-subtitle">Manage examinations, question banks, and monitor live proctored sessions.</p>
           </div>
           <div class="dashboard-actions flex" style="gap: 12px; flex-wrap: wrap;">
-            <button onclick="TeacherDashboard.showBroadcastModal()" class="btn btn-theme">
-              <i class="fas fa-bullhorn"></i> Broadcast
+            <button onclick="TeacherDashboard.showAnnouncementModal()" class="btn btn-theme">
+              <i class="fas fa-bullhorn"></i> New Announcement
             </button>
             <button onclick="TeacherDashboard.navigateToView('materials')" class="btn btn-theme">
               <i class="fas fa-book"></i> Curriculum
@@ -384,6 +387,21 @@
       <!-- VIEW: Forum -->
       <main id="view-forum" class="view" style="display: none;">
         <div id="teacher-forum-container"></div>
+      </main>
+
+      <!-- VIEW: Admin Broadcasts -->
+      <main id="view-broadcasts" class="view" style="display: none;">
+        <header class="animate-fade-in flex-col" style="gap: 1.5rem; margin-bottom: 2.5rem;">
+          <div>
+            <h2 class="welcome-title">Admin Broadcasts</h2>
+            <p class="welcome-subtitle">View updates sent by the school administration and forward them to your students.</p>
+          </div>
+        </header>
+        <div id="teacher-broadcasts-list" style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <div class="glass-card" style="text-align: center; padding: 40px;">
+            <p class="p-dim">Loading broadcasts...</p>
+          </div>
+        </div>
       </main>
     </div>
   </div>

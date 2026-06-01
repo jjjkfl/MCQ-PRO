@@ -76,24 +76,24 @@ const api = {
   /**
    * Specialized for file uploads (FormData)
    */
-  async upload(endpoint, formData) {
+  async upload(endpoint, formData, method = 'POST') {
     const token = sessionStorage.getItem('token');
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'POST',
+        method,
         headers: {
           ...(token && { 'Authorization': `Bearer ${token}` }),
         },
         body: formData
       });
       const result = await response.json();
-      if (!response.ok && response.status === 401) {
-        auth.logout();
+      if (!response.ok) {
+        if (response.status === 401) auth.logout();
+        throw new Error(result.message || 'Upload failed');
       }
       return result;
     } catch (error) {
       console.error('Upload Error:', error);
-      if (error.message?.includes('401')) auth.logout();
       throw error;
     }
   }

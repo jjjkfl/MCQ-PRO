@@ -5,10 +5,13 @@
 
 const SchoolAdmin = {
     socket: null,
+    _streams: {},
+    _capturedBlobs: {},
 
     async init() {
         if (!auth.checkAuth()) return;
         console.log('🏫 SchoolAdmin Initializing...');
+        await utils.applySchoolBranding();
         this.bindEvents();
         this.initSocket();
         await this.loadDashboardData();
@@ -53,6 +56,27 @@ const SchoolAdmin = {
         // Apply saved theme
         const saved = localStorage.getItem('admin-theme') || 'dark';
         this.applyTheme(saved);
+
+        // Logo input change listener for preview
+        const logoInput = document.getElementById('school-logo-input');
+        if (logoInput) {
+            logoInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = document.getElementById('school-logo-img');
+                        const fallback = document.getElementById('school-logo-fallback');
+                        if (img && fallback) {
+                            img.src = event.target.result;
+                            img.style.display = 'block';
+                            fallback.style.display = 'none';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
     },
 
     toggleTheme() {
@@ -97,6 +121,8 @@ const SchoolAdmin = {
             case 'certificates': this.loadCertificates(); break;
             case 'materials': this.loadMaterials(); break;
             case 'security': this.loadSecurityIntel(); break;
+            case 'broadcasts': this.loadBroadcasts(); break;
+            case 'settings': this.loadSettings(); break;
         }
     },
 
@@ -142,14 +168,28 @@ const SchoolAdmin = {
         container.innerHTML = students.map(s => {
             const initials = this._getInitials(s.name);
             const color = this._avatarColor(s.name);
+            
+            const avatarHtml = s.cameraPhoto 
+                ? `<img src="${s.cameraPhoto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.outerHTML='<div style=&quot;width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#1e293b;flex-shrink:0;&quot;>${initials}</div>'">`
+                : `<div style="width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#1e293b;flex-shrink:0;">${initials}</div>`;
+
+            const phoneText = s.phoneNumber ? ` • ${s.phoneNumber}` : '';
+            const bloodText = s.bloodGroup ? ` • Blood: ${s.bloodGroup}` : '';
+            const aadharLink = s.aadharCard 
+                ? `<a href="${s.aadharCard}" target="_blank" style="margin-left: 10px; color: var(--primary); text-decoration: underline; font-size: 11px;"><i class="fas fa-id-card"></i> View Aadhar</a>`
+                : '';
+
             return `
             <tr>
                 <td>
                     <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#1e293b;flex-shrink:0;">${initials}</div>
+                        ${avatarHtml}
                         <div>
-                            <div style="font-weight:600;">${s.name}</div>
-                            <div style="font-size:12px;color:#64748b;">${s.email}</div>
+                            <div style="font-weight:600; display:flex; align-items:center;">
+                                ${s.name}
+                                ${aadharLink}
+                            </div>
+                            <div style="font-size:12px;color:#64748b;">${s.email}${phoneText}${bloodText}</div>
                         </div>
                     </div>
                 </td>
@@ -179,14 +219,28 @@ const SchoolAdmin = {
                 const initials = this._getInitials(t.name);
                 const color = this._avatarColor(t.name);
                 const joined = new Date(t.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+
+                const avatarHtml = t.cameraPhoto 
+                    ? `<img src="${t.cameraPhoto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.outerHTML='<div style=&quot;width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#1e293b;flex-shrink:0;&quot;>${initials}</div>'">`
+                    : `<div style="width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#1e293b;flex-shrink:0;">${initials}</div>`;
+
+                const phoneText = t.phoneNumber ? ` • ${t.phoneNumber}` : '';
+                const bloodText = t.bloodGroup ? ` • Blood: ${t.bloodGroup}` : '';
+                const aadharLink = t.aadharCard 
+                    ? `<a href="${t.aadharCard}" target="_blank" style="margin-left: 10px; color: var(--primary); text-decoration: underline; font-size: 11px;"><i class="fas fa-id-card"></i> View Aadhar</a>`
+                    : '';
+
                 return `
                 <tr>
                     <td>
                         <div style="display:flex; align-items:center; gap:12px;">
-                            <div style="width:36px;height:36px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#1e293b;flex-shrink:0;">${initials}</div>
+                            ${avatarHtml}
                             <div>
-                                <div style="font-weight:600;">${t.name}</div>
-                                <div style="font-size:12px;color:#64748b;">Teacher</div>
+                                <div style="font-weight:600; display:flex; align-items:center;">
+                                    ${t.name}
+                                    ${aadharLink}
+                                </div>
+                                <div style="font-size:12px;color:#64748b;">Teacher${phoneText}${bloodText}</div>
                             </div>
                         </div>
                     </td>
@@ -212,6 +266,18 @@ const SchoolAdmin = {
 
         container.innerHTML = '<tr><td colspan="3" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading schedule...</td></tr>';
         resultsContainer.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading results...</td></tr>';
+
+        // Fetch courses for dropdown
+        try {
+            const courses = await api.get('/portal/student/courses');
+            const select = document.getElementById('m-courseId');
+            if (select && courses && courses.data) {
+                select.innerHTML = '<option value="">Select Course</option>' +
+                    courses.data.map(c => `<option value="${c._id}">${c.courseName}</option>`).join('');
+            }
+        } catch (err) {
+            console.error('Failed to load courses for selection:', err);
+        }
 
         try {
             const exams = await api.get('/admin/school/exams');
@@ -387,6 +453,86 @@ const SchoolAdmin = {
 
     closeModal(id) {
         document.getElementById(id).style.display = 'none';
+        if (id === 'modal-add-student') {
+            this.stopCamera('s');
+            const placeholder = document.getElementById('s-camera-placeholder');
+            const img = document.getElementById('s-photo-preview');
+            const captureBtn = document.getElementById('s-btn-capture');
+            if (placeholder) placeholder.style.display = 'block';
+            if (img) { img.style.display = 'none'; img.removeAttribute('src'); }
+            if (captureBtn) captureBtn.style.display = 'none';
+            delete this._capturedBlobs['s'];
+        } else if (id === 'modal-add-teacher') {
+            this.stopCamera('t');
+            const placeholder = document.getElementById('t-camera-placeholder');
+            const img = document.getElementById('t-photo-preview');
+            const captureBtn = document.getElementById('t-btn-capture');
+            if (placeholder) placeholder.style.display = 'block';
+            if (img) { img.style.display = 'none'; img.removeAttribute('src'); }
+            if (captureBtn) captureBtn.style.display = 'none';
+            delete this._capturedBlobs['t'];
+        }
+    },
+
+    async startCamera(prefix) {
+        const video = document.getElementById(`${prefix}-video`);
+        const img = document.getElementById(`${prefix}-photo-preview`);
+        const placeholder = document.getElementById(`${prefix}-camera-placeholder`);
+        const captureBtn = document.getElementById(`${prefix}-btn-capture`);
+
+        if (!video) return;
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 320 } });
+            video.srcObject = stream;
+            video.style.display = 'block';
+            if (img) img.style.display = 'none';
+            if (placeholder) placeholder.style.display = 'none';
+            if (captureBtn) captureBtn.style.display = 'inline-block';
+            this._streams[prefix] = stream;
+        } catch (err) {
+            console.error('Camera access error:', err);
+            notifications.error('Could not access webcam. Please check permissions.');
+        }
+    },
+
+    captureSnapshot(prefix) {
+        const video = document.getElementById(`${prefix}-video`);
+        const img = document.getElementById(`${prefix}-photo-preview`);
+        const captureBtn = document.getElementById(`${prefix}-btn-capture`);
+
+        if (!video || !this._streams[prefix]) return;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth || 320;
+        canvas.height = video.videoHeight || 320;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob((blob) => {
+            this._capturedBlobs[prefix] = blob;
+        }, 'image/jpeg');
+
+        if (img) {
+            img.src = canvas.toDataURL('image/jpeg');
+            img.style.display = 'block';
+        }
+        video.style.display = 'none';
+        if (captureBtn) captureBtn.style.display = 'none';
+
+        this.stopCamera(prefix);
+    },
+
+    stopCamera(prefix) {
+        if (this._streams[prefix]) {
+            this._streams[prefix].getTracks().forEach(track => track.stop());
+            delete this._streams[prefix];
+        }
+        const video = document.getElementById(`${prefix}-video`);
+        if (video) {
+            video.style.display = 'none';
+            video.srcObject = null;
+        }
     },
 
     async submitAddStudent(e) {
@@ -395,13 +541,26 @@ const SchoolAdmin = {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
         try {
-            await api.post('/admin/school/students', {
-                name: document.getElementById('s-name').value,
-                email: document.getElementById('s-email').value,
-                password: document.getElementById('s-password').value || 'Student@123',
-                classTag: document.getElementById('s-class').value,
-                division: document.getElementById('s-division').value || 'A',
-            });
+            const formData = new FormData();
+            formData.append('name', document.getElementById('s-name').value);
+            formData.append('email', document.getElementById('s-email').value);
+            formData.append('password', document.getElementById('s-password').value || 'Student@123');
+            formData.append('classTag', document.getElementById('s-class').value || '');
+            formData.append('division', document.getElementById('s-division').value || 'A');
+            formData.append('phoneNumber', document.getElementById('s-phone').value || '');
+            formData.append('bloodGroup', document.getElementById('s-blood').value || '');
+
+            const aadharFile = document.getElementById('s-aadhar').files[0];
+            if (aadharFile) {
+                formData.append('aadharCard', aadharFile);
+            }
+
+            const cameraBlob = this._capturedBlobs['s'];
+            if (cameraBlob) {
+                formData.append('cameraPhoto', cameraBlob, 'photo.jpg');
+            }
+
+            await api.upload('/admin/school/students', formData);
             notifications.success('✅ Student added successfully!');
             this.closeModal('modal-add-student');
             document.getElementById('add-student-form').reset();
@@ -421,11 +580,24 @@ const SchoolAdmin = {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
         try {
-            await api.post('/admin/school/teachers', {
-                name: document.getElementById('t-name').value,
-                email: document.getElementById('t-email').value,
-                password: document.getElementById('t-password').value || 'Teacher@123',
-            });
+            const formData = new FormData();
+            formData.append('name', document.getElementById('t-name').value);
+            formData.append('email', document.getElementById('t-email').value);
+            formData.append('password', document.getElementById('t-password').value || 'Teacher@123');
+            formData.append('phoneNumber', document.getElementById('t-phone').value || '');
+            formData.append('bloodGroup', document.getElementById('t-blood').value || '');
+
+            const aadharFile = document.getElementById('t-aadhar').files[0];
+            if (aadharFile) {
+                formData.append('aadharCard', aadharFile);
+            }
+
+            const cameraBlob = this._capturedBlobs['t'];
+            if (cameraBlob) {
+                formData.append('cameraPhoto', cameraBlob, 'photo.jpg');
+            }
+
+            await api.upload('/admin/school/teachers', formData);
             notifications.success('✅ Teacher added successfully!');
             this.closeModal('modal-add-teacher');
             document.getElementById('add-teacher-form').reset();
@@ -819,6 +991,193 @@ Merkle Root Computed:   ${data.blockchain ? 'VERIFIED' : 'FAILED'}${discrepancyL
             }
             // Always refresh log listing
             this.loadSecurityIntel();
+        }
+    },
+
+    async loadBroadcasts() {
+        const historyContainer = document.getElementById('admin-broadcast-history');
+        if (!historyContainer) return;
+        historyContainer.innerHTML = '<div class="text-center p-4 text-secondary"><i class="fas fa-spinner fa-spin"></i> Loading broadcasts...</div>';
+
+        try {
+            const broadcasts = await api.get('/admin/school/broadcasts');
+            if (!broadcasts || broadcasts.length === 0) {
+                historyContainer.innerHTML = '<div class="text-center p-4 text-secondary">No broadcasts sent yet.</div>';
+                return;
+            }
+
+            historyContainer.innerHTML = broadcasts.map(b => {
+                const targetVal = b.targetAudience || 'teachers';
+                const audienceLabel = targetVal === 'teachers' ? 'Teachers' : targetVal === 'students' ? 'Students' : 'All';
+                const audienceColor = targetVal === 'teachers' ? '#8b5cf6' : targetVal === 'students' ? '#10b981' : '#f59e0b';
+                
+                return `
+                <div class="glass-card animate-fade-in" style="padding:1rem; background:rgba(255,255,255,0.02); border-left:4px solid ${audienceColor};">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; flex-wrap:wrap; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <strong style="font-size:15px; color:#fff;">${b.title}</strong>
+                            <span style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:${audienceColor}; border: 1px solid ${audienceColor}33; padding:2px 6px; border-radius:10px;">To: ${audienceLabel}</span>
+                        </div>
+                        <span style="font-size:11px; color:#64748b;">${new Date(b.createdAt).toLocaleString()}</span>
+                    </div>
+                    <p style="font-size:13px; color:#c7c7cc; margin:0; line-height:1.4;">${b.content}</p>
+                </div>
+            `}).join('');
+        } catch (err) {
+            console.error('Failed to load broadcasts:', err);
+            historyContainer.innerHTML = '<div class="text-center p-4 text-danger">Failed to load broadcast history.</div>';
+        }
+    },
+
+    async submitBroadcast(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-send-broadcast');
+        const titleInput = document.getElementById('b-title');
+        const contentInput = document.getElementById('b-content');
+        const targetSelect = document.getElementById('b-target');
+        
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+        try {
+            await api.post('/admin/school/broadcasts', {
+                title: titleInput.value,
+                content: contentInput.value,
+                targetAudience: targetSelect ? targetSelect.value : 'teachers'
+            });
+            notifications.success('📢 Broadcast sent successfully!');
+            titleInput.value = '';
+            contentInput.value = '';
+            this.loadBroadcasts();
+        } catch (err) {
+            notifications.error(err.message || 'Failed to send broadcast');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Broadcast';
+        }
+    },
+
+    async submitUploadMarks(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-upload-marks');
+        const resultEl = document.getElementById('upload-marks-result');
+        const fileInput = document.getElementById('m-file');
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        resultEl.style.display = 'none';
+
+        try {
+            const formData = new FormData();
+            formData.append('courseId', document.getElementById('m-courseId').value);
+            formData.append('subject', document.getElementById('m-subject').value);
+            formData.append('examType', document.getElementById('m-examType').value);
+            formData.append('file', fileInput.files[0]);
+
+            const res = await api.upload('/admin/school/marks/upload-excel', formData);
+            resultEl.style.display = 'block';
+            
+            let errorText = '';
+            if (res.errors && res.errors.length > 0) {
+                errorText = `\n\n⚠️ Errors:\n` + res.errors.join('\n');
+                resultEl.style.color = '#ff9f0a';
+                resultEl.style.borderColor = '#ff9f0a';
+            } else {
+                resultEl.style.color = '#30d158';
+                resultEl.style.borderColor = '#30d158';
+            }
+
+            resultEl.innerHTML = `<strong>IMPORT RESULT:</strong>\n${res.message}${errorText}`;
+            notifications.success(res.message);
+            document.getElementById('upload-marks-form').reset();
+        } catch (err) {
+            resultEl.style.display = 'block';
+            resultEl.style.color = '#d97a7e';
+            resultEl.style.borderColor = '#d97a7e';
+            resultEl.innerHTML = `<strong>ERROR:</strong>\n${err.message}`;
+            notifications.error(err.message || 'Failed to upload marks');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-upload"></i> Upload & Import Marks';
+        }
+    },
+
+    async loadSettings() {
+        try {
+            const data = await api.get('/admin/school/settings');
+            if (!data) return;
+
+            const nameInput = document.getElementById('school-settings-name');
+            const primaryInput = document.getElementById('school-settings-primary');
+            const secondaryInput = document.getElementById('school-settings-secondary');
+            const logoImg = document.getElementById('school-logo-img');
+            const logoFallback = document.getElementById('school-logo-fallback');
+
+            if (nameInput) nameInput.value = data.name || '';
+            if (data.branding) {
+                if (primaryInput) primaryInput.value = data.branding.primary_color || '#5c8d89';
+                if (secondaryInput) secondaryInput.value = data.branding.secondary_color || '#1d1d1f';
+                
+                if (data.branding.logo && logoImg && logoFallback) {
+                    logoImg.src = data.branding.logo;
+                    logoImg.style.display = 'block';
+                    logoFallback.style.display = 'none';
+                } else if (logoImg && logoFallback) {
+                    logoImg.style.display = 'none';
+                    logoFallback.style.display = 'block';
+                }
+            } else {
+                if (logoImg && logoFallback) {
+                    logoImg.style.display = 'none';
+                    logoFallback.style.display = 'block';
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load settings:', err);
+            notifications.error('Failed to load settings');
+        }
+    },
+
+    async saveSettings(e) {
+        if (e) e.preventDefault();
+        const btn = document.getElementById('btn-save-settings');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        }
+
+        try {
+            const name = document.getElementById('school-settings-name').value;
+            const primaryColor = document.getElementById('school-settings-primary').value;
+            const secondaryColor = document.getElementById('school-settings-secondary').value;
+            const logoInput = document.getElementById('school-logo-input');
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('primary_color', primaryColor);
+            formData.append('secondary_color', secondaryColor);
+
+            if (logoInput && logoInput.files.length > 0) {
+                formData.append('logo', logoInput.files[0]);
+            }
+
+            const res = await api.upload('/admin/school/settings', formData, 'PUT');
+            if (res.success) {
+                notifications.success('School settings updated successfully!');
+                await utils.applySchoolBranding();
+                await this.loadSettings();
+                if (logoInput) logoInput.value = '';
+            } else {
+                throw new Error(res.message || 'Failed to save settings');
+            }
+        } catch (err) {
+            console.error('Failed to save settings:', err);
+            notifications.error(err.message || 'Failed to save settings');
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = 'Save Settings';
+            }
         }
     }
 };

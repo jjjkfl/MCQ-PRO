@@ -5,6 +5,11 @@ const Certificate = require('../models/Certificate');
 const Course = require('../models/Course');
 const Session = require('../models/Session');
 const CourseMaterial = require('../models/CourseMaterial');
+const Broadcast = require('../models/Broadcast');
+const Mark = require('../models/Mark');
+const School = require('../models/School');
+const fs = require('fs').promises;
+const XLSX = require('xlsx');
 
 // Student Management
 exports.getStudents = async (req, res) => {
@@ -18,9 +23,21 @@ exports.getStudents = async (req, res) => {
 
 exports.createStudent = async (req, res) => {
   try {
-    const { name, email, password, classTag, division } = req.body;
+    const { name, email, password, classTag, division, bloodGroup, phoneNumber } = req.body;
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ message: 'Email already registered.' });
+
+    let cameraPhoto = '';
+    let aadharCard = '';
+
+    if (req.files) {
+      if (req.files.cameraPhoto) {
+        cameraPhoto = '/uploads/' + req.files.cameraPhoto[0].filename;
+      }
+      if (req.files.aadharCard) {
+        aadharCard = '/uploads/' + req.files.aadharCard[0].filename;
+      }
+    }
 
     const student = await User.create({
       name, email,
@@ -29,6 +46,10 @@ exports.createStudent = async (req, res) => {
       schoolId: req.user.schoolId,
       classTag: classTag || '',
       division: division || 'A',
+      cameraPhoto,
+      aadharCard,
+      bloodGroup: bloodGroup || '',
+      phoneNumber: phoneNumber || '',
       isActive: true
     });
 
@@ -54,15 +75,31 @@ exports.getTeachers = async (req, res) => {
 
 exports.createTeacher = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, bloodGroup, phoneNumber } = req.body;
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ message: 'Email already registered.' });
+
+    let cameraPhoto = '';
+    let aadharCard = '';
+
+    if (req.files) {
+      if (req.files.cameraPhoto) {
+        cameraPhoto = '/uploads/' + req.files.cameraPhoto[0].filename;
+      }
+      if (req.files.aadharCard) {
+        aadharCard = '/uploads/' + req.files.aadharCard[0].filename;
+      }
+    }
 
     const teacher = await User.create({
       name, email,
       password: password || 'Teacher@123',
       role: 'teacher',
       schoolId: req.user.schoolId,
+      cameraPhoto,
+      aadharCard,
+      bloodGroup: bloodGroup || '',
+      phoneNumber: phoneNumber || '',
       isActive: true
     });
 
@@ -74,10 +111,26 @@ exports.createTeacher = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { name, email, classTag, division, isActive } = req.body;
+    const { name, email, classTag, division, isActive, bloodGroup, phoneNumber } = req.body;
+    const updateData = { 
+      name, email, classTag, division, 
+      isActive: isActive === 'true' || isActive === true,
+      bloodGroup: bloodGroup || '',
+      phoneNumber: phoneNumber || ''
+    };
+
+    if (req.files) {
+      if (req.files.cameraPhoto) {
+        updateData.cameraPhoto = '/uploads/' + req.files.cameraPhoto[0].filename;
+      }
+      if (req.files.aadharCard) {
+        updateData.aadharCard = '/uploads/' + req.files.aadharCard[0].filename;
+      }
+    }
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { name, email, classTag, division, isActive: isActive === 'true' || isActive === true },
+      updateData,
       { new: true, runValidators: true }
     );
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -209,6 +262,172 @@ exports.deleteSchoolMaterial = async (req, res) => {
 
     await CourseMaterial.findByIdAndDelete(materialId);
     res.json({ success: true, message: 'Material deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Broadcast Management
+exports.createBroadcast = async (req, res) => {
+  try {
+    const { title, content, targetAudience } = req.body;
+    if (!title || !content) {
+      return res.status(400).json({ message: 'Title and content are required.' });
+    }
+
+    const broadcast = await Broadcast.create({
+      title,
+      content,
+      schoolId: req.user.schoolId,
+      authorId: req.user.id,
+      targetAudience: targetAudience || 'teachers'
+    });
+
+    // Notify teachers/students via websocket if socketio is present
+    const io = req.app.get('socketio');
+    if (io) {
+      io.to(`school:${broadcast.schoolId}`).emit('announcement', {
+        title: broadcast.title,
+        content: broadcast.content,
+        schoolId: broadcast.schoolId,
+        targetAudience: broadcast.targetAudience
+      });
+    }
+
+    res.status(201).json({ success: true, data: broadcast });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getBroadcasts = async (req, res) => {
+  try {
+    const query = { schoolId: req.user.schoolId };
+    if (req.user.role === 'teacher') {
+      query.targetAudience = { $in: ['teachers', 'all'] };
+    }
+    const broadcasts = await Broadcast.find(query)
+      .populate('authorId', 'name')
+      .sort({ createdAt: -1 });
+    res.json(broadcasts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Excel Marks Upload
+exports.uploadMarksExcel = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: 'No file uploaded.' });
+  }
+
+  const { courseId, subject, examType } = req.body;
+  if (!courseId || !subject || !examType) {
+    return res.status(400).json({ success: false, message: 'courseId, subject, and examType are required.' });
+  }
+
+  try {
+    const workbook = XLSX.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+
+    const results = [];
+    const errors = [];
+
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      // supports different spellings of headers
+      const email = row.email || row.Email || row['Student Email'] || row['student_email'];
+      const marksObtained = row.marks || row.Marks || row['Marks Obtained'] || row.marks_obtained;
+      const totalMarks = row.total || row.Total || row['Total Marks'] || row.total_marks || 100;
+      const remarks = row.remarks || row.Remarks || '';
+
+      if (!email || marksObtained == null) {
+        errors.push(`Row ${i + 2}: Missing Email or Marks.`);
+        continue;
+      }
+
+      // Find student in current school
+      const student = await User.findOne({ 
+        email: email.toString().trim().toLowerCase(), 
+        role: 'student', 
+        schoolId: req.user.schoolId 
+      });
+
+      if (!student) {
+        errors.push(`Row ${i + 2}: Student with email ${email} not found in this school.`);
+        continue;
+      }
+
+      try {
+        const mark = await Mark.findOneAndUpdate(
+          { studentId: student._id, subject, examType },
+          {
+            studentId: student._id,
+            courseId,
+            teacherId: req.user.id, // uploaded by admin
+            subject,
+            examType,
+            marksObtained: Number(marksObtained),
+            totalMarks: Number(totalMarks),
+            remarks: remarks
+          },
+          { upsert: true, new: true, runValidators: true }
+        );
+        results.push(mark);
+      } catch (err) {
+        errors.push(`Row ${i + 2}: Error saving mark: ${err.message}`);
+      }
+    }
+
+    // Clean up uploaded file
+    await fs.unlink(req.file.path);
+
+    res.json({
+      success: true,
+      message: `Successfully processed ${results.length} records.`,
+      uploadedCount: results.length,
+      errors
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// School settings
+exports.getSchoolSettings = async (req, res) => {
+  try {
+    const school = await School.findById(req.user.schoolId);
+    if (!school) return res.status(404).json({ message: 'School not found' });
+    res.json(school);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.updateSchoolSettings = async (req, res) => {
+  try {
+    const { name, primary_color, secondary_color } = req.body;
+    const school = await School.findById(req.user.schoolId);
+    if (!school) return res.status(404).json({ message: 'School not found' });
+
+    school.name = name || school.name;
+    if (!school.branding) {
+      school.branding = {
+        primary_color: '#0071e3',
+        secondary_color: '#1d1d1f'
+      };
+    }
+    school.branding.primary_color = primary_color || school.branding.primary_color;
+    school.branding.secondary_color = secondary_color || school.branding.secondary_color;
+
+    if (req.file) {
+      school.branding.logo = '/uploads/' + req.file.filename;
+    }
+
+    await school.save();
+    res.json({ success: true, school });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

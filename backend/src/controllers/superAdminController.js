@@ -325,3 +325,12 @@ exports.deletePlan = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.getSchoolStudents = async (req, res) => {
+  try {
+    const students = await User.find({ schoolId: req.params.id, role: 'student' });
+    res.json(students);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

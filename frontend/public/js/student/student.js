@@ -6,6 +6,7 @@
 const StudentDashboard = {
   async init() {
     if (!auth.checkAuth()) return;
+    await utils.applySchoolBranding();
 
     // Attach listeners immediately so UI is responsive even if data fails
     this.bindDashboardNav();
@@ -45,10 +46,10 @@ const StudentDashboard = {
   },
 
   initAnnouncements() {
-    // Basic WebSocket notification handler (if socket.io is present globally)
-    if (typeof io !== 'undefined') {
-      const socket = io();
+    if (window.studentSocket && studentSocket.socket) {
+      const socket = studentSocket.socket;
       socket.on('announcement', (data) => {
+        if (data.targetAudience && data.targetAudience === 'teachers') return;
         this.showAnnouncementToast(data);
       });
     }

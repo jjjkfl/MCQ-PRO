@@ -53,9 +53,13 @@ const initSocket = (httpServer) => {
 
   /* ─── Connection Handler ──────────────────────────────────────── */
   io.on('connection', (socket) => {
-    const { id: userId, role } = socket.user;
+    const { id: userId, role, schoolId } = socket.user;
     userSocket.set(userId, socket.id);
     logger.info(`Socket connected: ${socket.id} | user=${userId} | role=${role}`);
+    if (schoolId) {
+      socket.join(`school:${schoolId}`);
+      logger.info(`Socket ${socket.id} joined school room: school:${schoolId}`);
+    }
 
     /* ── JOIN EXAM ROOM ──────────────────────────────────────────── */
     socket.on('exam:join', ({ sessionId }) => {
@@ -227,9 +231,15 @@ const initSocket = (httpServer) => {
 
     /* ── GLOBAL ANNOUNCEMENTS ───────────────────────────────────── */
     socket.on('broadcast-announcement', (data) => {
-      if (role !== 'teacher' && role !== 'super_admin') return;
-      io.emit('platform_announcement', data);
-      io.emit('announcement', data);
+      if (role !== 'school_admin' && role !== 'super_admin') return;
+      if (role === 'super_admin') {
+        io.emit('platform_announcement', data);
+        io.emit('announcement', data);
+      } else if (role === 'school_admin') {
+        if (schoolId) {
+          io.to(`school:${schoolId}`).emit('announcement', data);
+        }
+      }
       logger.info(`User ${userId} (${role}) broadcasted announcement: ${data.title}`);
     });
 

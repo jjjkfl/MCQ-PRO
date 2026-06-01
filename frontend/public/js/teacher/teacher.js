@@ -9,6 +9,7 @@ const TeacherDashboard = {
   sessions: [],
   async init() {
     if (!auth.checkAuth()) return;
+    await utils.applySchoolBranding();
     if (this._pollingInterval) clearInterval(this._pollingInterval);
     this.bindSidebarNav();
     this.highlightSidebar('dashboard');
@@ -40,7 +41,8 @@ const TeacherDashboard = {
         'materials': () => this.loadMaterials(),
         'students': () => this.loadStudentsView(),
         'timetable': () => this.loadTimetable(),
-        'forum': () => this.loadForum()
+        'forum': () => this.loadForum(),
+        'broadcasts': () => this.loadBroadcastsView()
       };
 
       this.highlightSidebar(view || 'dashboard');
@@ -1023,8 +1025,8 @@ const TeacherDashboard = {
     this.init();
   },
 
-  async showBroadcastModal() {
-    if (this.courses.length === 0) return notifications.error('No courses available to broadcast to.');
+  async showAnnouncementModal() {
+    if (this.courses.length === 0) return notifications.error('No courses available to announce to.');
 
     Modal.show('announcement', `
       <div class="form-group">
@@ -1041,8 +1043,8 @@ const TeacherDashboard = {
         <label>Message Content</label>
         <textarea id="ann-content" class="form-control" rows="4"></textarea>
       </div>
-      <button onclick="TeacherDashboard.sendAnnouncement()" class="btn btn-primary" style="width:100%;">Broadcast to Students</button>
-    `, { title: 'Broadcast Announcement' });
+      <button onclick="TeacherDashboard.sendAnnouncement()" class="btn btn-theme" style="width:100%;">Publish Announcement</button>
+    `, { title: 'New Course Announcement' });
   },
 
   async sendAnnouncement() {
@@ -1052,13 +1054,9 @@ const TeacherDashboard = {
     if (!courseId || !title || !content) return;
 
     try {
-      // Emit via socket for real-time
-      if (window.TeacherSocket && TeacherSocket.socket) {
-        TeacherSocket.socket.emit('broadcast-announcement', { title, content, courseId });
-      }
       // Save to DB
       await api.post('/portal/edu/announcements', { courseId, title, content });
-      notifications.success('Announcement broadcasted');
+      notifications.success('Announcement published successfully');
       Modal.close();
     } catch (err) {
       notifications.error('Failed to send announcement');
@@ -1075,7 +1073,8 @@ const TeacherDashboard = {
           'students': 'students',
           'timetable': 'timetable',
           'forum': 'forum',
-          'analytics': 'analytics-all'
+          'analytics': 'analytics-all',
+          'broadcasts': 'broadcasts'
         };
         const viewId = viewMap[action] || 'dashboard';
 
@@ -1098,7 +1097,8 @@ const TeacherDashboard = {
       'timetable': 'timetable',
       'forum': 'forum',
       'analytics-all': 'analytics',
-      'analytics': 'analytics'
+      'analytics': 'analytics',
+      'broadcasts': 'broadcasts'
     };
 
     const action = mapping[viewName] || 'overview';
@@ -1408,6 +1408,74 @@ const TeacherDashboard = {
       this.loadTimetable();
     } catch (err) {
       notifications.error('Failed to remove schedule');
+    }
+  },
+
+  async loadBroadcastsView() {
+    const listContainer = document.getElementById('teacher-broadcasts-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '<div class="glass-card" style="text-align: center; padding: 40px;"><p class="p-dim"><i class="fas fa-spinner fa-spin"></i> Loading broadcasts...</p></div>';
+
+    try {
+      const broadcasts = await api.get('/admin/school/broadcasts');
+      
+      // Ensure courses are loaded for forwarding
+      if (this.courses.length === 0) {
+        const { data } = await api.get('/portal/teacher/dashboard');
+        this.courses = data.courses || [];
+      }
+
+      if (!broadcasts || broadcasts.length === 0) {
+        listContainer.innerHTML = `
+          <div class="glass-card" style="text-align: center; padding: 40px;">
+            <p class="p-dim">No announcements from school administration.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listContainer.innerHTML = broadcasts.map(b => `
+        <div class="glass-card animate-fade-in" style="padding: 24px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+          <div style="flex: 1;">
+                        <h3 class="h3" style="font-size: 18px; margin-bottom: 10px; font-weight:700;">${b.title}</h3>
+            <p class="p-dim" style="font-size: 14px; margin: 0; line-height: 1.5; color: #fff;">${b.content}</p>
+          </div>
+          <button onclick="TeacherDashboard.showForwardAnnouncementModal('${b.title.replace(/'/g, "\\'")}', '${b.content.replace(/'/g, "\\'")}')" class="btn btn-theme" style="white-space: nowrap;">
+            <i class="fas fa-share-square"></i> Forward to Students
+          </button>
+        </div>
+      `).join('');
+    } catch (err) {
+      console.error('Failed to load broadcasts:', err);
+      listContainer.innerHTML = '<div class="glass-card" style="text-align: center; padding: 40px;"><p class="p-dim text-danger">Failed to load announcements.</p></div>';
+    }
+  },
+
+  showForwardAnnouncementModal(title, content) {
+    if (this.courses.length === 0) return notifications.error('No courses available to forward to.');
+
+    Modal.show('forward-announcement', `
+      <div style="margin-bottom: 16px; font-weight: 700; font-size: 15px; color: var(--primary);">Forwarding Announcement: "${title}"</div>
+      <div class="form-group">
+        <label>Select Course to Publish To</label>
+        <select id="fwd-courseId" class="form-control" required style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px;">
+          ${this.courses.map(c => `<option value="${c._id}">${c.courseName}</option>`).join('')}
+        </select>
+      </div>
+      <button onclick="TeacherDashboard.submitForwardAnnouncement('${title.replace(/'/g, "\\'")}', '${content.replace(/'/g, "\\'")}')" class="btn btn-theme" style="width: 100%; margin-top: 15px;">📢 Forward to Students</button>
+    `, { title: 'Forward Admin Broadcast' });
+  },
+
+  async submitForwardAnnouncement(title, content) {
+    const courseId = document.getElementById('fwd-courseId').value;
+    if (!courseId) return;
+
+    try {
+      await api.post('/portal/edu/announcements', { courseId, title, content });
+      notifications.success('📢 Announcement successfully forwarded to students!');
+      Modal.close();
+    } catch (err) {
+      notifications.error('Failed to forward announcement');
     }
   }
 };
