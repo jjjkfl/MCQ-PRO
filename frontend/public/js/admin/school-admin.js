@@ -269,16 +269,7 @@ const SchoolAdmin = {
         resultsContainer.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading results...</td></tr>';
 
         // Fetch courses for dropdown
-        try {
-            const courses = await api.get('/admin/school/courses');
-            const select = document.getElementById('m-courseId');
-            if (select && courses && courses.data) {
-                select.innerHTML = '<option value="">Select Course</option>' +
-                    courses.data.map(c => `<option value="${c._id}">${c.courseName}</option>`).join('');
-            }
-        } catch (err) {
-            console.error('Failed to load courses for selection:', err);
-        }
+        await this._loadCourseDropdown();
 
 
         try {
@@ -1229,9 +1220,29 @@ Merkle Root Computed:   ${data.blockchain ? 'VERIFIED' : 'FAILED'}${discrepancyL
 
             // Also populate teacher dropdown in create form
             await this._populateCourseTeacherDropdown();
+            // Refresh the marks-upload course dropdown too
+            await this._loadCourseDropdown();
         } catch (err) {
             tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:#ef4444;">Failed to load courses.</td></tr>';
             console.error('loadCourses error:', err);
+        }
+    },
+
+    async _loadCourseDropdown() {
+        const select = document.getElementById('m-courseId');
+        if (!select) return;
+        try {
+            const res = await api.get('/admin/school/courses');
+            const courses = (res && res.data) ? res.data : [];
+            if (courses.length === 0) {
+                select.innerHTML = '<option value="">— No courses yet. Create one first —</option>';
+            } else {
+                select.innerHTML = '<option value="">Select Course</option>' +
+                    courses.map(c => `<option value="${c._id}">${c.courseName}</option>`).join('');
+            }
+        } catch (err) {
+            console.error('Failed to load courses for dropdown:', err);
+            select.innerHTML = '<option value="">— Failed to load courses —</option>';
         }
     },
 
